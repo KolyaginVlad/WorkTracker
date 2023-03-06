@@ -9,11 +9,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import ru.kolyagin.worktracker.domain.models.DayWorkInfo
+import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
 import ru.kolyagin.worktracker.utils.Constants
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -43,60 +44,96 @@ class AlarmNotificationsManager @Inject constructor(
                         )
                     }
                     ?.let { workStart ->
-                        scheduleAlarm(dayWorkInfo, workStart)
+                        scheduleAlarm(
+                            dayWorkInfo.day.ordinal,
+                            Constants.MORNING_CONST,
+                            workStart - Time(
+                                Constants.MORNING_HOURS_OFFSET,
+                                Constants.MORNING_MINUTES_OFFSET
+                            )
+                        ) {
+                            putExtra(Constants.DESCRIPTION, R.string.start_work_description)
+                        }
                     }
+            }
+        }
+    }
+
+    override fun scheduleDinnerNotification() {
+        scope.launch {
+            val time = Time(
+                Constants.DINNER_HOURS,
+                Constants.DINNER_MINUTES
+            )
+            scheduleRepository.schedule().firstOrNull()?.forEach { dayWorkInfo ->
+                if (!dayWorkInfo.isDinnerInclude && dayWorkInfo.periods.all {
+                        time !in it.timeStart..it.timeEnd
+                    }
+                ) {
+                    scheduleAlarm(
+                        dayWorkInfo.day.ordinal,
+                        Constants.NOT_WORK_DINNER_CONST,
+                        time
+                    ) {
+                        putExtra(Constants.DESCRIPTION, R.string.dinner_description)
+                    }
+                }
             }
         }
     }
 
     override fun rescheduleNotifications() {
         scheduleMorningNotification()
+        scheduleDinnerNotification()
     }
 
     private fun scheduleAlarm(
-        dayWorkInfo: DayWorkInfo,
+        day: Int,
+        const: Int,
         workStart: Time,
+        modifyIntent: Intent.() -> Unit = {}
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val resultIntent = Intent(context, NotificationReceiver::class.java)
+        val resultIntent = Intent(context, NotificationReceiver::class.java).apply(modifyIntent)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            Constants.MORNING_CONST + dayWorkInfo.day.ordinal,
+            const + day,
             resultIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val time = workStart - Time(
-            Constants.MORNING_HOURS_OFFSET,
-            Constants.MORNING_MINUTES_OFFSET
-        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (alarmManager.canScheduleExactAlarms()) {
-                schedule(alarmManager, time, pendingIntent)
+                schedule(alarmManager, workStart, pendingIntent, day)
             }
         } else {
-            schedule(alarmManager, time, pendingIntent)
+            schedule(alarmManager, workStart, pendingIntent, day)
         }
     }
 
     private fun schedule(
         alarmManager: AlarmManager,
         time: Time,
-        pendingIntent: PendingIntent?
+        pendingIntent: PendingIntent?,
+        day: Int
     ) {
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            calculateTriggerTime(time),
+            calculateTriggerTime(time, day),
             pendingIntent
         )
     }
 
-    private fun calculateTriggerTime(time: Time): Long {
+    private fun calculateTriggerTime(time: Time, day: Int): Long {
         var notificationTime = LocalDate.now().atTime(time.hours, time.minutes, 0)
+        val currentDayOfWeek = notificationTime.dayOfWeek.ordinal
+        val dif = day - currentDayOfWeek
 
-        val currentTime = LocalDateTime.now()
-        if (currentTime.isAfter(notificationTime)) {
-            notificationTime = notificationTime.plusDays(Constants.DAY_INTERVAL)
-        }
+        notificationTime =
+            if (dif > 0 || (dif == 0 && LocalDateTime.now().isBefore(notificationTime))) {
+                notificationTime.plusDays(dif.toLong())
+            } else {
+                notificationTime.plusDays((DayOfWeek.values().size - currentDayOfWeek + day).toLong())
+            }
         val offset = OffsetDateTime.now().offset
         return notificationTime.toInstant(offset).toEpochMilli()
     }

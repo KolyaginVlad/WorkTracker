@@ -10,6 +10,7 @@ import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.ui.MainActivity
 import ru.kolyagin.worktracker.ui.notifications.Notification
 import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
+import ru.kolyagin.worktracker.utils.Constants
 import javax.inject.Inject
 
 @SuppressLint("UnspecifiedImmutableFlag")
@@ -34,7 +35,12 @@ class NotificationReceiver @Inject constructor(
             notificationIntent, PendingIntent.FLAG_IMMUTABLE
         )
         notification.sendNotification(
-            description = context.applicationContext.getString(R.string.notification_description),
+            description = context.applicationContext.getString(
+                intent.getIntExtra(
+                    Constants.DESCRIPTION,
+                    R.string.start_work_description
+                )
+            ),
             pendingIntent = pendingIntent
         )
     }

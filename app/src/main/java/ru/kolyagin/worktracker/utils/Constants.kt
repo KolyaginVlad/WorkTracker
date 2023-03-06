@@ -1,7 +1,7 @@
 package ru.kolyagin.worktracker.utils
 
 object Constants {
-    const val DAY_INTERVAL = 7L
+    const val DESCRIPTION = "DESCRIPTION"
     const val NOTIFICATION_SCOPE = "NOTIFICATION_SCOPE"
 
     const val MORNING_CONST = 0
@@ -9,4 +9,10 @@ object Constants {
     const val MORNING_MINUTES_LIMIT = 30
     const val MORNING_HOURS_OFFSET = 2
     const val MORNING_MINUTES_OFFSET = 0
+
+    const val NOT_WORK_DINNER_CONST = 10
+
+
+    const val DINNER_HOURS = 13
+    const val DINNER_MINUTES = 0
 }
