@@ -9,6 +9,7 @@
     <string name="friday">Пятница</string>
     <string name="saturday">Суббота</string>
     <string name="dinner">Обед</string>
+    <string name="notification_description">it\'s time to work</string>
 
     <plurals name="hours">
         <item quantity="one">%d час</item>
