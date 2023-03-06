@@ -7,7 +7,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ru.kolyagin.worktracker.data.database.AppDatabase
@@ -15,7 +14,7 @@ import ru.kolyagin.worktracker.data.database.RoomCallback
 import ru.kolyagin.worktracker.data.repositories.ScheduleRepositoryImpl
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 interface DataModule {
 
