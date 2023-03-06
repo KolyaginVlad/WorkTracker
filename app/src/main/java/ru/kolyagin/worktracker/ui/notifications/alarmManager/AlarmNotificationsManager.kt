@@ -34,6 +34,15 @@ class AlarmNotificationsManager @Inject constructor(
                 dayWorkInfo.periods
                     .takeIf { it.isNotEmpty() }
                     ?.minOfOrNull { it.timeStart }
+                    ?.takeIf {
+                        it < Time(
+                            Constants.MORNING_HOURS_LIMIT,
+                            Constants.MORNING_MINUTES_LIMIT
+                        ) && it > Time(
+                            Constants.MORNING_HOURS_OFFSET,
+                            Constants.MORNING_MINUTES_OFFSET
+                        )
+                    }
                     ?.let { workStart ->
                         val pendingIntent = PendingIntent.getBroadcast(
                             context,
