@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
@@ -28,8 +29,6 @@ class AlarmNotificationsManager @Inject constructor(
 
     override fun scheduleMorningNotification() {
         scope.launch {
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val resultIntent = Intent(context, NotificationReceiver::class.java)
             scheduleRepository.schedule().firstOrNull()?.forEach { dayWorkInfo ->
                 dayWorkInfo.periods
                     .takeIf { it.isNotEmpty() }
@@ -44,23 +43,7 @@ class AlarmNotificationsManager @Inject constructor(
                         )
                     }
                     ?.let { workStart ->
-                        val pendingIntent = PendingIntent.getBroadcast(
-                            context,
-                            Constants.MORNING_CONST + dayWorkInfo.day.ordinal,
-                            resultIntent,
-                            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                        )
-                        val time = workStart - Time(
-                            Constants.MORNING_HOURS_OFFSET,
-                            Constants.MORNING_MINUTES_OFFSET
-                        )
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            if (alarmManager.canScheduleExactAlarms()) {
-                                schedule(alarmManager, time, pendingIntent)
-                            }
-                        } else {
-                            schedule(alarmManager, time, pendingIntent)
-                        }
+                        scheduleAlarm(dayWorkInfo, workStart)
                     }
             }
         }
@@ -68,6 +51,31 @@ class AlarmNotificationsManager @Inject constructor(
 
     override fun rescheduleNotifications() {
         scheduleMorningNotification()
+    }
+
+    private fun scheduleAlarm(
+        dayWorkInfo: DayWorkInfo,
+        workStart: Time,
+    ) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val resultIntent = Intent(context, NotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            Constants.MORNING_CONST + dayWorkInfo.day.ordinal,
+            resultIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val time = workStart - Time(
+            Constants.MORNING_HOURS_OFFSET,
+            Constants.MORNING_MINUTES_OFFSET
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (alarmManager.canScheduleExactAlarms()) {
+                schedule(alarmManager, time, pendingIntent)
+            }
+        } else {
+            schedule(alarmManager, time, pendingIntent)
+        }
     }
 
     private fun schedule(
