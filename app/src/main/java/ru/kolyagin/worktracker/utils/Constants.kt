@@ -15,4 +15,8 @@ object Constants {
 
     const val DINNER_HOURS = 13
     const val DINNER_MINUTES = 0
+
+    const val PRE_WORK_CONST = 20
+    const val PRE_WORK_HOURS_OFFSET = 0
+    const val PRE_WORK_MINUTES_OFFSET = 30
 }

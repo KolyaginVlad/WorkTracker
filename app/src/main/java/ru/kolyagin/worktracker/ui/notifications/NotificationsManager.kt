@@ -6,6 +6,8 @@ interface NotificationsManager {
 
     fun scheduleDinnerNotification()
 
+    fun schedulePreWorkNotification()
+
     fun rescheduleNotifications()
 
 }
