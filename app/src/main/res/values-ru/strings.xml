@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Work Tracker</string>
+    <string name="work_schedule">График работы</string>
+    <string name="total_time">Общее время работы за неделю:</string>
+    <string name="monday">Понедельник</string>
+    <string name="tuesday">Вторник</string>
+    <string name="wednesday">Среда</string>
+    <string name="thursday">Четверг</string>
+    <string name="friday">Пятница</string>
+    <string name="saturday">Суббота</string>
+    <string name="dinner">Обед</string>
+    <string name="dinner_description">Пора кушать!</string>
+    <string name="start_work_description">Пора на работу!</string>
+
+    <plurals name="hours">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+    </plurals>
+</resources>
