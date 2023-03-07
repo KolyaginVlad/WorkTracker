@@ -38,7 +38,7 @@ class NotificationReceiver @Inject constructor(
             description = context.applicationContext.getString(
                 intent.getIntExtra(
                     Constants.DESCRIPTION,
-                    R.string.start_work_description
+                    R.string.morning_start_work_description
                 )
             ),
             pendingIntent = pendingIntent

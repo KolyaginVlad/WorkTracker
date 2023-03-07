@@ -52,7 +52,7 @@ class AlarmNotificationsManager @Inject constructor(
                                 Constants.MORNING_MINUTES_OFFSET
                             )
                         ) {
-                            putExtra(Constants.DESCRIPTION, R.string.start_work_description)
+                            putExtra(Constants.DESCRIPTION, R.string.morning_start_work_description)
                         }
                     }
             }
