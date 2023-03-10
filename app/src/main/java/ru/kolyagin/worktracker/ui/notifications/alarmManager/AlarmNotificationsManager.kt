@@ -116,6 +116,7 @@ class AlarmNotificationsManager @Inject constructor(
         scheduleMorningNotification()
         scheduleDinnerNotification()
         schedulePreWorkNotification()
+
     }
 
     private fun scheduleAlarm(
