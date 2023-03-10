@@ -74,7 +74,7 @@ class AlarmNotificationsManager @Inject constructor(
                         }?.let { workStart ->
                             scheduleAlarm(
                                 dayWorkInfo.day.ordinal,
-                                Constants.FIN_WORK_CONST,
+                                Constants.PRE_WORK_CONST,
                                 workStart - Time(
                                     Constants.PRE_WORK_HOURS_OFFSET,
                                     Constants.PRE_WORK_MINUTES_OFFSET
@@ -104,7 +104,7 @@ class AlarmNotificationsManager @Inject constructor(
                         }?.let { workEnd ->
                             scheduleAlarm(
                                 dayWorkInfo.day.ordinal,
-                                Constants.FIN_WORK_CONST,
+                                Constants.EVENING_CONST,
                                 workEnd - Time(
                                     Constants.FIN_WORK_HOURS_OFFSET,
                                     Constants.FIN_WORK_MINUTES_OFFSET
@@ -134,7 +134,7 @@ class AlarmNotificationsManager @Inject constructor(
                         }?.let { workEnd ->
                             scheduleAlarm(
                                 dayWorkInfo.day.ordinal,
-                                Constants.PRE_WORK_CONST,
+                                Constants.FIN_WORK_CONST,
                                 workEnd - Time(
                                     Constants.FIN_WORK_HOURS_OFFSET,
                                     Constants.FIN_WORK_MINUTES_OFFSET

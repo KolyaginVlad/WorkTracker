@@ -22,6 +22,7 @@ object Constants {
 
     const val EVENING_HOURS_LIMIT = 17
     const val EVENING_MINUTES_LIMIT = 30
+    const val EVENING_CONST = 40
 
 
     const val FIN_WORK_HOURS_OFFSET = 0
