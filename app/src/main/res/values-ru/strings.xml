@@ -12,6 +12,8 @@
     <string name="dinner_description">Пора кушать!</string>
     <string name="morning_start_work_description">Просыпайся! Пора на работу!</string>
     <string name="start_work_description">Пора на работу!</string>
+    <string name="evening_finish_work_description">Уже поздно! Пора возвращаться с работы!</string>
+    <string name="finish_work_description">Пора возвращаться с работы!</string>
 
     <plurals name="hours">
         <item quantity="one">%d час</item>

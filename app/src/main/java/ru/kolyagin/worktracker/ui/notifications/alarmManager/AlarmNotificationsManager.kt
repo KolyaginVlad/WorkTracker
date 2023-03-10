@@ -74,13 +74,73 @@ class AlarmNotificationsManager @Inject constructor(
                         }?.let { workStart ->
                             scheduleAlarm(
                                 dayWorkInfo.day.ordinal,
-                                Constants.PRE_WORK_CONST,
+                                Constants.FIN_WORK_CONST,
                                 workStart - Time(
                                     Constants.PRE_WORK_HOURS_OFFSET,
                                     Constants.PRE_WORK_MINUTES_OFFSET
                                 )
                             ) {
                                 putExtra(Constants.DESCRIPTION, R.string.start_work_description)
+                            }
+                        }
+                    }
+
+            }
+        }
+    }
+
+    override fun scheduleEveningNotification() {
+        scope.launch {
+            scheduleRepository.schedule().firstOrNull()?.forEach { dayWorkInfo ->
+                dayWorkInfo.periods
+                    .takeIf { it.isNotEmpty() }
+                    ?.map { it.timeEnd }
+                    ?.forEach {
+                        it.takeIf {
+                            it > Time(
+                                Constants.EVENING_HOURS_LIMIT,
+                                Constants.EVENING_MINUTES_LIMIT
+                            )
+                        }?.let { workEnd ->
+                            scheduleAlarm(
+                                dayWorkInfo.day.ordinal,
+                                Constants.FIN_WORK_CONST,
+                                workEnd - Time(
+                                    Constants.FIN_WORK_HOURS_OFFSET,
+                                    Constants.FIN_WORK_MINUTES_OFFSET
+                                )
+                            ) {
+                                putExtra(Constants.DESCRIPTION, R.string.evening_finish_work_description)
+                            }
+                        }
+                    }
+
+            }
+        }
+    }
+
+    override fun scheduleFinWorkNotification() {
+        scope.launch {
+            scheduleRepository.schedule().firstOrNull()?.forEach { dayWorkInfo ->
+                dayWorkInfo.periods
+                    .takeIf { it.isNotEmpty() }
+                    ?.map { it.timeEnd }
+                    ?.forEach {
+                        it.takeIf {
+                            it < Time(
+                                Constants.EVENING_HOURS_LIMIT,
+                                Constants.EVENING_MINUTES_LIMIT
+                            )
+                        }?.let { workEnd ->
+                            scheduleAlarm(
+                                dayWorkInfo.day.ordinal,
+                                Constants.PRE_WORK_CONST,
+                                workEnd - Time(
+                                    Constants.FIN_WORK_HOURS_OFFSET,
+                                    Constants.FIN_WORK_MINUTES_OFFSET
+                                )
+                            ) {
+                                putExtra(Constants.DESCRIPTION, R.string.finish_work_description)
                             }
                         }
                     }
@@ -116,7 +176,8 @@ class AlarmNotificationsManager @Inject constructor(
         scheduleMorningNotification()
         scheduleDinnerNotification()
         schedulePreWorkNotification()
-
+        scheduleEveningNotification()
+        scheduleFinWorkNotification()
     }
 
     private fun scheduleAlarm(
