@@ -60,7 +60,7 @@ android {
 
 dependencies {
     implementation "io.github.raamcosta.compose-destinations:core:$destinations_version"
-    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:1.9.0'
     ksp "io.github.raamcosta.compose-destinations:ksp:$destinations_version"
 
     //firebase
