@@ -67,7 +67,7 @@ class AlarmNotificationsManager @Inject constructor(
                     ?.map { it.timeStart }
                     ?.forEach {
                         it.takeIf {
-                            it > Time(
+                            it >= Time(
                                 Constants.MORNING_HOURS_LIMIT,
                                 Constants.MORNING_MINUTES_LIMIT
                             )
@@ -97,7 +97,7 @@ class AlarmNotificationsManager @Inject constructor(
                     ?.map { it.timeEnd }
                     ?.forEach {
                         it.takeIf {
-                            it > Time(
+                            it >= Time(
                                 Constants.EVENING_HOURS_LIMIT,
                                 Constants.EVENING_MINUTES_LIMIT
                             )
