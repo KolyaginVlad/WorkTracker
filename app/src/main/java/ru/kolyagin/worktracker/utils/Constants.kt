@@ -19,4 +19,14 @@ object Constants {
     const val PRE_WORK_CONST = 20
     const val PRE_WORK_HOURS_OFFSET = 0
     const val PRE_WORK_MINUTES_OFFSET = 30
+
+    const val EVENING_HOURS_LIMIT = 19
+    const val EVENING_MINUTES_LIMIT = 0
+    const val EVENING_CONST = 40
+
+
+    const val FIN_WORK_HOURS_OFFSET = 0
+    const val FIN_WORK_MINUTES_OFFSET = 10
+    const val FIN_WORK_CONST = 30
+
 }
