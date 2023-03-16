@@ -14,6 +14,13 @@
     <string name="start_work_description">It\'s time to work!</string>
     <string name="evening_finish_work_description">It\'s late! Time to get back from work</string>
     <string name="finish_work_description">Time to get back from work</string>
+    <string name="work_start">Начало работы</string>
+    <string name="working">Working</string>
+    <string name="pause">On pause</string>
+    <string name="work_end">Work end</string>
+    <string name="result">Results of work</string>
+    <string name="work_not_started">Work not started</string>
+    <string name="main_init">Loading...</string>
 
     <plurals name="hours">
         <item quantity="one">%d hour</item>

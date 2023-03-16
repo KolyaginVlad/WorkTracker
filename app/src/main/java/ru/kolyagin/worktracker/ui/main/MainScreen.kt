@@ -1,27 +1,29 @@
 package ru.kolyagin.worktracker.ui.main
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.ui.destinations.SettingsScreenDestination
-import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.main.content.DinneringScreenContent
+import ru.kolyagin.worktracker.ui.main.content.PauseScreenContent
+import ru.kolyagin.worktracker.ui.main.content.ResultsScreenContent
+import ru.kolyagin.worktracker.ui.main.content.WorkEndScreenContent
+import ru.kolyagin.worktracker.ui.main.content.WorkNotStartedScreenContent
+import ru.kolyagin.worktracker.ui.main.content.WorkStartScreenContent
+import ru.kolyagin.worktracker.ui.main.content.WorkingScreenContent
+import ru.kolyagin.worktracker.ui.main.views.TopBar
 
 @RootNavGraph(start = true)
 @Destination
@@ -40,51 +42,62 @@ fun MainScreen(
             }
         }
     }
-    MainScreenContent(
-        state = state,
-        onSettingsClick = viewModel::onClickOpenSettings,
-    )
-}
-
-@Composable
-private fun MainScreenContent(
-    state: MainScreenState,
-    onSettingsClick: () -> Unit,
-) {
     Scaffold(
         topBar = {
-            TopBar(title = state.title, onSettingsClick = onSettingsClick)
+            TopBar(
+                title = stringResource(id = getTitle(state)),
+                onSettingsClick = viewModel::onClickOpenSettings
+            )
         }
     ) {
-        Column(Modifier.padding(it)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            when (val currentState = state) {
+                is MainScreenState.WorkNotStarted -> WorkNotStartedScreenContent(currentState)
+                is MainScreenState.WorkStart -> WorkStartScreenContent(
+                    currentState,
+                    viewModel::onClickStartWork
+                )
 
+                is MainScreenState.Dinnering -> DinneringScreenContent(
+                    currentState,
+                    viewModel::onClickReturnFromDinner
+                )
+
+                is MainScreenState.Working -> WorkingScreenContent(
+                    currentState,
+                    viewModel::onClickStartPause,
+                    viewModel::onClickGoToDinner
+                )
+
+                is MainScreenState.Pause -> PauseScreenContent(
+                    currentState,
+                    viewModel::onClickEndPause
+                )
+
+                is MainScreenState.WorkEnd -> WorkEndScreenContent(
+                    currentState,
+                    viewModel::onClickFinishWork
+                )
+
+                is MainScreenState.Results -> ResultsScreenContent(currentState)
+                is MainScreenState.Init -> { //TODO сделать экран заглушку
+                }
+            }
         }
     }
 }
 
-@Composable
-fun TopBar(
-    title: String,
-    onSettingsClick: () -> Unit
-) {
-    TopAppBar(
-        title = { Text(text = title) },
-        actions = {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = null,
-                modifier = Modifier
-                    .clickable(onClick = onSettingsClick)
-                    .padding(horizontal = 16.dp)
-            )
-        },
-    )
-}
-
-@Preview
-@Composable
-private fun MainPreview() {
-    WorkTrackerTheme {
-        MainScreenContent(state = MainScreenState("Best title"), { })
-    }
+fun getTitle(state: MainScreenState) = when (state) {
+    is MainScreenState.WorkNotStarted -> R.string.work_not_started
+    is MainScreenState.WorkStart -> R.string.work_start
+    is MainScreenState.Dinnering -> R.string.dinner
+    is MainScreenState.Working -> R.string.working
+    is MainScreenState.Pause -> R.string.pause
+    is MainScreenState.WorkEnd -> R.string.work_end
+    is MainScreenState.Results -> R.string.result
+    is MainScreenState.Init -> R.string.main_init
 }
