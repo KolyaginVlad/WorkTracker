@@ -24,7 +24,12 @@ class NotificationReceiver @Inject constructor(
     lateinit var notificationManager: NotificationsManager
 
     override fun onReceive(context: Context, intent: Intent) {
-        notificationManager.rescheduleNotifications()
+        notificationManager.rescheduleNotifications(
+            intent.getIntExtra(
+                Constants.NOTIFICATION_CODE,
+                Constants.INVALID_CODE
+            )
+        )
         val notificationIntent =
             Intent(context.applicationContext, MainActivity::class.java).apply {
                 flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)

@@ -1,8 +1,11 @@
 package ru.kolyagin.worktracker.utils
 
 object Constants {
+    const val NOTIFICATION_CODE = "NOTIFICATION_CODE"
     const val DESCRIPTION = "DESCRIPTION"
     const val NOTIFICATION_SCOPE = "NOTIFICATION_SCOPE"
+
+    const val INVALID_CODE = -1
 
     const val MORNING_CONST = 0
     const val MORNING_HOURS_LIMIT = 11

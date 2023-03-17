@@ -7,8 +7,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TimeChangeBroadcastReceiver @Inject constructor(
-) : BroadcastReceiver(){
+class TimeChangeBroadcastReceiver : BroadcastReceiver(){
 
     @Inject
     lateinit var notificationsManager: NotificationsManager

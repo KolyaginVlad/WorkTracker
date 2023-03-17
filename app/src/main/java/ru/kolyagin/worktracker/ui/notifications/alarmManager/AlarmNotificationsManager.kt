@@ -14,6 +14,7 @@ import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
 import ru.kolyagin.worktracker.utils.Constants
+import ru.kolyagin.worktracker.utils.log.Logger
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,6 +26,7 @@ import javax.inject.Named
 class AlarmNotificationsManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val scheduleRepository: ScheduleRepository,
+    private val logger: Logger,
     @Named(Constants.NOTIFICATION_SCOPE) private val scope: CoroutineScope
 ) : NotificationsManager {
 
@@ -110,7 +112,10 @@ class AlarmNotificationsManager @Inject constructor(
                                     Constants.FIN_WORK_MINUTES_OFFSET
                                 )
                             ) {
-                                putExtra(Constants.DESCRIPTION, R.string.evening_finish_work_description)
+                                putExtra(
+                                    Constants.DESCRIPTION,
+                                    R.string.evening_finish_work_description
+                                )
                             }
                         }
                     }
@@ -187,7 +192,10 @@ class AlarmNotificationsManager @Inject constructor(
         modifyIntent: Intent.() -> Unit = {}
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val resultIntent = Intent(context, NotificationReceiver::class.java).apply(modifyIntent)
+        val resultIntent = Intent(context, NotificationReceiver::class.java).apply {
+            putExtra(Constants.NOTIFICATION_CODE, const)
+            modifyIntent()
+        }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             const + day,
@@ -200,6 +208,17 @@ class AlarmNotificationsManager @Inject constructor(
             }
         } else {
             schedule(alarmManager, workStart, pendingIntent, day)
+        }
+    }
+
+    override fun rescheduleNotifications(code: Int) {
+        when (code) {
+            Constants.MORNING_CONST -> scheduleMorningNotification()
+            Constants.NOT_WORK_DINNER_CONST -> scheduleDinnerNotification()
+            Constants.EVENING_CONST -> scheduleEveningNotification()
+            Constants.FIN_WORK_CONST -> scheduleFinWorkNotification()
+            Constants.PRE_WORK_CONST -> schedulePreWorkNotification()
+            else -> logger.error("Notification not found. code = $code")
         }
     }
 

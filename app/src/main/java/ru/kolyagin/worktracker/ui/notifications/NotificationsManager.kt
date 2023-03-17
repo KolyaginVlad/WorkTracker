@@ -10,6 +10,8 @@ interface NotificationsManager {
 
     fun rescheduleNotifications()
 
+    fun rescheduleNotifications(code: Int)
+
     fun scheduleEveningNotification()
 
     fun scheduleFinWorkNotification()
