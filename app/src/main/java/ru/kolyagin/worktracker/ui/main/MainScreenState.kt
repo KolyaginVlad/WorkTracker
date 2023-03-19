@@ -10,13 +10,6 @@ sealed class MainScreenState : State() {
     object Init: MainScreenState()
 
     /**
-     * Состояние между рабочими периодами и утром
-     */
-    data class WorkNotStarted(
-        val timeBeforeWorkStarts: Time
-    ): MainScreenState()
-
-    /**
      * Состояние перед началом рабочего периода
      */
     object WorkStart : MainScreenState()
