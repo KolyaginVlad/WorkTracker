@@ -14,6 +14,15 @@
     <string name="start_work_description">Пора на работу!</string>
     <string name="evening_finish_work_description">Уже поздно! Пора возвращаться с работы!</string>
     <string name="finish_work_description">Пора возвращаться с работы!</string>
+    <string name="work_start">Начало работы</string>
+    <string name="working">Работа</string>
+    <string name="pause">На паузе</string>
+    <string name="work_end">Завершение работы</string>
+    <string name="result">Результаты работы</string>
+    <string name="work_not_started">Работа не начата</string>
+    <string name="main_init">Загрузка…</string>
+    <string name="back">назад</string>
+    <string name="work_periods">Рабочие периоды</string>
 
     <plurals name="hours">
         <item quantity="one">%d час</item>

@@ -83,11 +83,13 @@ private fun SettingsScreenContent(
             TopAppBar(
                 navigationIcon = {
                     Icon(
-                        modifier = Modifier.clickable(onClick = remember {
-                            {
-                                navigator.navigateUp()
-                            }
-                        }),
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable(onClick = remember {
+                                {
+                                    navigator.navigateUp()
+                                }
+                            }),
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = null
                     )
