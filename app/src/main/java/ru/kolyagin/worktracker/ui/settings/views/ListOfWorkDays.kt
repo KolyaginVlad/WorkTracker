@@ -34,9 +34,9 @@ import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
-import ru.kolyagin.worktracker.ui.theme.Green
-import ru.kolyagin.worktracker.ui.theme.GreyDark
 import ru.kolyagin.worktracker.ui.theme.Red
+import ru.kolyagin.worktracker.ui.theme.Secondary
+import ru.kolyagin.worktracker.ui.theme.SurfaceDisabled
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.utils.toStringId
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
@@ -108,7 +108,7 @@ private fun WorkDay(
             )
             ProvideTextStyle(
                 value = TextStyle(
-                    color = GreyDark
+                    color = SurfaceDisabled
                 )
             ) {
                 Periods(
@@ -127,7 +127,7 @@ private fun WorkDay(
                 ),
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                tint = Green
+                tint = Secondary
             )
         }
     }

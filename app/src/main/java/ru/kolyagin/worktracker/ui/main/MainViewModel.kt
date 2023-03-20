@@ -1,14 +1,13 @@
 package ru.kolyagin.worktracker.ui.main
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
 
-): BaseViewModel<MainScreenState, MainEvent>(MainScreenState.Init) {
+): BaseViewModel<MainScreenState, MainEvent>(MainScreenState()) {
 
     init {
         updateState {
@@ -22,43 +21,43 @@ class MainViewModel @Inject constructor(
 
     fun onClickStartWork() {
         //TODO обработать
-        updateState {
-            MainScreenState.Working
-        }
+//        updateState {
+//            CardState.Working
+//        }
     }
 
     fun onClickFinishWork() {
         //TODO обработать
-        updateState {
-            MainScreenState.Results(Time(0, 0)) // or MainScreenState.WorkNotStarted
-        }
+//        updateState {
+//            CardState.Results(Time(0, 0)) // or CardState.WorkNotStarted
+//        }
     }
 
     fun onClickStartPause() {
         //TODO обработать
-        updateState {
-            MainScreenState.Pause
-        }
+//        updateState {
+//            CardState.Pause
+//        }
     }
 
     fun onClickEndPause() {
         //TODO обработать
-        updateState {
-            MainScreenState.Working // or MainScreenState.WorkNotStarted or MainScreenState.Results
-        }
+//        updateState {
+//            CardState.Working // or CardState.WorkNotStarted or CardState.Results
+//        }
     }
 
     fun onClickGoToDinner() {
         //TODO обработать
-        updateState {
-            MainScreenState.Dinnering
-        }
+//        updateState {
+//            CardState.Dinnering
+//        }
     }
 
     fun onClickReturnFromDinner(){
         //TODO обработать
-        updateState {
-            MainScreenState.Working // or MainScreenState.WorkNotStarted or MainScreenState.Results
-        }
+//        updateState {
+//            CardState.Working // or CardState.WorkNotStarted or CardState.Results
+//        }
     }
 }

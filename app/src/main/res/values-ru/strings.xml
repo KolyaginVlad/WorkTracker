@@ -20,8 +20,9 @@
     <string name="work_end">Завершение работы</string>
     <string name="result">Результаты работы</string>
     <string name="work_not_started">Работа не начата</string>
-    <string name="main_init">Загрузка...</string>
+    <string name="main_init">Загрузка…</string>
     <string name="back">назад</string>
+    <string name="work_periods">Рабочие периоды</string>
 
     <plurals name="hours">
         <item quantity="one">%d час</item>
