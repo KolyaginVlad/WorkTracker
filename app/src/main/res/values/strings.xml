@@ -22,6 +22,7 @@
     <string name="work_not_started">Work not started</string>
     <string name="main_init">Loading...</string>
     <string name="back">back</string>
+    <string name="work_periods">Work periods</string>
 
     <plurals name="hours">
         <item quantity="one">%d hour</item>

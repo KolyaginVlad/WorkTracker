@@ -1,41 +1,48 @@
 package ru.kolyagin.worktracker.ui.main
 
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.utils.base.State
+import ru.kolyagin.worktracker.utils.models.DayOfWeek
 
-sealed class MainScreenState : State() {
+data class MainScreenState(
+    val days: PersistentList<CardState> = persistentListOf()
+): State()
+
+sealed class CardState(open val day: DayOfWeek) {
     /**
      * Состояние для инициализации экрана
      */
-    object Init: MainScreenState()
+    class Init(day: DayOfWeek): CardState(day)
 
     /**
      * Состояние перед началом рабочего периода
      */
-    object WorkStart : MainScreenState()
+    class WorkStart(day: DayOfWeek): CardState(day)
 
     /**
      * Состояние в конце рабочего периода
      */
-    object WorkEnd : MainScreenState()
+    class WorkEnd(day: DayOfWeek): CardState(day)
 
     /**
      * Состояние во время работы
      */
-    object Working : MainScreenState()
+    class Working(day: DayOfWeek): CardState(day)
 
     /**
      * Состояние во время рабочей паузы
      */
-    object Pause : MainScreenState()
+    class Pause(day: DayOfWeek): CardState(day)
 
     /**
      * Состояние во время обеда в рабочий период
      */
-    object Dinnering : MainScreenState()
+    class Dinnering(day: DayOfWeek): CardState(day)
 
     /**
      * Состояние после завершения последнего периода работы
      */
-    data class Results(val time: Time) : MainScreenState()
+    data class Results(override val day: DayOfWeek, val time: Time) : CardState(day)
 }
