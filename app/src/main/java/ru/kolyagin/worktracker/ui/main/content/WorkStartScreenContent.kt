@@ -16,16 +16,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.immutableListOf
+import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.ui.main.CardState
+import ru.kolyagin.worktracker.ui.models.DayStartEvent
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryDisabled
 import ru.kolyagin.worktracker.ui.theme.Primary
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
@@ -36,180 +36,163 @@ import ru.kolyagin.worktracker.utils.models.DayOfWeek
 fun WorkStartScreenContent(
     state: CardState.WorkStart,
     onClickStartWork: () -> Unit,
-    buttonActive: Boolean,
-    events: ImmutableList<Event> ,
-    onClickDeleteMeal: () -> Unit,
-    onAddPeriod: () -> Unit ,
-    onClickEvent: () -> Unit
-
-
+    onClickDeleteEvent: () -> Unit = {},
+    onAddPeriod: () -> Unit = {},
+    onClickEvent: () -> Unit = {},
+    onClickDeleteday: () -> Unit = {}
 ) {
     Column {
         HeaderDay(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp),
-            state = state
+            day = state.day,
+            onClickDeleteday = onClickDeleteday
         )
         StartButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp, 0.dp),
+                .padding(horizontal = 12.dp, vertical = 0.dp),
             onClickStartWork = onClickStartWork,
-            buttonActive = buttonActive
+            buttonActive = state.buttonActive
         )
         EventList(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp, 12.dp),
-            events = events,
-            onClickDeleteMeal = onClickDeleteMeal,
+                .padding(horizontal = 12.dp, vertical = 12.dp),
+            events = state.events,
+            onClickDeleteMeal = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
             onClickEvent = onClickEvent
         )
     }
-
-
 }
-
 @Composable
 fun HeaderDay(
-    modifier: Modifier, state: CardState.WorkStart,
+    modifier: Modifier, day: DayOfWeek, onClickDeleteday: () -> Unit
 ) {
     Row(
         modifier = modifier
-
     ) {
-        Text(text = state.day.name, style = MaterialTheme.typography.h4)
+        Text(
+            text = day.name,
+            style = MaterialTheme.typography.h4,
+            modifier = Modifier.weight(1F)
+        )
+        Icon(
+            modifier = Modifier
+                .clickable(onClick = onClickDeleteday)
+                .align(CenterVertically)
+                .padding(18.dp, 0.dp, 0.dp, 0.dp),
+            painter = painterResource(id = R.drawable.delete),
+            contentDescription = null,
+            tint = Primary
+        )
     }
 }
-
 @Composable
 fun StartButton(
     modifier: Modifier, onClickStartWork: () -> Unit,
     buttonActive: Boolean
 ) {
-    var buttonColor: Color
-    var buttonclick: () -> Unit
-    if (buttonActive) {
-        buttonColor = MaterialTheme.colors.primary
-        buttonclick = onClickStartWork
-    } else {
-        buttonColor = OnPrimaryDisabled
-        buttonclick = {}
-    }
     Row(
         modifier = modifier
-
     ) {
         Button(
+            enabled = buttonActive,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedButtonShapes.medium,
-            onClick = buttonclick,
+            onClick = onClickStartWork,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = buttonColor,
+                backgroundColor = MaterialTheme.colors.primary,
+                disabledBackgroundColor=OnPrimaryDisabled,
+                disabledContentColor = MaterialTheme.colors.background,
                 contentColor = MaterialTheme.colors.background
             )
         ) {
             Text(
-                modifier = Modifier.padding(16.dp, 20.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
                 text = stringResource(id = R.string.work_start)
             )
         }
     }
 }
-
 @Composable
 fun EventList(
     modifier: Modifier,
-    events: ImmutableList<Event>,
+    events: ImmutableList<DayStartEvent>,
     onClickDeleteMeal: () -> Unit,
     onAddPeriod: () -> Unit,
-    onClickEvent:()-> Unit,
+    onClickEvent: () -> Unit,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         events.forEach {
-
             OutlinedButton(
                 border = BorderStroke(2.dp, Primary),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedButtonShapes.medium,
-                onClick = {onClickEvent }) {
-                Row(modifier = Modifier.padding(16.dp, 20.dp)) {
+                onClick = onClickEvent
+            ) {
+                Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp)) {
                     Text(
                         text = it.timeStart.toString() + "-" + it.timeEnd.toString(),
                         modifier = Modifier.weight(1F),
-
-                        )
+                    )
                     Text(text = it.name)
                     Icon(
                         modifier = Modifier
                             .clickable(onClick = onClickDeleteMeal)
                             .align(CenterVertically)
-                            .padding(20.dp, 0.dp, 0.dp, 0.dp),
+                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
                         painter = painterResource(id = R.drawable.delete),
                         contentDescription = null,
                         tint = Primary
                     )
                 }
-
-
             }
         }
-        OutlinedButton(border =
-                BorderStroke(2.dp, Primary),
+        OutlinedButton(
+            border = BorderStroke(2.dp, Primary),
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedButtonShapes.medium,
-            onClick = { onAddPeriod() }) {
+            onClick = onAddPeriod
+        ) {
             Icon(
                 modifier = Modifier
-                    .clickable(
-                        onClick =
-                        {
-                            onAddPeriod()
-                        }
-
-                    )
-                    .padding(16.dp, 20.dp),
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
                 painter = painterResource(id = R.drawable.plus),
                 contentDescription = null,
                 tint = Primary
-
             )
         }
     }
 }
-
-data class Event(
-    val id: Long,
-    val timeStart: Time,
-    val timeEnd: Time,
-    val name: String
-)
 
 @Preview
 @Composable
 private fun WorkStartScreenPreview() {
     WorkTrackerTheme {
         WorkStartScreenContent(
-            state = CardState.WorkStart(DayOfWeek.Monday),
-            onClickStartWork = {},
-            events = immutableListOf(
-                Event(
-                    id = 0,
-                    timeStart = Time(19, 0),
-                    timeEnd = Time(19, 10),
-                    name = "УЖИН"
-                )
+            state = CardState.WorkStart(
+                DayOfWeek.Monday,
+                events = persistentListOf(
+                    DayStartEvent(
+                        id = 0,
+                        timeStart = Time(19, 0),
+                        timeEnd = Time(19, 10),
+                        name = "УЖИН"
+                    )
+                ),
+                buttonActive = false,
             ),
-            onClickDeleteMeal = {},
-            buttonActive = false,
+            onClickStartWork = {},
+            onClickDeleteEvent = {},
             onAddPeriod = {},
-            onClickEvent = {}
-
+            onClickEvent = {},
+            onClickDeleteday = {}
         )
     }
 }
