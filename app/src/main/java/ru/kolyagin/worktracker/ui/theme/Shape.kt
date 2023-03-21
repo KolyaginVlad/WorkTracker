@@ -9,3 +9,8 @@ val Shapes = Shapes(
     medium = RoundedCornerShape(4.dp),
     large = RoundedCornerShape(0.dp)
 )
+val RoundedButtonShapes=Shapes(
+    small = RoundedCornerShape(28.dp),
+    medium = RoundedCornerShape(28.dp),
+    large = RoundedCornerShape(28.dp)
+)
