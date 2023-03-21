@@ -37,9 +37,11 @@ fun WorkStartScreenContent(
     state: CardState.WorkStart,
     onClickStartWork: () -> Unit,
     buttonActive: Boolean,
-    events: ImmutableList<Event> = immutableListOf(),
-    onClickDeleteMeal: () -> Unit = {},
-    onAddPeriod: () -> Unit = {}
+    events: ImmutableList<Event> ,
+    onClickDeleteMeal: () -> Unit,
+    onAddPeriod: () -> Unit ,
+    onClickEvent: () -> Unit
+
 
 ) {
     Column {
@@ -62,7 +64,8 @@ fun WorkStartScreenContent(
                 .padding(12.dp, 12.dp),
             events = events,
             onClickDeleteMeal = onClickDeleteMeal,
-            onAddPeriod = onAddPeriod
+            onAddPeriod = onAddPeriod,
+            onClickEvent = onClickEvent
         )
     }
 
@@ -121,7 +124,8 @@ fun EventList(
     modifier: Modifier,
     events: ImmutableList<Event>,
     onClickDeleteMeal: () -> Unit,
-    onAddPeriod: () -> Unit
+    onAddPeriod: () -> Unit,
+    onClickEvent:()-> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -133,7 +137,7 @@ fun EventList(
                 border = BorderStroke(2.dp, Primary),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedButtonShapes.medium,
-                onClick = {/* TODO: */ }) {
+                onClick = {onClickEvent }) {
                 Row(modifier = Modifier.padding(16.dp, 20.dp)) {
                     Text(
                         text = it.timeStart.toString() + "-" + it.timeEnd.toString(),
@@ -202,7 +206,9 @@ private fun WorkStartScreenPreview() {
                 )
             ),
             onClickDeleteMeal = {},
-            buttonActive = false
+            buttonActive = false,
+            onAddPeriod = {},
+            onClickEvent = {}
 
         )
     }
