@@ -14,6 +14,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -24,6 +25,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
+import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
 import ru.kolyagin.worktracker.ui.main.CardState
 import ru.kolyagin.worktracker.ui.models.DayStartEvent
 import ru.kolyagin.worktracker.ui.theme.Primary
@@ -31,6 +33,7 @@ import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.utils.toShortStringId
+import ru.kolyagin.worktracker.ui.views.Timer
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 
 @Composable
@@ -46,10 +49,11 @@ fun WorkStartScreenContent(
         HeaderDay(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 17.dp, vertical = 26.dp),
+                .padding(start = 17.dp, top = 26.dp, end = 28.dp, bottom = 15.dp),
             day = state.day,
             onClickDeleteday = onClickDeleteday
         )
+        WorkStartTimer(time = state.time)
         StartButton(
             modifier = Modifier
                 .fillMaxWidth()
@@ -66,6 +70,27 @@ fun WorkStartScreenContent(
             onAddPeriod = onAddPeriod,
             onClickEvent = onClickEvent
         )
+    }
+}
+
+@Composable
+fun WorkStartTimer(time: TimeWithSeconds?) {
+    time?.let {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = stringResource(id = R.string.time_before_work),
+                modifier = Modifier.align(CenterHorizontally),
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.primaryVariant
+            )
+            Timer(
+                time = it,
+                modifier = Modifier
+                    .align(CenterHorizontally)
+                    .padding(start = 40.dp, top = 8.dp, end = 40.dp, bottom = 24.dp)
+                    .fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -200,6 +225,7 @@ private fun WorkStartScreenPreview() {
                     )
                 ),
                 buttonActive = false,
+                time = TimeWithSeconds(hours = 10, minutes = 0, seconds = 36)
             ),
             onClickStartWork = {},
             onClickDeleteEvent = {},

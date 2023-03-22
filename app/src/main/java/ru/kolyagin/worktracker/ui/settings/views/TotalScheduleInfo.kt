@@ -35,13 +35,13 @@ fun TotalScheduleInfo(
             modifier = Modifier.padding(24.dp),
             text = "${stringResource(id = R.string.total_time)}\n${
                 pluralStringResource(
-                    id = R.plurals.hours,
+                    id = R.plurals.hoursL,
                     count = totalTime.hours,
                     totalTime.hours
                 )
             } ${
                 pluralStringResource(
-                    id = R.plurals.minutes,
+                    id = R.plurals.minutesL,
                     count = totalTime.minutes,
                     totalTime.minutes
                 )

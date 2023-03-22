@@ -29,14 +29,32 @@
     <string name="main_init">Загрузка…</string>
     <string name="back">назад</string>
     <string name="work_periods">Рабочие периоды</string>
-    <plurals name="hours">
+    <string name="time_before_work">время до работы</string>
+
+    <plurals name="hoursL">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>
         <item quantity="many">%d часов</item>
     </plurals>
-    <plurals name="minutes">
+    <plurals name="minutesL">
         <item quantity="one">%d минута</item>
         <item quantity="few">%d минуты</item>
         <item quantity="many">%d минут</item>
+    </plurals>
+
+    <plurals name="hours">
+        <item quantity="one">час</item>
+        <item quantity="few">часа</item>
+        <item quantity="many">часов</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">минута</item>
+        <item quantity="few">минуты</item>
+        <item quantity="many">минут</item>
+    </plurals>
+    <plurals name="seconds">
+        <item quantity="one">секунда</item>
+        <item quantity="few">секунды</item>
+        <item quantity="many">секунд</item>
     </plurals>
 </resources>

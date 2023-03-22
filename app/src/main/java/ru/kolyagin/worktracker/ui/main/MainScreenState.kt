@@ -3,13 +3,14 @@ package ru.kolyagin.worktracker.ui.main
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.domain.models.Time
+import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
 import ru.kolyagin.worktracker.ui.models.DayStartEvent
 import ru.kolyagin.worktracker.utils.base.State
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 
 data class MainScreenState(
     val days: PersistentList<CardState> = persistentListOf()
-) : State()
+): State()
 
 sealed class CardState(open val day: DayOfWeek) {
     /**
@@ -23,7 +24,8 @@ sealed class CardState(open val day: DayOfWeek) {
     class WorkStart(
         day: DayOfWeek,
         val buttonActive: Boolean,
-        val events: PersistentList<DayStartEvent>
+        val events: PersistentList<DayStartEvent>,
+        val time: TimeWithSeconds? = null
     ) :
         CardState(day)
 

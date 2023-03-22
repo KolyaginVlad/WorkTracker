@@ -29,18 +29,36 @@
     <string name="main_init">Loading...</string>
     <string name="back">back</string>
     <string name="work_periods">Work periods</string>
-
-    <plurals name="hours">
+    <string name="time_before_work">time before work</string>
+    <plurals name="hoursL">
         <item quantity="one">%d hour</item>
         <item quantity="few">%d hours</item>
         <item quantity="many">%d hours</item>
         <item quantity="other">%d hours</item>
     </plurals>
-    <plurals name="minutes">
+    <plurals name="minutesL">
         <item quantity="one">%d minute</item>
         <item quantity="few">%d minutes</item>
         <item quantity="many">%d minutes</item>
         <item quantity="other">%d minutes</item>
     </plurals>
 
+    <plurals name="hours">
+        <item quantity="one">hour</item>
+        <item quantity="few">hours</item>
+        <item quantity="many">hours</item>
+        <item quantity="other">hours</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">minute</item>
+        <item quantity="few">minutes</item>
+        <item quantity="many">minutes</item>
+        <item quantity="other">minutes</item>
+    </plurals>
+    <plurals name="seconds">
+        <item quantity="one">second</item>
+        <item quantity="few">seconds</item>
+        <item quantity="many">seconds</item>
+        <item quantity="other">seconds</item>
+    </plurals>
 </resources>
