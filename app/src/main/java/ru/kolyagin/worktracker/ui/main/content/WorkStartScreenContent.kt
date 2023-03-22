@@ -16,7 +16,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,8 +30,8 @@ import ru.kolyagin.worktracker.ui.theme.Primary
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.utils.toShortStringId
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
-import ru.kolyagin.worktracker.utils.models.toShortString
 
 @Composable
 fun WorkStartScreenContent(
@@ -78,7 +77,7 @@ fun HeaderDay(
         modifier = modifier
     ) {
         Text(
-            text = day.toShortString(LocalContext.current),
+            text = stringResource(id = day.toShortStringId()),
             style = MaterialTheme.typography.h4,
             modifier = Modifier.weight(1F),
             color = MaterialTheme.colors.primaryVariant
