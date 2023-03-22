@@ -16,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,11 +27,12 @@ import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.ui.main.CardState
 import ru.kolyagin.worktracker.ui.models.DayStartEvent
-import ru.kolyagin.worktracker.ui.theme.OnPrimaryDisabled
 import ru.kolyagin.worktracker.ui.theme.Primary
+import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import ru.kolyagin.worktracker.utils.models.toShortString
 
 @Composable
 fun WorkStartScreenContent(
@@ -45,7 +47,7 @@ fun WorkStartScreenContent(
         HeaderDay(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
+                .padding(horizontal = 17.dp, vertical = 26.dp),
             day = state.day,
             onClickDeleteday = onClickDeleteday
         )
@@ -67,6 +69,7 @@ fun WorkStartScreenContent(
         )
     }
 }
+
 @Composable
 fun HeaderDay(
     modifier: Modifier, day: DayOfWeek, onClickDeleteday: () -> Unit
@@ -75,21 +78,23 @@ fun HeaderDay(
         modifier = modifier
     ) {
         Text(
-            text = day.name,
+            text = day.toShortString(LocalContext.current),
             style = MaterialTheme.typography.h4,
-            modifier = Modifier.weight(1F)
+            modifier = Modifier.weight(1F),
+            color = MaterialTheme.colors.primaryVariant
         )
         Icon(
             modifier = Modifier
                 .clickable(onClick = onClickDeleteday)
                 .align(CenterVertically)
-                .padding(18.dp, 0.dp, 0.dp, 0.dp),
+                .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
             painter = painterResource(id = R.drawable.delete),
             contentDescription = null,
-            tint = Primary
+            tint = MaterialTheme.colors.primaryVariant
         )
     }
 }
+
 @Composable
 fun StartButton(
     modifier: Modifier, onClickStartWork: () -> Unit,
@@ -104,19 +109,20 @@ fun StartButton(
             shape = RoundedButtonShapes.medium,
             onClick = onClickStartWork,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.primary,
-                disabledBackgroundColor=OnPrimaryDisabled,
+                backgroundColor = MaterialTheme.colors.primaryVariant,
+                disabledBackgroundColor = PrimaryVariantDisabled,
                 disabledContentColor = MaterialTheme.colors.background,
                 contentColor = MaterialTheme.colors.background
             )
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
                 text = stringResource(id = R.string.work_start)
             )
         }
     }
 }
+
 @Composable
 fun EventList(
     modifier: Modifier,
@@ -127,7 +133,7 @@ fun EventList(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         events.forEach {
             OutlinedButton(
@@ -136,7 +142,10 @@ fun EventList(
                 shape = RoundedButtonShapes.medium,
                 onClick = onClickEvent
             ) {
-                Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp)) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 18.dp)
+                ) {
                     Text(
                         text = it.timeStart.toString() + "-" + it.timeEnd.toString(),
                         modifier = Modifier.weight(1F),
@@ -162,7 +171,7 @@ fun EventList(
         ) {
             Icon(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 20.dp),
+                    .padding(horizontal = 16.dp, vertical = 18.dp),
                 painter = painterResource(id = R.drawable.plus),
                 contentDescription = null,
                 tint = Primary
@@ -184,6 +193,11 @@ private fun WorkStartScreenPreview() {
                         timeStart = Time(19, 0),
                         timeEnd = Time(19, 10),
                         name = "УЖИН"
+                    ), DayStartEvent(
+                        id = 0,
+                        timeStart = Time(19, 0),
+                        timeEnd = Time(19, 10),
+                        name = "ОБЕД"
                     )
                 ),
                 buttonActive = false,
