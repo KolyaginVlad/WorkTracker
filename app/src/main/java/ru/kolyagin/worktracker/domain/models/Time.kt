@@ -27,6 +27,8 @@ class Time(val hours: Int, val minutes: Int): Comparable<Time> {
 
         fun Time.toMinutes(): Int =
             hours * 60 + minutes
+
+        fun Time.toTimeWithSeconds(seconds: Int = 0) = TimeWithSeconds(hours, minutes, seconds)
     }
 
 }
