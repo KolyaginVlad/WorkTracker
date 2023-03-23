@@ -1,16 +1,20 @@
 package ru.kolyagin.worktracker.ui.main
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
+import ru.kolyagin.worktracker.domain.models.Time.Companion.toTimeWithSeconds
+import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,18 +25,34 @@ class MainViewModel @Inject constructor(
     private var timerJob: Job? = null
 
     init {
+        updateState {
+            val listOfDays = DayOfWeek.values().toList()
+            it.copy(days = listOfDays.map { day ->
+                CardState.WorkStart(
+                    day = day,
+                    buttonActive = false,
+                    buttonStartEarly = true,
+                    events = persistentListOf(),
+                    time = null
+                )
+            }.toPersistentList())
+        }
+    }
+
+    fun init() {
+        val listOfDays = DayOfWeek.values().toList()
         scheduleRepository.schedule().subscribe {
             timerJob?.cancel()
             timerJob = launchViewModelScope {
                 var currentDay = LocalDate.now().dayOfWeek.ordinal
                 val currentSchedule = it.getOrNull(currentDay)
                 currentDay = currentDay.takeUnless { it == 6 } ?: 0
-                val listOfDays = DayOfWeek.values().toList()
+
                 val startWorkRanges =
                     currentSchedule?.let { schedule -> getListOfTimeRangesStartWork(schedule) }
                 val workingRanges =
                     currentSchedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
-                while (true) {
+                while (timerJob?.isCancelled != true) {
                     val currentTime = LocalTime.now()
                     val time = Time(currentTime.hour, currentTime.minute)
                     updateState { state ->
@@ -41,18 +61,25 @@ class MainViewModel @Inject constructor(
                             workingRanges,
                             listOfDays[currentDay],
                             time,
-                            currentSchedule?.totalTime
+                            currentSchedule?.totalTime,
+                            currentTime
                         )
                         val daysWithOutCurrent = (listOfDays.subList(
                             currentDay + 1, listOfDays.size
                         ) + listOfDays.subList(0, currentDay)).map { day ->
-                            CardState.WorkStart(day)
+                            CardState.WorkStart(
+                                day = day,
+                                buttonActive = false,
+                                buttonStartEarly = true,
+                                events = persistentListOf(),
+                                time = null
+                            )
                         }
                         state.copy(
                             days = (listOf(currentState) + daysWithOutCurrent).toPersistentList()
                         )
                     }
-                    delay(1000)
+                    delay(ChronoUnit.MILLIS.between(currentTime.plusSeconds(1), LocalTime.now()))
                 }
             }
         }
@@ -139,14 +166,33 @@ class MainViewModel @Inject constructor(
         workingRanges: List<ClosedRange<Time>>?,
         dayOfWeek: DayOfWeek,
         time: Time,
-        totalTime: Time?
+        totalTime: Time?,
+        currentTime: LocalTime
     ) = when {
         startWorkRanges == null || workingRanges == null || totalTime == null -> {
-            CardState.WorkStart(dayOfWeek) //false active
+            CardState.WorkStart(
+                day = dayOfWeek,
+                buttonActive = false,
+                buttonStartEarly = true,
+                events = persistentListOf(),
+                time = null
+            )
         }
 
         startWorkRanges.any { time in it } -> {
-            CardState.WorkStart(dayOfWeek) //true active
+            val range = startWorkRanges.first { time in it }
+            val timeBeforeWork = range.endInclusive.toTimeWithSeconds() - TimeWithSeconds(
+                currentTime.hour,
+                currentTime.minute,
+                currentTime.second
+            )
+            CardState.WorkStart(
+                day = dayOfWeek,
+                buttonActive = true,
+                buttonStartEarly = true,
+                events = persistentListOf(),
+                time = timeBeforeWork
+            )
         }
 
         workingRanges.any { time in it } -> {

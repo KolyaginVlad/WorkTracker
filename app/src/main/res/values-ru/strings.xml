@@ -20,7 +20,7 @@
     <string name="start_work_description">Пора на работу!</string>
     <string name="evening_finish_work_description">Уже поздно! Пора возвращаться с работы!</string>
     <string name="finish_work_description">Пора возвращаться с работы!</string>
-    <string name="work_start">Начать работу</string>
+    <string name="work_start">НАЧАТЬ РАБОТУ</string>
     <string name="working">Работа</string>
     <string name="pause">На паузе</string>
     <string name="work_end">Завершение работы</string>
@@ -30,7 +30,7 @@
     <string name="back">назад</string>
     <string name="work_periods">Рабочие периоды</string>
     <string name="time_before_work">время до работы</string>
-    <string name="work_start_early">Начать досрочно</string>
+    <string name="work_start_early">НАЧАТЬ ДОСРОЧНО</string>
   
     <plurals name="hoursL">
         <item quantity="one">%d час</item>

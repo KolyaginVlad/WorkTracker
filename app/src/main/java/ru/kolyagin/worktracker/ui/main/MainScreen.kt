@@ -49,6 +49,7 @@ fun MainScreen(
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
+        viewModel.init()
         viewModel.event.collect {
             when (it) {
                 is MainEvent.OpenSettings -> {
@@ -63,6 +64,7 @@ fun MainScreen(
             .fillMaxHeight(),
     ) {
         val (topBar, content) = createRefs()
+        val scrollState = rememberScrollState()
         TopBar(
             modifier = Modifier
                 .fillMaxWidth()
@@ -82,11 +84,11 @@ fun MainScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.75f)
+                .fillMaxHeight(0.80f)
                 .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
                 .background(MaterialTheme.colors.background)
                 .padding(top = 16.dp)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .constrainAs(content) {
                     top.linkTo(topBar.bottom, margin = (-48).dp)
                 },
