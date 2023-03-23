@@ -1,5 +1,6 @@
 package ru.kolyagin.worktracker.ui.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,13 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -56,14 +60,13 @@ fun MainScreen(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState()),
+            .fillMaxHeight(),
     ) {
         val (topBar, content) = createRefs()
         TopBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.3f)
+                .fillMaxHeight(0.25f)
                 .constrainAs(topBar) {
                     top.linkTo(parent.top)
                 },
@@ -78,8 +81,12 @@ fun MainScreen(
         }
         Column(
             modifier = Modifier
-                .fillMaxHeight(0.7f)
-                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .fillMaxHeight(0.75f)
+                .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
+                .background(MaterialTheme.colors.background)
+                .padding(top = 16.dp)
+                .verticalScroll(rememberScrollState())
                 .constrainAs(content) {
                     top.linkTo(topBar.bottom, margin = (-48).dp)
                 },
@@ -88,7 +95,9 @@ fun MainScreen(
             state.days.forEach {
                 Card(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    shape = RoundedCornerShape(40.dp),
                     backgroundColor = OnPrimaryHighEmphasis
                 ) {
                     when (val currentState = it) {
@@ -119,8 +128,6 @@ fun MainScreen(
                         )
 
                         is CardState.Results -> ResultsScreenContent(currentState)
-                        is CardState.Init -> { //TODO сделать экран заглушку
-                        }
                     }
                 }
             }
