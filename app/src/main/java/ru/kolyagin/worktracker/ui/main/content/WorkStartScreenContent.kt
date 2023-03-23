@@ -97,7 +97,9 @@ fun WorkStartTimer(time: TimeWithSeconds?) {
 
 @Composable
 fun HeaderDay(
-    modifier: Modifier, day: DayOfWeek, onClickDeleteDay: () -> Unit
+    modifier: Modifier,
+    day: DayOfWeek,
+    onClickDeleteDay: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -122,7 +124,10 @@ fun HeaderDay(
 
 @Composable
 fun StartButton(
-    modifier: Modifier, onClickStartWork: () -> Unit, buttonActive: Boolean, startEarly: Boolean
+    modifier: Modifier,
+    onClickStartWork: () -> Unit,
+    buttonActive: Boolean,
+    startEarly: Boolean
 ) {
     Row(
         modifier = modifier
