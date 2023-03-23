@@ -8,13 +8,19 @@
     <string name="thursday">Четверг</string>
     <string name="friday">Пятница</string>
     <string name="saturday">Суббота</string>
+    <string name="shortMonday">пн</string>
+    <string name="shortTuesday">вт</string>
+    <string name="shortWednesday">ср</string>
+    <string name="shortThursday">чт</string>
+    <string name="shortFriday">пт</string>
+    <string name="shortSaturday">сб</string>
     <string name="dinner">Обед</string>
     <string name="dinner_description">Пора кушать!</string>
     <string name="morning_start_work_description">Просыпайся! Пора на работу!</string>
     <string name="start_work_description">Пора на работу!</string>
     <string name="evening_finish_work_description">Уже поздно! Пора возвращаться с работы!</string>
     <string name="finish_work_description">Пора возвращаться с работы!</string>
-    <string name="work_start">Начало работы</string>
+    <string name="work_start">Начать работу</string>
     <string name="working">Работа</string>
     <string name="pause">На паузе</string>
     <string name="work_end">Завершение работы</string>
@@ -23,7 +29,9 @@
     <string name="main_init">Загрузка…</string>
     <string name="back">назад</string>
     <string name="work_periods">Рабочие периоды</string>
-
+    <string name="time_before_work">время до работы</string>
+    <string name="work_start_early">Начать досрочно</string>
+  
     <plurals name="hoursL">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>
