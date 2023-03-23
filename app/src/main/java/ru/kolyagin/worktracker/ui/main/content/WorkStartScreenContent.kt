@@ -43,7 +43,7 @@ fun WorkStartScreenContent(
     onClickDeleteEvent: () -> Unit = {},
     onAddPeriod: () -> Unit = {},
     onClickEvent: () -> Unit = {},
-    onClickDeleteday: () -> Unit = {}
+    onClickDeleteDay: () -> Unit = {}
 ) {
     Column {
         HeaderDay(
@@ -51,7 +51,7 @@ fun WorkStartScreenContent(
                 .fillMaxWidth()
                 .padding(start = 17.dp, top = 26.dp, end = 28.dp, bottom = 15.dp),
             day = state.day,
-            onClickDeleteday = onClickDeleteday
+            onClickDeleteDay = onClickDeleteDay
         )
         WorkStartTimer(time = state.time)
         StartButton(
@@ -97,7 +97,7 @@ fun WorkStartTimer(time: TimeWithSeconds?) {
 
 @Composable
 fun HeaderDay(
-    modifier: Modifier, day: DayOfWeek, onClickDeleteday: () -> Unit
+    modifier: Modifier, day: DayOfWeek, onClickDeleteDay: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -110,7 +110,7 @@ fun HeaderDay(
         )
         Icon(
             modifier = Modifier
-                .clickable(onClick = onClickDeleteday)
+                .clickable(onClick = onClickDeleteDay)
                 .align(CenterVertically)
                 .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
             painter = painterResource(id = R.drawable.delete),
@@ -225,6 +225,6 @@ private fun WorkStartScreenPreview() {
             onClickDeleteEvent = {},
             onAddPeriod = {},
             onClickEvent = {},
-            onClickDeleteday = {})
+            onClickDeleteDay = {})
     }
 }
