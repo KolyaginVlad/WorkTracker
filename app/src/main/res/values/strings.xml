@@ -31,6 +31,7 @@
     <string name="back">back</string>
     <string name="work_periods">Work periods</string>
     <string name="time_before_work">time before work</string>
+  
     <plurals name="hoursL">
         <item quantity="one">%d hour</item>
         <item quantity="few">%d hours</item>
