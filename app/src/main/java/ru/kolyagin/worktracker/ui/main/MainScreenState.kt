@@ -24,6 +24,7 @@ sealed class CardState(open val day: DayOfWeek) {
     class WorkStart(
         day: DayOfWeek,
         val buttonActive: Boolean,
+        val buttonStartEarly:Boolean,
         val events: PersistentList<DayStartEvent>,
         val time: TimeWithSeconds? = null
     ) :

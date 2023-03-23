@@ -30,7 +30,7 @@
     <string name="back">назад</string>
     <string name="work_periods">Рабочие периоды</string>
     <string name="time_before_work">время до работы</string>
-
+    <string name="work_start_early">Начать досрочно</string>
     <plurals name="hoursL">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>

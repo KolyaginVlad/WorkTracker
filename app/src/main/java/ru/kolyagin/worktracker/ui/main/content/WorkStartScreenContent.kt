@@ -59,7 +59,8 @@ fun WorkStartScreenContent(
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 0.dp),
             onClickStartWork = onClickStartWork,
-            buttonActive = state.buttonActive
+            buttonActive = state.buttonActive,
+            startEarly = state.buttonStartEarly
         )
         EventList(
             modifier = Modifier
@@ -121,8 +122,7 @@ fun HeaderDay(
 
 @Composable
 fun StartButton(
-    modifier: Modifier, onClickStartWork: () -> Unit,
-    buttonActive: Boolean
+    modifier: Modifier, onClickStartWork: () -> Unit, buttonActive: Boolean, startEarly: Boolean
 ) {
     Row(
         modifier = modifier
@@ -141,7 +141,10 @@ fun StartButton(
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
-                text = stringResource(id = R.string.work_start)
+                text = if (startEarly) stringResource(id = R.string.work_start_early)
+                else stringResource(
+                    id = R.string.work_start
+                )
             )
         }
     }
@@ -156,8 +159,7 @@ fun EventList(
     onClickEvent: () -> Unit,
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         events.forEach {
             OutlinedButton(
@@ -167,8 +169,7 @@ fun EventList(
                 onClick = onClickEvent
             ) {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 18.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp)
                 ) {
                     Text(
                         text = it.timeStart.toString() + "-" + it.timeEnd.toString(),
@@ -194,8 +195,7 @@ fun EventList(
             onClick = onAddPeriod
         ) {
             Icon(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 18.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
                 painter = painterResource(id = R.drawable.plus),
                 contentDescription = null,
                 tint = Primary
@@ -208,30 +208,23 @@ fun EventList(
 @Composable
 private fun WorkStartScreenPreview() {
     WorkTrackerTheme {
-        WorkStartScreenContent(
-            state = CardState.WorkStart(
-                DayOfWeek.Monday,
-                events = persistentListOf(
-                    DayStartEvent(
-                        id = 0,
-                        timeStart = Time(19, 0),
-                        timeEnd = Time(19, 10),
-                        name = "УЖИН"
-                    ), DayStartEvent(
-                        id = 0,
-                        timeStart = Time(19, 0),
-                        timeEnd = Time(19, 10),
-                        name = "ОБЕД"
-                    )
-                ),
-                buttonActive = false,
-                time = TimeWithSeconds(hours = 10, minutes = 0, seconds = 36)
+        WorkStartScreenContent(state = CardState.WorkStart(
+            DayOfWeek.Monday,
+            events = persistentListOf(
+                DayStartEvent(
+                    id = 0, timeStart = Time(19, 0), timeEnd = Time(19, 10), name = "УЖИН"
+                ), DayStartEvent(
+                    id = 0, timeStart = Time(19, 0), timeEnd = Time(19, 10), name = "ОБЕД"
+                )
             ),
+            buttonActive = true,
+            time = TimeWithSeconds(hours = 10, minutes = 0, seconds = 36),
+            buttonStartEarly = false
+        ),
             onClickStartWork = {},
             onClickDeleteEvent = {},
             onAddPeriod = {},
             onClickEvent = {},
-            onClickDeleteday = {}
-        )
+            onClickDeleteday = {})
     }
 }

@@ -21,6 +21,7 @@
     <string name="evening_finish_work_description">It\'s late! Time to get back from work</string>
     <string name="finish_work_description">Time to get back from work</string>
     <string name="work_start">Start work</string>
+    <string name="work_start_early">Start early</string>
     <string name="working">Working</string>
     <string name="pause">On pause</string>
     <string name="work_end">Work end</string>
