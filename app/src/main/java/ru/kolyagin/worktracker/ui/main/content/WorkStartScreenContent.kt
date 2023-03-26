@@ -145,7 +145,8 @@ fun StartButton(
             )
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                style = MaterialTheme.typography.button,
                 text = if (startEarly) stringResource(id = R.string.work_start_early)
                 else stringResource(
                     id = R.string.work_start
@@ -174,7 +175,7 @@ fun EventList(
                 onClick = onClickEvent
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
                 ) {
                     Text(
                         text = it.timeStart.toString() + "-" + it.timeEnd.toString(),
@@ -200,7 +201,7 @@ fun EventList(
             onClick = onAddPeriod
         ) {
             Icon(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
                 painter = painterResource(id = R.drawable.plus),
                 contentDescription = null,
                 tint = Primary
