@@ -31,7 +31,11 @@
     <string name="work_periods">Рабочие периоды</string>
     <string name="time_before_work">время до работы</string>
     <string name="work_start_early">Начать досрочно</string>
-  
+    <string name="continue_work">ПРОДОЛЖИТЬ</string>
+    <string name="time_dinnering">время обеда</string>
+    <string name="finish_work">ЗАВЕРШИТЬ РАБОТУ</string>
+    <string name="time_pause">время паузы</string>
+
     <plurals name="hoursL">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>

@@ -10,7 +10,7 @@ import ru.kolyagin.worktracker.utils.models.DayOfWeek
 
 data class MainScreenState(
     val days: PersistentList<CardState> = persistentListOf()
-): State()
+) : State()
 
 sealed class CardState(open val day: DayOfWeek) {
     /**
@@ -24,7 +24,7 @@ sealed class CardState(open val day: DayOfWeek) {
     class WorkStart(
         day: DayOfWeek,
         val buttonActive: Boolean,
-        val buttonStartEarly:Boolean,
+        val buttonStartEarly: Boolean,
         val events: PersistentList<DayStartEvent>,
         val time: TimeWithSeconds? = null
     ) :
@@ -43,12 +43,20 @@ sealed class CardState(open val day: DayOfWeek) {
     /**
      * Состояние во время рабочей паузы
      */
-    class Pause(day: DayOfWeek) : CardState(day)
+    class Pause(
+        day: DayOfWeek,
+        val events: PersistentList<DayStartEvent>,
+        val time: TimeWithSeconds
+    ) : CardState(day)
 
     /**
      * Состояние во время обеда в рабочий период
      */
-    class Dinnering(day: DayOfWeek) : CardState(day)
+    class Dinnering(
+        day: DayOfWeek,
+        val events: PersistentList<DayStartEvent>,
+        val time: TimeWithSeconds
+    ) : CardState(day)
 
     /**
      * Состояние после завершения последнего периода работы
