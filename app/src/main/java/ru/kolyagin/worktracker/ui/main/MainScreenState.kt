@@ -13,38 +13,33 @@ data class MainScreenState(
 ) : State()
 
 sealed class CardState(open val day: DayOfWeek) {
-    /**
-     * Состояние для инициализации экрана
-     */
-    class Init(day: DayOfWeek) : CardState(day)
 
     /**
      * Состояние перед началом рабочего периода
      */
-    class WorkStart(
-        day: DayOfWeek,
+    data class WorkStart(
+        override val day: DayOfWeek,
         val buttonActive: Boolean,
         val buttonStartEarly: Boolean,
         val events: PersistentList<DayStartEvent>,
         val time: TimeWithSeconds? = null
-    ) :
-        CardState(day)
+    ) : CardState(day)
 
     /**
      * Состояние в конце рабочего периода
      */
-    class WorkEnd(day: DayOfWeek) : CardState(day)
+    data class WorkEnd(override val day: DayOfWeek) : CardState(day)
 
     /**
      * Состояние во время работы
      */
-    class Working(day: DayOfWeek) : CardState(day)
+    data class Working(override val day: DayOfWeek) : CardState(day)
 
     /**
      * Состояние во время рабочей паузы
      */
-    class Pause(
-        day: DayOfWeek,
+    data class Pause(
+        override val day: DayOfWeek,
         val events: PersistentList<DayStartEvent>,
         val time: TimeWithSeconds
     ) : CardState(day)
@@ -52,8 +47,8 @@ sealed class CardState(open val day: DayOfWeek) {
     /**
      * Состояние во время обеда в рабочий период
      */
-    class Dinnering(
-        day: DayOfWeek,
+    data class Dinnering(
+        override val day: DayOfWeek,
         val events: PersistentList<DayStartEvent>,
         val time: TimeWithSeconds
     ) : CardState(day)

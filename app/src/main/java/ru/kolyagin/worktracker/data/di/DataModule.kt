@@ -1,6 +1,7 @@
 package ru.kolyagin.worktracker.data.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Binds
@@ -11,7 +12,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ru.kolyagin.worktracker.data.database.AppDatabase
 import ru.kolyagin.worktracker.data.database.RoomCallback
+import ru.kolyagin.worktracker.data.repositories.PreferenceRepositoryImpl
 import ru.kolyagin.worktracker.data.repositories.ScheduleRepositoryImpl
+import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 
 @InstallIn(SingletonComponent::class)
@@ -22,21 +25,21 @@ interface DataModule {
     fun bindScheduleRepository(
         impl: ScheduleRepositoryImpl
     ): ScheduleRepository
+
+    @Binds
+    fun bindPreferencesRepository(
+        impl: PreferenceRepositoryImpl
+    ): PreferenceRepository
 }
 
-@Module
 @InstallIn(SingletonComponent::class)
-class AnalyticsModule {
+@Module
+class DataProvidesModule {
 
     @Provides
     fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
         return FirebaseAnalytics.getInstance(context)
     }
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-class DatabaseModule {
 
     @Provides
     fun provideDatabase(@ApplicationContext context: Context, roomCallback: RoomCallback) =
@@ -49,4 +52,9 @@ class DatabaseModule {
     @Provides
     fun providesScheduleDao(database: AppDatabase) =
         database.getScheduleDao()
+
+    @Provides
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences =
+        context.getSharedPreferences("WorkTracker", Context.MODE_PRIVATE)
 }
+

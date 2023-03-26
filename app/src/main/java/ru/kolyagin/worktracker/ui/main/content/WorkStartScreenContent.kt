@@ -91,7 +91,8 @@ fun StartButton(
             )
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                style = MaterialTheme.typography.button,
                 text = if (startEarly) stringResource(id = R.string.work_start_early)
                 else stringResource(
                     id = R.string.work_start
