@@ -251,10 +251,10 @@ class MainViewModel @Inject constructor(
                 CardState.Working(currentDayOfWeek) //Переработка
             }
             WorkState.Dinner -> {
-                CardState.Dinnering(currentDayOfWeek)
+                CardState.Dinnering(currentDayOfWeek, persistentListOf(), TimeWithSeconds.fromSeconds(0)) //TODO Приписать логику
             }
             WorkState.Pause -> {
-                CardState.Pause(currentDayOfWeek)
+                CardState.Pause(currentDayOfWeek, persistentListOf(), TimeWithSeconds.fromSeconds(0)) //TODO Приписать логику
             }
         }
 
@@ -284,10 +284,10 @@ class MainViewModel @Inject constructor(
                 CardState.Working(currentDayOfWeek)
             }
             WorkState.Dinner -> {
-                CardState.Dinnering(currentDayOfWeek)
+                CardState.Dinnering(currentDayOfWeek, persistentListOf(), TimeWithSeconds.fromSeconds(0)) //TODO Приписать логику
             }
             WorkState.Pause -> {
-                CardState.Pause(currentDayOfWeek)
+                CardState.Pause(currentDayOfWeek, persistentListOf(), TimeWithSeconds.fromSeconds(0)) //TODO Приписать логику
             }
         }
 
@@ -300,10 +300,10 @@ class MainViewModel @Inject constructor(
                 CardState.Working(currentDayOfWeek) // переработка
             }
             WorkState.Dinner -> {
-                CardState.Dinnering(currentDayOfWeek)
+                CardState.Dinnering(currentDayOfWeek, persistentListOf(), TimeWithSeconds.fromSeconds(0)) //TODO Приписать логику
             }
             WorkState.Pause -> {
-                CardState.Pause(currentDayOfWeek)
+                CardState.Pause(currentDayOfWeek, persistentListOf(), TimeWithSeconds.fromSeconds(0)) //TODO Приписать логику
             }
         }
 }
