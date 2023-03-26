@@ -9,6 +9,8 @@ import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.Time.Companion.toTimeWithSeconds
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
+import ru.kolyagin.worktracker.domain.models.WorkState
+import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
@@ -19,10 +21,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val scheduleRepository: ScheduleRepository
+    private val scheduleRepository: ScheduleRepository,
+    private val preferenceRepository: PreferenceRepository
 ) : BaseViewModel<MainScreenState, MainEvent>(MainScreenState()) {
 
     private var timerJob: Job? = null
+    private var schedule: DayWorkInfo? = null
 
     init {
         updateState {
@@ -44,14 +48,13 @@ class MainViewModel @Inject constructor(
         scheduleRepository.schedule().subscribe {
             timerJob?.cancel()
             timerJob = launchViewModelScope {
-                var currentDay = LocalDate.now().dayOfWeek.ordinal
-                val currentSchedule = it.getOrNull(currentDay)
-                currentDay = currentDay.takeUnless { it == 6 } ?: 0
+                val currentDay = LocalDate.now().dayOfWeek.ordinal.takeUnless { it == 6 } ?: 0
+                schedule = it.getOrNull(LocalDate.now().dayOfWeek.ordinal)
 
                 val startWorkRanges =
-                    currentSchedule?.let { schedule -> getListOfTimeRangesStartWork(schedule) }
+                    schedule?.let { schedule -> getListOfTimeRangesStartWork(schedule) }
                 val workingRanges =
-                    currentSchedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
+                    schedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
                 while (timerJob?.isCancelled != true) {
                     val currentTime = LocalTime.now()
                     val time = Time(currentTime.hour, currentTime.minute)
@@ -59,9 +62,9 @@ class MainViewModel @Inject constructor(
                         val currentState = getCurrentState(
                             startWorkRanges,
                             workingRanges,
-                            listOfDays[currentDay],
                             time,
-                            currentSchedule?.totalTime,
+                            listOfDays[currentDay],
+                            schedule?.totalTime, //TODO убрать и заменить внутри функции на выборку статистики из репозитория
                             currentTime
                         )
                         val daysWithOutCurrent = (listOfDays.subList(
@@ -90,45 +93,40 @@ class MainViewModel @Inject constructor(
     }
 
     fun onClickStartWork() {
-        //TODO обработать
-//        updateState {
-//            CardState.Working
-//        }
+        preferenceRepository.currentWorkState = WorkState.Working
+        updateCardState()
+        //TODO Посмотреть насколько раньше\позднее начали работать чем запланировано
+
     }
 
     fun onClickFinishWork() {
-        //TODO обработать
-//        updateState {
-//            CardState.Results(Time(0, 0)) // or CardState.WorkNotStarted
-//        }
+        preferenceRepository.currentWorkState = WorkState.NotWorking
+        updateCardState()
+        //TODO Посмотреть насколько раньше\позднее закончили работать чем запланировано
     }
 
     fun onClickStartPause() {
-        //TODO обработать
-//        updateState {
-//            CardState.Pause
-//        }
+        preferenceRepository.currentWorkState = WorkState.Pause
+        updateCardState()
+        //TODO Посмотреть запланированная ли это пауза
     }
 
     fun onClickEndPause() {
-        //TODO обработать
-//        updateState {
-//            CardState.Working // or CardState.WorkNotStarted or CardState.Results
-//        }
+        preferenceRepository.currentWorkState = WorkState.Working
+        updateCardState()
+        //TODO Подсчитать сколько времени в запланированной паузе, а сколько нет
     }
 
     fun onClickGoToDinner() {
-        //TODO обработать
-//        updateState {
-//            CardState.Dinnering
-//        }
+        preferenceRepository.currentWorkState = WorkState.Dinner
+        updateCardState()
+        //TODO Записать, что на обед ушли и больше нельзя
     }
 
     fun onClickReturnFromDinner() {
-        //TODO обработать
-//        updateState {
-//            CardState.Working // or CardState.WorkNotStarted or CardState.Results
-//        }
+        preferenceRepository.currentWorkState = WorkState.Working
+        updateCardState()
+        //TODO Подсчитать не ушли ли мы на незапланированную\запланированную паузу во время обеда
     }
 
 
@@ -161,17 +159,52 @@ class MainViewModel @Inject constructor(
             .takeIf { it.isNotEmpty() }
     }
 
+    private fun updateCardState() {
+        val currentDay = LocalDate.now().dayOfWeek.ordinal.takeUnless { it == 6 } ?: 0
+        val startWorkRanges =
+            schedule?.let { schedule -> getListOfTimeRangesStartWork(schedule) }
+        val workingRanges =
+            schedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
+        val currentTime = LocalTime.now()
+        val time = Time(currentTime.hour, currentTime.minute)
+        val listOfDays = DayOfWeek.values().toList()
+        updateState { state ->
+            val currentState = getCurrentState(
+                startWorkRanges,
+                workingRanges,
+                time,
+                listOfDays[currentDay],
+                schedule?.totalTime, //TODO убрать и заменить внутри функции на выборку статистики из репозитория
+                currentTime
+            )
+            val daysWithOutCurrent = (listOfDays.subList(
+                currentDay + 1, listOfDays.size
+            ) + listOfDays.subList(0, currentDay)).map { day ->
+                CardState.WorkStart(
+                    day = day,
+                    buttonActive = false,
+                    buttonStartEarly = true,
+                    events = persistentListOf(),
+                    time = null
+                )
+            }
+            state.copy(
+                days = (listOf(currentState) + daysWithOutCurrent).toPersistentList()
+            )
+        }
+    }
+
     private fun getCurrentState(
         startWorkRanges: List<ClosedRange<Time>>?,
         workingRanges: List<ClosedRange<Time>>?,
-        dayOfWeek: DayOfWeek,
         time: Time,
+        currentDayOfWeek: DayOfWeek,
         totalTime: Time?,
         currentTime: LocalTime
     ) = when {
         startWorkRanges == null || workingRanges == null || totalTime == null -> {
             CardState.WorkStart(
-                day = dayOfWeek,
+                day = currentDayOfWeek,
                 buttonActive = false,
                 buttonStartEarly = true,
                 events = persistentListOf(),
@@ -180,27 +213,97 @@ class MainViewModel @Inject constructor(
         }
 
         startWorkRanges.any { time in it } -> {
-            val range = startWorkRanges.first { time in it }
-            val timeBeforeWork = range.endInclusive.toTimeWithSeconds() - TimeWithSeconds(
-                currentTime.hour,
-                currentTime.minute,
-                currentTime.second
-            )
-            CardState.WorkStart(
-                day = dayOfWeek,
-                buttonActive = true,
-                buttonStartEarly = true,
-                events = persistentListOf(),
-                time = timeBeforeWork
-            )
+            getStateForStartWork(startWorkRanges, currentTime, time, currentDayOfWeek)
         }
 
         workingRanges.any { time in it } -> {
-            CardState.Working(dayOfWeek) //check pause and events. check is work start
+            getStateForWorking(workingRanges, currentTime, time, currentDayOfWeek)
         }
 
         else -> {
-            CardState.Results(dayOfWeek, totalTime)
+            getStateForEndWork(currentDayOfWeek, totalTime)
         }
     }
+
+    private fun getStateForStartWork(
+        startWorkRanges: List<ClosedRange<Time>>,
+        currentTime: LocalTime,
+        time: Time,
+        currentDayOfWeek: DayOfWeek
+    ) =
+        when(preferenceRepository.currentWorkState) {
+            WorkState.NotWorking -> {
+                val range = startWorkRanges.first { time in it }
+                val timeBeforeWork = range.endInclusive.toTimeWithSeconds() - TimeWithSeconds(
+                    currentTime.hour,
+                    currentTime.minute,
+                    currentTime.second
+                )
+                CardState.WorkStart(
+                    day = currentDayOfWeek,
+                    buttonActive = true,
+                    buttonStartEarly = true,
+                    events = persistentListOf(),
+                    time = timeBeforeWork
+                )
+            }
+            WorkState.Working -> {
+                CardState.Working(currentDayOfWeek) //Переработка
+            }
+            WorkState.Dinner -> {
+                CardState.Dinnering(currentDayOfWeek)
+            }
+            WorkState.Pause -> {
+                CardState.Pause(currentDayOfWeek)
+            }
+        }
+
+    private fun getStateForWorking(
+        workingRanges: List<ClosedRange<Time>>,
+        currentTime: LocalTime,
+        time: Time,
+        currentDayOfWeek: DayOfWeek
+    ) =
+        when(preferenceRepository.currentWorkState) {
+            WorkState.NotWorking -> {
+                val range = workingRanges.first { time in it }
+                val timeLate = TimeWithSeconds(
+                    currentTime.hour,
+                    currentTime.minute,
+                    currentTime.second
+                ) - range.start.toTimeWithSeconds()
+                CardState.WorkStart(
+                    day = currentDayOfWeek,
+                    buttonActive = true,
+                    buttonStartEarly = false,
+                    events = persistentListOf(),
+                    time = timeLate
+                )
+            }
+            WorkState.Working -> {
+                CardState.Working(currentDayOfWeek)
+            }
+            WorkState.Dinner -> {
+                CardState.Dinnering(currentDayOfWeek)
+            }
+            WorkState.Pause -> {
+                CardState.Pause(currentDayOfWeek)
+            }
+        }
+
+    private fun getStateForEndWork(currentDayOfWeek: DayOfWeek, totalTime: Time) =
+        when(preferenceRepository.currentWorkState) {
+            WorkState.NotWorking -> {
+                CardState.Results(currentDayOfWeek, totalTime)
+            }
+            WorkState.Working -> {
+                CardState.Working(currentDayOfWeek) // переработка
+            }
+            WorkState.Dinner -> {
+                CardState.Dinnering(currentDayOfWeek)
+            }
+            WorkState.Pause -> {
+                CardState.Pause(currentDayOfWeek)
+            }
+        }
 }
