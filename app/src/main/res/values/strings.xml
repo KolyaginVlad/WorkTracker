@@ -31,7 +31,12 @@
     <string name="back">back</string>
     <string name="work_periods">Work periods</string>
     <string name="time_before_work">time before work</string>
+    <string name="late_time">late time</string>
+    <string name="overwork_time">overwork time</string>
+    <string name="time_work">working time</string>
     <string name="continue_work">CONTINUE</string>
+    <string name="pause_work">PAUSE</string>
+    <string name="start_lunch">TAKE A LUNCH BREAK</string>
     <string name="time_dinnering">time dinnering</string>
     <string name="finish_work">FINISH WORK</string>
     <string name="time_pause">time pause</string>

@@ -22,7 +22,8 @@ sealed class CardState(open val day: DayOfWeek) {
         val buttonActive: Boolean,
         val buttonStartEarly: Boolean,
         val events: PersistentList<DayStartEvent>,
-        val time: TimeWithSeconds? = null
+        val time: TimeWithSeconds? = null,
+        val late: Boolean = false
     ) : CardState(day)
 
     /**
@@ -33,7 +34,12 @@ sealed class CardState(open val day: DayOfWeek) {
     /**
      * Состояние во время работы
      */
-    data class Working(override val day: DayOfWeek) : CardState(day)
+    data class Working(
+        override val day: DayOfWeek,
+        val events: PersistentList<DayStartEvent>,
+        val time: TimeWithSeconds,
+        val overwork: Boolean = false
+    ) : CardState(day)
 
     /**
      * Состояние во время рабочей паузы

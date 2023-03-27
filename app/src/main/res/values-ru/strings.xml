@@ -30,9 +30,14 @@
     <string name="back">назад</string>
     <string name="work_periods">Рабочие периоды</string>
     <string name="time_before_work">время до работы</string>
+    <string name="late_time">время опоздания</string>
+    <string name="time_work">время работы</string>
+    <string name="overwork_time">время переработки</string>
     <string name="work_start_early">НАЧАТЬ ДОСРОЧНО</string>
     <string name="continue_work">ПРОДОЛЖИТЬ</string>
     <string name="time_dinnering">время обеда</string>
+    <string name="pause_work">ПАУЗА</string>
+    <string name="start_lunch">УЙТИ НА ОБЕД</string>
     <string name="finish_work">ЗАВЕРШИТЬ РАБОТУ</string>
     <string name="time_pause">время паузы</string>
     <plurals name="hoursL">

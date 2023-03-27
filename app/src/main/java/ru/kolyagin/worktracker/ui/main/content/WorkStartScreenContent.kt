@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,16 +38,33 @@ fun WorkStartScreenContent(
     onClickDeleteDay: () -> Unit = {}
 ) {
     Column {
+        val title: String
+        val textColor: Color
+        val disablseColor: Color
+        if (!state.late) {
+            title = stringResource(id = R.string.time_before_work)
+            textColor = MaterialTheme.colors.primaryVariant
+            disablseColor = PrimaryVariantDisabled
+        } else {
+            title = stringResource(
+                id = R.string.late_time
+            )
+            textColor = MaterialTheme.colors.secondary
+            disablseColor = MaterialTheme.colors.secondary
+        }
         HeaderDay(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 17.dp, top = 26.dp, end = 28.dp, bottom = 15.dp),
             day = state.day,
-            onClickDeleteDay = onClickDeleteDay
+            onClickDeleteDay = onClickDeleteDay,
+            contentColor = textColor
         )
         WorkTimer(
             time = state.time,
-            title = stringResource(id = R.string.time_before_work)
+            title = title,
+            primaryColor = textColor,
+            disableColor = disablseColor
         )
         StartButton(
             modifier = Modifier
@@ -54,7 +72,8 @@ fun WorkStartScreenContent(
                 .padding(horizontal = 12.dp, vertical = 0.dp),
             onClickStartWork = onClickStartWork,
             buttonActive = state.buttonActive,
-            startEarly = state.buttonStartEarly
+            startEarly = state.buttonStartEarly,
+            contentColor = textColor
         )
         EventList(
             modifier = Modifier
@@ -63,7 +82,8 @@ fun WorkStartScreenContent(
             events = state.events,
             onClickDeleteMeal = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
-            onClickEvent = onClickEvent
+            onClickEvent = onClickEvent,
+            contentColor = textColor
         )
     }
 }
@@ -73,7 +93,8 @@ fun StartButton(
     modifier: Modifier,
     onClickStartWork: () -> Unit,
     buttonActive: Boolean,
-    startEarly: Boolean
+    startEarly: Boolean,
+    contentColor: Color = MaterialTheme.colors.primaryVariant
 ) {
     Row(
         modifier = modifier
@@ -84,7 +105,7 @@ fun StartButton(
             shape = RoundedButtonShapes.medium,
             onClick = onClickStartWork,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.primaryVariant,
+                backgroundColor = contentColor,
                 disabledBackgroundColor = PrimaryVariantDisabled,
                 disabledContentColor = MaterialTheme.colors.background,
                 contentColor = MaterialTheme.colors.background
@@ -117,7 +138,8 @@ private fun WorkStartScreenPreview() {
             ),
             buttonActive = true,
             time = TimeWithSeconds(hours = 10, minutes = 0, seconds = 36),
-            buttonStartEarly = false
+            buttonStartEarly = false,
+            late = true
         ),
             onClickStartWork = {},
             onClickDeleteEvent = {},
