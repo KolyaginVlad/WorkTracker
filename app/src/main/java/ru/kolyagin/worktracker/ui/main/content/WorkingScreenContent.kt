@@ -50,7 +50,7 @@ fun WorkingScreenContent(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 12.dp),
+                .padding(12.dp),
             onClick = onClickStartPause,
             text = stringResource(id = R.string.pause_work),
             backgroundColor = MaterialTheme.colors.secondary,
@@ -60,7 +60,7 @@ fun WorkingScreenContent(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 0.dp),
+                .padding(horizontal = 12.dp),
             onClick = onClickGoToDinner,
             text = stringResource(id = R.string.start_lunch),
             backgroundColor = MaterialTheme.colors.secondary,
@@ -70,7 +70,7 @@ fun WorkingScreenContent(
         EventList(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 12.dp),
+                .padding(12.dp),
             events = state.events,
             onClickDeleteMeal = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
@@ -79,7 +79,7 @@ fun WorkingScreenContent(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 0.dp),
+                .padding(horizontal = 12.dp),
             onClick = onClickEndWork,
             text = stringResource(id = R.string.finish_work),
             backgroundColor = MaterialTheme.colors.primaryVariant,
