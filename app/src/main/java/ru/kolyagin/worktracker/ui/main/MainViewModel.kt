@@ -275,13 +275,13 @@ class MainViewModel @Inject constructor(
 
         WorkState.Working -> {
             val range = workingRanges.first { time in it }
-            val time = TimeWithSeconds(
+            val timeWork = TimeWithSeconds(
                 currentTime.hour, currentTime.minute, currentTime.second
             ) - range.start.toTimeWithSeconds()
             CardState.Working(
                 day = currentDayOfWeek,
                 events = persistentListOf(),
-                time = time,
+                time = timeWork,
             )
         }
 
