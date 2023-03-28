@@ -1,5 +1,7 @@
 package ru.kolyagin.worktracker.domain.models
 
+import java.time.LocalTime
+
 class Time(val hours: Int, val minutes: Int): Comparable<Time> {
 
     operator fun minus(other: Time): Time {
@@ -24,6 +26,10 @@ class Time(val hours: Int, val minutes: Int): Comparable<Time> {
             val min = minutes % 60
             return Time(hours, min)
         }
+
+        fun LocalTime.toTime() =
+            Time(hour, minute)
+
 
         fun Time.toMinutes(): Int =
             hours * 60 + minutes

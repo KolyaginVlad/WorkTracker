@@ -9,9 +9,12 @@ import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.Time.Companion.toTimeWithSeconds
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
+import ru.kolyagin.worktracker.domain.models.TimeWithSeconds.Companion.toSeconds
+import ru.kolyagin.worktracker.domain.models.TimeWithSeconds.Companion.toTimeWithSeconds
 import ru.kolyagin.worktracker.domain.models.WorkState
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
+import ru.kolyagin.worktracker.domain.repositories.WorkStatisticRepository
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 import java.time.LocalDate
@@ -22,7 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val scheduleRepository: ScheduleRepository,
-    private val preferenceRepository: PreferenceRepository
+    private val preferenceRepository: PreferenceRepository,
+    private val workStatisticRepository: WorkStatisticRepository
 ) : BaseViewModel<MainScreenState, MainEvent>(MainScreenState()) {
 
     private var timerJob: Job? = null
@@ -95,26 +99,36 @@ class MainViewModel @Inject constructor(
     fun onClickStartWork() {
         preferenceRepository.currentWorkState = WorkState.Working
         updateCardState()
-        //TODO Посмотреть насколько раньше\позднее начали работать чем запланировано
-
     }
 
     fun onClickFinishWork() {
+        when (preferenceRepository.currentWorkState) {
+            WorkState.Pause -> {
+                updateTimeOfPause()
+            }
+
+            WorkState.Working -> {
+                workStatisticRepository.addWorkTime(
+                    LocalDate.now(),
+                    LocalTime.now().toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet
+                )
+            }
+
+            else -> {}
+        }
         preferenceRepository.currentWorkState = WorkState.NotWorking
         updateCardState()
-        //TODO Посмотреть насколько раньше\позднее закончили работать чем запланировано
     }
 
     fun onClickStartPause() {
         preferenceRepository.currentWorkState = WorkState.Pause
         updateCardState()
-        //TODO Посмотреть запланированная ли это пауза
     }
 
     fun onClickEndPause() {
+        updateTimeOfPause()
         preferenceRepository.currentWorkState = WorkState.Working
         updateCardState()
-        //TODO Подсчитать сколько времени в запланированной паузе, а сколько нет
     }
 
     fun onClickGoToDinner() {
@@ -127,6 +141,40 @@ class MainViewModel @Inject constructor(
         preferenceRepository.currentWorkState = WorkState.Working
         updateCardState()
         //TODO Подсчитать не ушли ли мы на незапланированную\запланированную паузу во время обеда
+    }
+
+    private fun updateTimeOfPause() {
+        val listOfPausesWithoutDinner = listOf(
+            TimeWithSeconds(13, 0, 0)..TimeWithSeconds(13, 10, 0),
+            TimeWithSeconds(15, 0, 0)..TimeWithSeconds(15, 10, 0),
+        ) //FIXME заменить на реальные паузы без обеда
+        val pauseStart = preferenceRepository.timeOfCurrentStateSet
+        val pauseStop = LocalTime.now().toTimeWithSeconds()
+        val pause = pauseStart..pauseStop
+        listOfPausesWithoutDinner.foldRight(TimeWithSeconds.fromSeconds(0)) { elem, plannedTime ->
+            when {
+                elem.start in pause && elem.endInclusive in pause -> {
+                    plannedTime + (elem.endInclusive - elem.start)
+                }
+
+                elem.start in pause -> {
+                    plannedTime + pauseStop - elem.start
+                }
+
+                elem.endInclusive in pause -> {
+                    plannedTime + elem.endInclusive - pauseStart
+                }
+
+                else -> {
+                    plannedTime
+                }
+            }
+        }.let { plannedTime ->
+            workStatisticRepository.addPlannedPauseTime(LocalDate.now(), plannedTime)
+            val unplanned = pauseStop - pauseStart - plannedTime
+            if (unplanned.toSeconds() > 0)
+                workStatisticRepository.addUnplannedPauseTime(LocalDate.now(), unplanned)
+        }
     }
 
 

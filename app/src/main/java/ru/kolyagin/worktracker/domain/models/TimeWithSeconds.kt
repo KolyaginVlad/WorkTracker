@@ -1,7 +1,10 @@
 package ru.kolyagin.worktracker.domain.models
 
-class TimeWithSeconds(val hours: Int, val minutes: Int, val seconds: Int): Comparable<TimeWithSeconds> {
-  
+import java.time.LocalTime
+
+class TimeWithSeconds(val hours: Int, val minutes: Int, val seconds: Int) :
+    Comparable<TimeWithSeconds> {
+
     operator fun minus(other: TimeWithSeconds): TimeWithSeconds {
         return fromSeconds(this.toSeconds() - other.toSeconds())
     }
@@ -27,6 +30,9 @@ class TimeWithSeconds(val hours: Int, val minutes: Int, val seconds: Int): Compa
             val seconds = min % 60
             return TimeWithSeconds(hours.toInt(), minutes.toInt(), seconds.toInt())
         }
+
+        fun LocalTime.toTimeWithSeconds() =
+            TimeWithSeconds(hour, minute, second)
 
         fun TimeWithSeconds.toSeconds(): Long =
             (hours * 60 * 60 + minutes * 60 + seconds).toLong()
