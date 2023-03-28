@@ -1,6 +1,7 @@
 package ru.kolyagin.worktracker.ui.main
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Job
@@ -9,6 +10,7 @@ import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.Time.Companion.toTimeWithSeconds
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.domain.models.WorkState
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
@@ -27,6 +29,7 @@ class MainViewModel @Inject constructor(
 
     private var timerJob: Job? = null
     private var schedule: DayWorkInfo? = null
+    private var workEvent: Map<Int, List<WorkEvent>> = mapOf() // TODO:
 
     init {
         updateState {
@@ -46,48 +49,55 @@ class MainViewModel @Inject constructor(
     fun init() {
         val listOfDays = DayOfWeek.values().toList()
         scheduleRepository.schedule().subscribe {
-            timerJob?.cancel()
-            timerJob = launchViewModelScope {
-                val currentDay = LocalDate.now().dayOfWeek.ordinal.takeUnless { it == 6 } ?: 0
-                schedule = it.getOrNull(LocalDate.now().dayOfWeek.ordinal)
-
-                val startWorkRanges =
-                    schedule?.let { schedule -> getListOfTimeRangesStartWork(schedule) }
-                val workingRanges =
-                    schedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
-                while (timerJob?.isCancelled != true) {
-                    val currentTime = LocalTime.now()
-                    val time = Time(currentTime.hour, currentTime.minute)
-                    updateState { state ->
-                        val currentState = getCurrentState(
-                            startWorkRanges,
-                            workingRanges,
-                            time,
-                            listOfDays[currentDay],
-                            schedule?.totalTime, //TODO убрать и заменить внутри функции на выборку статистики из репозитория
-                            currentTime
-                        )
-                        val daysWithOutCurrent = (listOfDays.subList(
-                            currentDay + 1, listOfDays.size
-                        ) + listOfDays.subList(0, currentDay)).map { day ->
-                            CardState.WorkStart(
-                                day = day,
-                                buttonActive = false,
-                                buttonStartEarly = true,
-                                events = persistentListOf(),
-                                time = null
+            scheduleRepository.workEvents().subscribe { workEvents->
+                timerJob?.cancel()
+                timerJob = launchViewModelScope {
+                    val currentDay = LocalDate.now().dayOfWeek.ordinal.takeUnless { it == 6 } ?: 0
+                    schedule = it.getOrNull(LocalDate.now().dayOfWeek.ordinal)
+                    workEvent=workEvents
+                    val startWorkRanges =
+                        schedule?.let { schedule -> getListOfTimeRangesStartWork(schedule) }
+                    val workingRanges =
+                        schedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
+                    while (timerJob?.isCancelled != true) {
+                        val currentTime = LocalTime.now()
+                        val time = Time(currentTime.hour, currentTime.minute)
+                        updateState { state ->
+                            val currentState = getCurrentState(
+                                startWorkRanges,
+                                workingRanges,
+                                time,
+                                listOfDays[currentDay],
+                                schedule?.totalTime, //TODO убрать и заменить внутри функции на выборку статистики из репозитория
+                                currentTime,
+                                (workEvents[currentDay])?.toPersistentList()
+                            )
+                            val daysWithOutCurrent = (listOfDays.subList(
+                                currentDay + 1, listOfDays.size
+                            ) + listOfDays.subList(0, currentDay)).map { day ->
+                                CardState.WorkStart(
+                                    day = day,
+                                    buttonActive = false,
+                                    buttonStartEarly = true,
+                                    events = (workEvents[day.ordinal])?.toPersistentList()?: persistentListOf() ,
+                                    time = null
+                                )
+                            }
+                            state.copy(
+                                days = (listOf(currentState) + daysWithOutCurrent).toPersistentList()
                             )
                         }
-                        state.copy(
-                            days = (listOf(currentState) + daysWithOutCurrent).toPersistentList()
+                        delay(
+                            ChronoUnit.MILLIS.between(
+                                currentTime.plusSeconds(1),
+                                LocalTime.now()
+                            )
                         )
                     }
-                    delay(ChronoUnit.MILLIS.between(currentTime.plusSeconds(1), LocalTime.now()))
                 }
             }
         }
     }
-
     fun onClickOpenSettings() {
         trySendEvent(MainEvent.OpenSettings)
     }
@@ -162,7 +172,8 @@ class MainViewModel @Inject constructor(
                 time,
                 listOfDays[currentDay],
                 schedule?.totalTime, //TODO убрать и заменить внутри функции на выборку статистики из репозитория
-                currentTime
+                currentTime,
+                (workEvent[currentDay])?.toPersistentList()
             )
             val daysWithOutCurrent = (listOfDays.subList(
                 currentDay + 1, listOfDays.size
@@ -171,7 +182,7 @@ class MainViewModel @Inject constructor(
                     day = day,
                     buttonActive = false,
                     buttonStartEarly = true,
-                    events = persistentListOf(),
+                    events =(workEvent[day.ordinal])?.toPersistentList()?: persistentListOf(),
                     time = null
                 )
             }
@@ -187,14 +198,15 @@ class MainViewModel @Inject constructor(
         time: Time,
         currentDayOfWeek: DayOfWeek,
         totalTime: Time?,
-        currentTime: LocalTime
+        currentTime: LocalTime,
+        workEvents:PersistentList<WorkEvent>?
     ) = when {
         startWorkRanges == null || workingRanges == null || totalTime == null -> {
             CardState.WorkStart(
                 day = currentDayOfWeek,
                 buttonActive = false,
                 buttonStartEarly = true,
-                events = persistentListOf(),
+                events = workEvents?: persistentListOf(),
                 time = null
             )
         }

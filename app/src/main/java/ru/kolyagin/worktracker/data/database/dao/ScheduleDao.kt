@@ -5,6 +5,7 @@ import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import ru.kolyagin.worktracker.data.database.entities.DayScheduleEntity
+import ru.kolyagin.worktracker.data.database.entities.WorkEventEntity
 import ru.kolyagin.worktracker.data.database.entities.WorkPeriodEntity
 import ru.kolyagin.worktracker.domain.models.Time
 
@@ -31,9 +32,7 @@ interface ScheduleDao {
         """
     )
     suspend fun addPeriod(
-        day: Int,
-        timeStart: Time = Time(8, 0),
-        timeEnd: Time = Time(17, 0)
+        day: Int, timeStart: Time = Time(8, 0), timeEnd: Time = Time(17, 0)
     )
 
     @Query(
@@ -52,4 +51,33 @@ interface ScheduleDao {
         """
     )
     suspend fun setDinner(id: Int, isDinnerInclude: Boolean)
+
+    @Query(
+        """
+            SELECT * FROM WorkEvent
+        """
+    )
+    fun getWorkEvents(): Flow<List<WorkEventEntity>>
+
+    @Query(
+        """
+             INSERT INTO WorkEvent (timeStart, timeEnd, day) VALUES (:timeStart, :timeEnd, :day)
+        """
+    )
+
+    suspend fun addEvent(
+        day: Int, timeStart: Time = Time(8, 0), timeEnd: Time = Time(17, 0)
+    )
+
+    @Query(
+        """
+            DELETE FROM WorkEvent WHERE id == :id
+        """
+    )
+
+    suspend fun deleteEvent(id: Long)
+
+    @Update
+    suspend fun setEventTime(workEventEntity: WorkEventEntity)
+
 }

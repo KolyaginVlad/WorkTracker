@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
-import ru.kolyagin.worktracker.ui.models.DayStartEvent
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.utils.toShortStringId
@@ -91,7 +91,7 @@ fun WorkTimer(
 @Composable
 fun EventList(
     modifier: Modifier,
-    events: ImmutableList<DayStartEvent>,
+    events: ImmutableList<WorkEvent>,
     contentColor: Color = MaterialTheme.colors.primary,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
     onClickDeleteMeal: () -> Unit,

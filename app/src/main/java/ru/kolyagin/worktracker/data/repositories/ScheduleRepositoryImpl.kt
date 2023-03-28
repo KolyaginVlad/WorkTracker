@@ -3,13 +3,19 @@ package ru.kolyagin.worktracker.data.repositories
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.map
 import ru.kolyagin.worktracker.data.database.dao.ScheduleDao
 import ru.kolyagin.worktracker.data.database.entities.DayScheduleEntity
+import ru.kolyagin.worktracker.data.database.entities.WorkEventEntity
 import ru.kolyagin.worktracker.data.database.entities.WorkPeriodEntity
 import ru.kolyagin.worktracker.data.database.entities.mapToDomain
 import ru.kolyagin.worktracker.domain.models.DayWorkInfo
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
@@ -18,21 +24,19 @@ import javax.inject.Inject
 class ScheduleRepositoryImpl @Inject constructor(
     private val scheduleDao: ScheduleDao
 ) : ScheduleRepository {
-    override fun schedule(): Flow<ImmutableList<DayWorkInfo>> =
-        combine(
-            scheduleDao.getDaySchedule(),
-            scheduleDao.getWorkPeriods()
-        ) { dayScheduleEntities: List<DayScheduleEntity>, workPeriodEntities: List<WorkPeriodEntity> ->
-            val groups = workPeriodEntities.groupBy { it.day }
-            dayScheduleEntities.map { scheduleEntity ->
-                DayWorkInfo(
-                    day = DayOfWeek.values()[scheduleEntity.day],
-                    periods = groups[scheduleEntity.day]?.map { it.mapToDomain() }
-                        ?.toImmutableList() ?: persistentListOf(),
-                    isDinnerInclude = scheduleEntity.isDinnerInclude
-                )
-            }.toImmutableList()
-        }
+    override fun schedule(): Flow<ImmutableList<DayWorkInfo>> = combine(
+        scheduleDao.getDaySchedule(), scheduleDao.getWorkPeriods()
+    ) { dayScheduleEntities: List<DayScheduleEntity>, workPeriodEntities: List<WorkPeriodEntity> ->
+        val groups = workPeriodEntities.groupBy { it.day }
+        dayScheduleEntities.map { scheduleEntity ->
+            DayWorkInfo(
+                day = DayOfWeek.values()[scheduleEntity.day],
+                periods = groups[scheduleEntity.day]?.map { it.mapToDomain() }?.toImmutableList()
+                    ?: persistentListOf(),
+                isDinnerInclude = scheduleEntity.isDinnerInclude
+            )
+        }.toImmutableList()
+    }
 
     override suspend fun addPeriod(dayOfWeek: DayOfWeek) {
         scheduleDao.addPeriod(dayOfWeek.ordinal)
@@ -43,15 +47,11 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun setTime(
-        workPeriod: WorkPeriod,
-        dayOfWeek: DayOfWeek
+        workPeriod: WorkPeriod, dayOfWeek: DayOfWeek
     ) {
         scheduleDao.setTime(
             WorkPeriodEntity(
-                workPeriod.id,
-                workPeriod.timeStart,
-                workPeriod.timeEnd,
-                dayOfWeek.ordinal
+                workPeriod.id, workPeriod.timeStart, workPeriod.timeEnd, dayOfWeek.ordinal
             )
         )
     }
@@ -59,4 +59,29 @@ class ScheduleRepositoryImpl @Inject constructor(
     override suspend fun setDinner(dayOfWeek: DayOfWeek, isDinnerInclude: Boolean) {
         scheduleDao.setDinner(dayOfWeek.ordinal, isDinnerInclude)
     }
+
+    override fun workEvents(): Flow<Map<Int, List<WorkEvent>>> =
+        scheduleDao.getWorkEvents().map { workEventEntities ->
+            val persistentEvents=workEventEntities.toPersistentList()
+            persistentEvents.groupBy({ it.day }) { it.mapToDomain() }
+        }
+
+    override suspend fun addWorkEvent(dayOfWeek: DayOfWeek) {
+        scheduleDao.addEvent(dayOfWeek.ordinal)
+    }
+
+    override suspend fun deleteWorkEvent(workEvent: WorkEvent) {
+        scheduleDao.deleteEvent(workEvent.id)
+    }
+
+    override suspend fun setWorkEventTime(
+        workEvent: WorkEvent, dayOfWeek: DayOfWeek
+    ) {
+        scheduleDao.setTime(
+            WorkPeriodEntity(
+                workEvent.id, workEvent.timeStart, workEvent.timeEnd, dayOfWeek.ordinal
+            )
+        )
+    }
+
 }
