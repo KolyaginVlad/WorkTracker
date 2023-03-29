@@ -26,7 +26,7 @@ interface ScheduleRepository {
         dayOfWeek: DayOfWeek, isDinnerInclude: Boolean
     )
 
-    suspend fun addWorkEvent(dayOfWeek: Int,name:String)
+    suspend fun addWorkEvent(dayOfWeek: Int,event: WorkEvent)
 
     suspend fun deleteWorkEvent(workEvent: WorkEvent)
 

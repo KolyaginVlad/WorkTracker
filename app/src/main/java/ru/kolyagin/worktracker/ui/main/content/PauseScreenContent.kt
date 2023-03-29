@@ -29,7 +29,7 @@ fun PauseScreenContent(
     state: CardState.Pause,
     onClickEndPause: () -> Unit,
     onClickEndWork: () -> Unit = {},
-    onClickDeleteEvent: () -> Unit = {},
+    onClickDeleteEvent: (WorkEvent) -> Unit = {},
     onAddPeriod: () -> Unit = {},
     onClickEvent: () -> Unit = {},
     onClickDeleteDay: () -> Unit = {}
@@ -65,7 +65,7 @@ fun PauseScreenContent(
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 12.dp),
             events = state.events,
-            onClickDeleteMeal = onClickDeleteEvent,
+            onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
             onClickEvent = onClickEvent,
             contentColor = MaterialTheme.colors.onSecondary,

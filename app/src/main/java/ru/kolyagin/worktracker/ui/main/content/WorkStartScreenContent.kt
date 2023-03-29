@@ -32,7 +32,7 @@ import ru.kolyagin.worktracker.utils.models.DayOfWeek
 fun WorkStartScreenContent(
     state: CardState.WorkStart,
     onClickStartWork: () -> Unit,
-    onClickDeleteEvent: () -> Unit = {},
+    onClickDeleteEvent: (WorkEvent) -> Unit = {},
     onAddPeriod: () -> Unit = {},
     onClickEvent: () -> Unit = {},
     onClickDeleteDay: () -> Unit = {}
@@ -80,7 +80,7 @@ fun WorkStartScreenContent(
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 12.dp),
             events = state.events,
-            onClickDeleteMeal = onClickDeleteEvent,
+            onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
             onClickEvent = onClickEvent,
             contentColor = textColor

@@ -31,9 +31,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 periods = groups[scheduleEntity.day]?.map { it.mapToDomain() }?.toImmutableList()
                     ?: persistentListOf(),
                 isDinnerInclude = scheduleEntity.isDinnerInclude,
-                events = (eventGroups[scheduleEntity.day]?.plus(
-                    eventGroups[-1] ?: listOf()
-                ))?.toImmutableList() ?: eventGroups[-1]?.toImmutableList() ?: persistentListOf()
+                events = eventGroups[scheduleEntity.day]?.toImmutableList() ?: persistentListOf()
             )
         }.toImmutableList()
     }
@@ -61,8 +59,18 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun addWorkEvent(dayOfWeek: Int, name: String) {
-        scheduleDao.addEvent(dayOfWeek, name)
+    override suspend fun addWorkEvent(dayOfWeek: Int, event: WorkEvent) {
+        if (dayOfWeek == -1) {
+            for (i in 0 until 6) scheduleDao.addEvent(
+                i,
+                event.name,
+                event.isLunch,
+                event.timeStart,
+                event.timeEnd
+            )
+
+        }
+        scheduleDao.addEvent(dayOfWeek, event.name, event.isLunch, event.timeStart, event.timeEnd)
     }
 
     override suspend fun deleteWorkEvent(workEvent: WorkEvent) {
@@ -72,7 +80,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     override suspend fun setWorkEventTime(
         workEvent: WorkEvent, dayOfWeek: Int
     ) {
-        scheduleDao.setEventTime(
+        scheduleDao.changeEvent(
             WorkEventEntity(
                 workEvent.id,
                 workEvent.name,

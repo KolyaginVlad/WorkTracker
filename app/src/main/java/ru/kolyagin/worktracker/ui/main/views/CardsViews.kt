@@ -15,6 +15,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -94,7 +95,7 @@ fun EventList(
     events: ImmutableList<WorkEvent>,
     contentColor: Color = MaterialTheme.colors.primary,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
-    onClickDeleteMeal: () -> Unit,
+    onClickDeleteEvent: (WorkEvent) -> Unit,
     onAddPeriod: () -> Unit,
     onClickEvent: () -> Unit,
 ) {
@@ -122,7 +123,7 @@ fun EventList(
                     Text(text = it.name)
                     Icon(
                         modifier = Modifier
-                            .clickable(onClick = onClickDeleteMeal)
+                            .clickable(onClick = remember(events) {{ onClickDeleteEvent(it)} })
                             .align(Alignment.CenterVertically)
                             .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
                         painter = painterResource(id = R.drawable.delete),

@@ -46,6 +46,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun init() {
+
         val listOfDays = DayOfWeek.values().toList()
         scheduleRepository.schedule().subscribe {
             timerJob?.cancel()
@@ -142,6 +143,11 @@ class MainViewModel @Inject constructor(
         //TODO Подсчитать не ушли ли мы на незапланированную\запланированную паузу во время обеда
     }
 
+    fun onClickDeleteEvent(workEvent: WorkEvent) {
+        launchViewModelScope {
+            scheduleRepository.deleteWorkEvent(workEvent)
+        }
+    }
 
     private fun getListOfTimeRangesStartWork(currentSchedule: DayWorkInfo): List<ClosedRange<Time>>? {
         val startWorkTime = currentSchedule.periods.minByOrNull { it.timeStart }?.timeStart

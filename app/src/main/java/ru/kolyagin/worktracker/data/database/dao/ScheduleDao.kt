@@ -78,6 +78,6 @@ interface ScheduleDao {
     suspend fun deleteEvent(id: Long)
 
     @Update
-    suspend fun setEventTime(workEventEntity: WorkEventEntity)
+    suspend fun changeEvent(workEventEntity: WorkEventEntity)
 
 }

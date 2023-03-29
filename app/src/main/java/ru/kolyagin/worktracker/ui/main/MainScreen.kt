@@ -104,29 +104,33 @@ fun MainScreen(
                 ) {
                     when (val currentState = it) {
                         is CardState.WorkStart -> WorkStartScreenContent(
-                            currentState,
-                            viewModel::onClickStartWork
+                            state = currentState,
+                            onClickStartWork = viewModel::onClickStartWork,
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent
                         )
 
                         is CardState.Dinnering -> DinneringScreenContent(
-                            currentState,
-                            viewModel::onClickReturnFromDinner
+                            state = currentState,
+                            onClickReturnFromDinner = viewModel::onClickReturnFromDinner,
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent
                         )
 
                         is CardState.Working -> WorkingScreenContent(
-                            currentState,
-                            viewModel::onClickStartPause,
-                            viewModel::onClickGoToDinner
+                            state = currentState,
+                            onClickStartPause = viewModel::onClickStartPause,
+                            onClickGoToDinner = viewModel::onClickGoToDinner,
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent
                         )
 
                         is CardState.Pause -> PauseScreenContent(
-                            currentState,
-                            viewModel::onClickEndPause
+                            state = currentState,
+                            onClickEndPause = viewModel::onClickEndPause,
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent
                         )
 
                         is CardState.WorkEnd -> WorkEndScreenContent(
-                            currentState,
-                            viewModel::onClickFinishWork
+                            state = currentState,
+                            onClickFinishWork = viewModel::onClickFinishWork,
                         )
 
                         is CardState.Results -> ResultsScreenContent(currentState)

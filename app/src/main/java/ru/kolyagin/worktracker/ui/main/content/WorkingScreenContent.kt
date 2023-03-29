@@ -28,7 +28,7 @@ fun WorkingScreenContent(
     onClickStartPause: () -> Unit,
     onClickGoToDinner: () -> Unit,
     onClickDeleteDay: () -> Unit = {},
-    onClickDeleteEvent: () -> Unit = {},
+    onClickDeleteEvent: (WorkEvent) -> Unit = {},
     onAddPeriod: () -> Unit = {},
     onClickEvent: () -> Unit = {},
     onClickEndWork: () -> Unit = {}
@@ -72,7 +72,7 @@ fun WorkingScreenContent(
                 .fillMaxWidth()
                 .padding(12.dp),
             events = state.events,
-            onClickDeleteMeal = onClickDeleteEvent,
+            onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
             onClickEvent = onClickEvent
         )
