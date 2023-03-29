@@ -26,10 +26,9 @@ class MainViewModel @Inject constructor(
     private val scheduleRepository: ScheduleRepository,
     private val preferenceRepository: PreferenceRepository
 ) : BaseViewModel<MainScreenState, MainEvent>(MainScreenState()) {
-
     private var timerJob: Job? = null
     private var schedule: DayWorkInfo? = null
-    private var events: Map<Int, List<WorkEvent>> = mapOf() // TODO:
+    private var events: Map<Int, List<WorkEvent>> = mapOf()
 
     init {
         updateState {
@@ -53,11 +52,13 @@ class MainViewModel @Inject constructor(
             timerJob = launchViewModelScope {
                 val currentDay = LocalDate.now().dayOfWeek.ordinal.takeUnless { it == 6 } ?: 0
                 schedule = it.getOrNull(LocalDate.now().dayOfWeek.ordinal)
-                events = it.map { Pair(it.day.ordinal, it.events) }.toMap()
+                events = it.associate { Pair(it.day.ordinal, it.events) }
+                println(events)
                 val startWorkRanges =
                     schedule?.let { schedule -> getListOfTimeRangesStartWork(schedule) }
                 val workingRanges =
                     schedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
+                val currentEvents = events[currentDay]?.toPersistentList() ?: persistentListOf()
 
                 while (timerJob?.isCancelled != true) {
                     val currentTime = LocalTime.now()
@@ -70,17 +71,19 @@ class MainViewModel @Inject constructor(
                             listOfDays[currentDay],
                             schedule?.totalTime, //TODO убрать и заменить внутри функции на выборку статистики из репозитория
                             currentTime,
-                            schedule?.events?.toPersistentList() ?: persistentListOf()
+                            currentEvents
                         )
+                        listOf(1, 1, 1) + listOf(1, 1)
                         val daysWithOutCurrent = (listOfDays.subList(
                             currentDay + 1, listOfDays.size
                         ) + listOfDays.subList(0, currentDay)).map { day ->
+                            val dayEvent =
+                                events[day.ordinal]?.toPersistentList() ?: persistentListOf()
                             CardState.WorkStart(
                                 day = day,
                                 buttonActive = false,
                                 buttonStartEarly = true,
-                                events = (events[day.ordinal])?.toPersistentList()
-                                    ?: persistentListOf(),
+                                events = dayEvent,
                                 time = null
                             )
                         }
@@ -165,6 +168,7 @@ class MainViewModel @Inject constructor(
         val currentTime = LocalTime.now()
         val time = Time(currentTime.hour, currentTime.minute)
         val listOfDays = DayOfWeek.values().toList()
+        val currentEvents = events[currentDay]?.toPersistentList() ?: persistentListOf()
         updateState { state ->
             val currentState = getCurrentState(
                 startWorkRanges,
@@ -173,16 +177,18 @@ class MainViewModel @Inject constructor(
                 listOfDays[currentDay],
                 schedule?.totalTime, //TODO убрать и заменить внутри функции на выборку статистики из репозитория
                 currentTime,
-                schedule?.events?.toPersistentList() ?: persistentListOf()
+                currentEvents
             )
             val daysWithOutCurrent = (listOfDays.subList(
                 currentDay + 1, listOfDays.size
             ) + listOfDays.subList(0, currentDay)).map { day ->
+
+                val dayEvent = events[day.ordinal]?.toPersistentList() ?: persistentListOf()
                 CardState.WorkStart(
                     day = day,
                     buttonActive = false,
                     buttonStartEarly = true,
-                    events = (events[day.ordinal])?.toPersistentList() ?: persistentListOf(),
+                    events = dayEvent,
                     time = null
                 )
             }

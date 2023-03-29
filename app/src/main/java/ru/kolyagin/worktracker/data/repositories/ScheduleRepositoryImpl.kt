@@ -31,7 +31,9 @@ class ScheduleRepositoryImpl @Inject constructor(
                 periods = groups[scheduleEntity.day]?.map { it.mapToDomain() }?.toImmutableList()
                     ?: persistentListOf(),
                 isDinnerInclude = scheduleEntity.isDinnerInclude,
-                events = eventGroups[scheduleEntity.day]?.toImmutableList() ?: persistentListOf()
+                events = (eventGroups[scheduleEntity.day]?.plus(
+                    eventGroups[-1] ?: listOf()
+                ))?.toImmutableList() ?: eventGroups[-1]?.toImmutableList() ?: persistentListOf()
             )
         }.toImmutableList()
     }
