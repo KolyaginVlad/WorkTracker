@@ -184,7 +184,7 @@ class MainViewModel @Inject constructor(
 
     fun onClickAddEvent(day: Int) {
         selectedDayOfWeek = day
-        trySendEvent(MainEvent.AddTimeStart)
+        trySendEvent(MainEvent.AddEventTime)
     }
 
     fun onTimePicked(time: Time) {
@@ -193,7 +193,6 @@ class MainViewModel @Inject constructor(
                 addingEvent.let {
                     if (enteringTimeStart) {
                         addingEvent = it.copy(timeStart = time)
-                        trySendEvent(MainEvent.AddTimeEnd)
                     } else {
                         addingEvent = it.copy(timeEnd = time)
                         scheduleRepository.addWorkEvent(dayOfWeek,it)

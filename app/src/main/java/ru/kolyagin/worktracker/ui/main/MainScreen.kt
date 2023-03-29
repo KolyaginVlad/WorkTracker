@@ -59,15 +59,21 @@ fun MainScreen(
                 is MainEvent.OpenSettings -> {
                     navigator.navigate(SettingsScreenDestination.route)
                 }
-                is MainEvent.AddTimeStart->{
+                is MainEvent.AddEventTime->{
                     TimePickerDialog(
                         context,
                         { _, hour: Int, minute: Int ->
                             viewModel.onTimePicked(Time(hour, minute))
                         }, 13, 0, true
                     ).show()
+                    TimePickerDialog(
+                        context,
+                        { _, hour: Int, minute: Int ->
+                            viewModel.onTimePicked(Time(hour, minute))
+                        },14, 0, true
+                    ).show()
                 }
-                is MainEvent.AddTimeEnd->{
+                is MainEvent.ChangeEventTime->{
                     TimePickerDialog(
                         context,
                         { _, hour: Int, minute: Int ->

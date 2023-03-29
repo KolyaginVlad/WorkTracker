@@ -29,19 +29,8 @@ class ScheduleRepositoryImpl @Inject constructor(
         val groups = workPeriodEntities.groupBy { it.day }
         val eventGroups = events.groupBy({ it.day }) { it.mapToDomain() }
         dayScheduleEntities.map { scheduleEntity ->
-            val eventsList: ImmutableList<WorkEvent> = if (scheduleEntity.isDinnerInclude) {
-                val dinner = WorkEvent(
-                    id = 0,
-                    timeStart = Time(DINNER_HOURS, DINNER_MINUTES),
-                    timeEnd = Time(DINNER_HOURS + 1, DINNER_MINUTES),
-                    name = "dinner",
-                    isDinner = true
-                )
-                (eventGroups[scheduleEntity.day]?.plus(listOf(dinner)))?.toImmutableList()
+            val eventsList= eventGroups[scheduleEntity.day]?.toImmutableList()
                     ?: persistentListOf()
-            } else {
-                eventGroups[scheduleEntity.day]?.toImmutableList() ?: persistentListOf()
-            }
 
             DayWorkInfo(
                 day = DayOfWeek.values()[scheduleEntity.day],
