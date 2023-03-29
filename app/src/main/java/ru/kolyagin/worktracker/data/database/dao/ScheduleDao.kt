@@ -61,12 +61,12 @@ interface ScheduleDao {
 
     @Query(
         """
-             INSERT INTO WorkEvent (timeStart, timeEnd, day) VALUES (:timeStart, :timeEnd, :day)
+             INSERT INTO WorkEvent (timeStart, timeEnd, day,name,isLunch) VALUES (:timeStart, :timeEnd, :day,:name,:isLunch)
         """
     )
 
     suspend fun addEvent(
-        day: Int, timeStart: Time = Time(8, 0), timeEnd: Time = Time(17, 0)
+        day: Int, name: String,isLunch:Boolean=false, timeStart: Time = Time(8, 0), timeEnd: Time = Time(17, 0)
     )
 
     @Query(

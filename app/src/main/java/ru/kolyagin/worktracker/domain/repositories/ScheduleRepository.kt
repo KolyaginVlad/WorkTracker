@@ -26,11 +26,9 @@ interface ScheduleRepository {
         dayOfWeek: DayOfWeek, isDinnerInclude: Boolean
     )
 
-    fun workEvents(): Flow<Map<Int, List<WorkEvent>>>
-
-    suspend fun addWorkEvent(dayOfWeek: DayOfWeek)
+    suspend fun addWorkEvent(dayOfWeek: Int,name:String)
 
     suspend fun deleteWorkEvent(workEvent: WorkEvent)
 
-    suspend fun setWorkEventTime( workEvent: WorkEvent, dayOfWeek: DayOfWeek)
+    suspend fun setWorkEventTime( workEvent: WorkEvent, dayOfWeek: Int)
 }

@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.WorkEvent
-import ru.kolyagin.worktracker.domain.models.WorkPeriod
 
 @Entity("WorkEvent")
 data class WorkEventEntity(
@@ -26,7 +25,7 @@ data class WorkEventEntity(
     @ColumnInfo("day")
     val day: Int,
 
-    @ColumnInfo("timeStart")
+    @ColumnInfo("isLunch")
     val isLunch: Boolean,
 )
 fun WorkEventEntity.mapToDomain() =

@@ -1,12 +1,14 @@
 package ru.kolyagin.worktracker.domain.models
 
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 
 data class DayWorkInfo(
     val day: DayOfWeek,
     val periods: ImmutableList<WorkPeriod>,
-    val isDinnerInclude: Boolean
+    val isDinnerInclude: Boolean,
+    val events: ImmutableList<WorkEvent> = persistentListOf()
 ) {
     val totalTime = (
             periods
