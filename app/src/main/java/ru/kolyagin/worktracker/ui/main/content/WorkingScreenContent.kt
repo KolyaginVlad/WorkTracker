@@ -20,7 +20,7 @@ import ru.kolyagin.worktracker.ui.main.views.HeaderDay
 import ru.kolyagin.worktracker.ui.main.views.WorkTimer
 import ru.kolyagin.worktracker.ui.models.DayStartEvent
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 
 @Composable
 fun WorkingScreenContent(
@@ -33,7 +33,7 @@ fun WorkingScreenContent(
     onClickEvent: () -> Unit = {},
     onClickEndWork: () -> Unit = {}
 ) {
-    Column {
+    Column(modifier = Modifier.padding(bottom = 12.dp)) {
         HeaderDay(
             modifier = Modifier
                 .fillMaxWidth()
@@ -94,7 +94,7 @@ private fun WorkingScreenPrev() {
     WorkTrackerTheme {
         WorkingScreenContent(
             state = CardState.Working(
-                day = DayOfWeek.Saturday,
+                day = DayOfWeek.SATURDAY,
                 events = persistentListOf(
                     DayStartEvent(
                         id = 0,

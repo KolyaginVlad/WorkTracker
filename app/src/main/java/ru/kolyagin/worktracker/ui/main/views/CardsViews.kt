@@ -29,7 +29,7 @@ import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.utils.toShortStringId
 import ru.kolyagin.worktracker.ui.views.Timer
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 
 @Composable
 fun HeaderDay(

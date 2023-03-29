@@ -6,7 +6,7 @@ import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 import javax.inject.Inject
 
 @HiltViewModel

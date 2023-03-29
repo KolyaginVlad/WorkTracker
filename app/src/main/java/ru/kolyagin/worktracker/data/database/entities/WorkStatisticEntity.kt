@@ -4,11 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
+import ru.kolyagin.worktracker.domain.models.WorkStatistic
 
 @Entity("WorkStatistic")
 data class WorkStatisticEntity(
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo("id")
     val id: Long,
 
@@ -30,3 +31,10 @@ data class WorkStatisticEntity(
     @ColumnInfo("unplannedPauseTime")
     val unplannedPauseTime: TimeWithSeconds
 )
+
+fun WorkStatisticEntity.mapToDomain() =
+    WorkStatistic(
+        workTime = workTime,
+        plannedPauseTime = plannedPauseTime,
+        unplannedPauseTime = unplannedPauseTime
+    )

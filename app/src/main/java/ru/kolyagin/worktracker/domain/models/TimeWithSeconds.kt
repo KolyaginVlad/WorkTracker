@@ -22,6 +22,21 @@ class TimeWithSeconds(val hours: Int, val minutes: Int, val seconds: Int) :
         return "$hours:${"%02d".format(minutes)}:${"%02d".format(seconds)}"
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (this === other) return true
+        if (other !is TimeWithSeconds) return false
+        return hours == other.hours && minutes == other.minutes && seconds == other.seconds
+    }
+
+    override fun hashCode(): Int {
+        var result = hours
+        result = 31 * result + minutes
+        result = 31 * result + seconds
+        return result
+    }
+
+
     companion object {
         fun fromSeconds(seconds: Long): TimeWithSeconds {
             val hours = seconds / (60 * 60)

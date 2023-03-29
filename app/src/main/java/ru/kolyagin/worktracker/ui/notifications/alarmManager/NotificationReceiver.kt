@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import ru.kolyagin.worktracker.R
+import ru.kolyagin.worktracker.domain.models.WorkState
+import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.ui.MainActivity
 import ru.kolyagin.worktracker.ui.notifications.Notification
 import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
@@ -23,8 +25,15 @@ class NotificationReceiver @Inject constructor(
     @Inject
     lateinit var notificationManager: NotificationsManager
 
+    @Inject
+    lateinit var preferencesRepository: PreferenceRepository
+
     override fun onReceive(context: Context, intent: Intent) {
         notificationManager.rescheduleNotifications()
+        if (intent.action == Constants.FIX_STATE_ACTION) {
+            preferencesRepository.currentWorkState = WorkState.NotWorking
+            preferencesRepository.isDinnerEnableToday = true
+        }
         val notificationIntent =
             Intent(context.applicationContext, MainActivity::class.java).apply {
                 flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)

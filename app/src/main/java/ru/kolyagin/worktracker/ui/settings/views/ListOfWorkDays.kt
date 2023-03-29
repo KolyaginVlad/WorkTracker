@@ -39,7 +39,7 @@ import ru.kolyagin.worktracker.ui.theme.Secondary
 import ru.kolyagin.worktracker.ui.theme.SurfaceDisabled
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.utils.toStringId
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 
 @Composable
 fun ListOfWorkDays(
@@ -212,7 +212,7 @@ private fun ListOfDaysPrev() {
         ListOfWorkDays(
             listOfWorkPeriods = persistentListOf(
                 DayWorkInfo(
-                    DayOfWeek.Monday,
+                    DayOfWeek.MONDAY,
                     persistentListOf(
                         WorkPeriod(
                             1,
@@ -223,7 +223,7 @@ private fun ListOfDaysPrev() {
                     true
                 ),
                 DayWorkInfo(
-                    DayOfWeek.Tuesday,
+                    DayOfWeek.TUESDAY,
                     persistentListOf(
                         WorkPeriod(2,
                             Time(8, 0),
@@ -238,7 +238,7 @@ private fun ListOfDaysPrev() {
                     false
                 ),
                 DayWorkInfo(
-                    DayOfWeek.Wednesday,
+                    DayOfWeek.WEDNESDAY,
                     persistentListOf(
                         WorkPeriod(
                             4,
@@ -254,7 +254,7 @@ private fun ListOfDaysPrev() {
                     false
                 ),
                 DayWorkInfo(
-                    DayOfWeek.Thursday,
+                    DayOfWeek.THURSDAY,
                     persistentListOf(
                         WorkPeriod(
                             6,
@@ -270,7 +270,7 @@ private fun ListOfDaysPrev() {
                     false
                 ),
                 DayWorkInfo(
-                    DayOfWeek.Friday,
+                    DayOfWeek.FRIDAY,
                     persistentListOf(
                         WorkPeriod(
                             8,
@@ -281,7 +281,7 @@ private fun ListOfDaysPrev() {
                     true
                 ),
                 DayWorkInfo(
-                    DayOfWeek.Saturday,
+                    DayOfWeek.SATURDAY,
                     persistentListOf(
                         WorkPeriod(
                             9,

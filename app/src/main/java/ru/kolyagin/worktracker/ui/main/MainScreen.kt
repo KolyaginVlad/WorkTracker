@@ -34,7 +34,6 @@ import ru.kolyagin.worktracker.ui.destinations.SettingsScreenDestination
 import ru.kolyagin.worktracker.ui.main.content.DinneringScreenContent
 import ru.kolyagin.worktracker.ui.main.content.PauseScreenContent
 import ru.kolyagin.worktracker.ui.main.content.ResultsScreenContent
-import ru.kolyagin.worktracker.ui.main.content.WorkEndScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkStartScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkingScreenContent
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
@@ -122,11 +121,6 @@ fun MainScreen(
                         is CardState.Pause -> PauseScreenContent(
                             currentState,
                             viewModel::onClickEndPause
-                        )
-
-                        is CardState.WorkEnd -> WorkEndScreenContent(
-                            currentState,
-                            viewModel::onClickFinishWork
                         )
 
                         is CardState.Results -> ResultsScreenContent(currentState)

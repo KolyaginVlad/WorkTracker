@@ -149,6 +149,19 @@ class AlarmNotificationsManager @Inject constructor(
         }
     }
 
+    override fun scheduleFixStateNotification() {
+        DayOfWeek.values().forEach {
+            scheduleAlarm(
+                it.ordinal,
+                Constants.FIX_STATE_CONST,
+                Time(23,59)
+            ) {
+                action = Constants.FIX_STATE_ACTION
+                putExtra(Constants.DESCRIPTION, R.string.fix_your_state)
+            }
+        }
+    }
+
     override fun scheduleDinnerNotification() {
         scope.launch {
             val time = Time(
@@ -178,6 +191,8 @@ class AlarmNotificationsManager @Inject constructor(
         schedulePreWorkNotification()
         scheduleEveningNotification()
         scheduleFinWorkNotification()
+
+        scheduleFixStateNotification()
     }
 
     private fun scheduleAlarm(

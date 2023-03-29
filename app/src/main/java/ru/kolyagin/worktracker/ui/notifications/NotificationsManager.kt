@@ -14,4 +14,6 @@ interface NotificationsManager {
 
     fun scheduleFinWorkNotification()
 
+    fun scheduleFixStateNotification()
+
 }

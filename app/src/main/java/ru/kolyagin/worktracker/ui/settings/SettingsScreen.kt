@@ -35,7 +35,7 @@ import ru.kolyagin.worktracker.ui.settings.views.ListOfWorkDays
 import ru.kolyagin.worktracker.ui.settings.views.TotalScheduleInfo
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.views.Spacer
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 
 @Destination
 @Composable

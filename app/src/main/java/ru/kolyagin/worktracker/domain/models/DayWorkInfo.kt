@@ -1,7 +1,7 @@
 package ru.kolyagin.worktracker.domain.models
 
 import kotlinx.collections.immutable.ImmutableList
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 
 data class DayWorkInfo(
     val day: DayOfWeek,

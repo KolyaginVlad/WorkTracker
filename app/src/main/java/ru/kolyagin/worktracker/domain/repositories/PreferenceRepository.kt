@@ -6,4 +6,5 @@ import ru.kolyagin.worktracker.domain.models.WorkState
 interface PreferenceRepository {
     var currentWorkState: WorkState
     val timeOfCurrentStateSet: TimeWithSeconds
+    var isDinnerEnableToday: Boolean
 }

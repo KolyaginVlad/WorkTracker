@@ -1,8 +1,12 @@
 package ru.kolyagin.worktracker.utils
 
 object Constants {
+    const val FIX_STATE_ACTION = "ru.kolyagin.worktracker.fix_state_action"
+    const val FIX_STATE_CONST = 100
+
     const val DESCRIPTION = "DESCRIPTION"
     const val NOTIFICATION_SCOPE = "NOTIFICATION_SCOPE"
+    const val DATA_SCOPE = "DATA_SCOPE"
 
     const val MORNING_CONST = 0
     const val MORNING_HOURS_LIMIT = 11
