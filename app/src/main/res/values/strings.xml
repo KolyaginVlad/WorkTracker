@@ -41,6 +41,7 @@
     <string name="finish_work">FINISH WORK</string>
     <string name="time_pause">time pause</string>
 
+
     <plurals name="hoursL">
         <item quantity="one">%d hour</item>
         <item quantity="few">%d hours</item>

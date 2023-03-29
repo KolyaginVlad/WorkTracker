@@ -30,6 +30,18 @@ class MainViewModel @Inject constructor(
     private var schedule: DayWorkInfo? = null
     private var events: Map<Int, List<WorkEvent>> = mapOf()
 
+    private var selectedDayOfWeek: Int? = null
+    private var selectedWorkPeriod: WorkEvent? = null
+    private var addingEvent: WorkEvent = WorkEvent(
+        id = 0,
+        timeStart = Time(13, 0),
+        timeEnd = Time(14, 0),
+        name = "перерыв",
+        isDinner = false
+    )
+    private var enteringTimeStart: Boolean = true
+
+
     init {
         updateState {
             val listOfDays = DayOfWeek.values().toList()
@@ -45,8 +57,29 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun init() {
+    fun init() {/* launchViewModelScope {
+             scheduleRepository.addWorkEvent(
+                 -1,
+                 WorkEvent(
+                     id = 0,
+                     timeStart = Time(0, 10),
+                     timeEnd = Time(10, 1),
+                     name = "HIHIHIIHIHIHHI",
+                     isDinner = false
+                 )
+             )
+             scheduleRepository.addWorkEvent(
+                 1,
+                 WorkEvent(
+                     id = 0,
+                     timeStart = Time(24, 10),
+                     timeEnd = Time(10, 1),
+                     name = "LALALALALA",
+                     isDinner = false
+                 )
+             )
 
+         }//Test*/
         val listOfDays = DayOfWeek.values().toList()
         scheduleRepository.schedule().subscribe {
             timerJob?.cancel()
@@ -146,6 +179,28 @@ class MainViewModel @Inject constructor(
     fun onClickDeleteEvent(workEvent: WorkEvent) {
         launchViewModelScope {
             scheduleRepository.deleteWorkEvent(workEvent)
+        }
+    }
+
+    fun onClickAddEvent(day: Int) {
+        selectedDayOfWeek = day
+        trySendEvent(MainEvent.AddTimeStart)
+    }
+
+    fun onTimePicked(time: Time) {
+        selectedDayOfWeek?.let { dayOfWeek ->
+            launchViewModelScope {
+                addingEvent.let {
+                    if (enteringTimeStart) {
+                        addingEvent = it.copy(timeStart = time)
+                        trySendEvent(MainEvent.AddTimeEnd)
+                    } else {
+                        addingEvent = it.copy(timeEnd = time)
+                        scheduleRepository.addWorkEvent(dayOfWeek,it)
+                    }
+                }
+                enteringTimeStart = !enteringTimeStart
+            }
         }
     }
 
@@ -325,35 +380,32 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getStateForEndWork(
-        currentDayOfWeek: DayOfWeek,
-        totalTime: Time,
-        workEvents: PersistentList<WorkEvent>
-    ) =
-        when (preferenceRepository.currentWorkState) {
-            WorkState.NotWorking -> {
-                CardState.Results(currentDayOfWeek, totalTime)
-            }
-
-            WorkState.Working -> {
-                CardState.Working(
-                    day = currentDayOfWeek,
-                    events = workEvents,
-                    time = totalTime.toTimeWithSeconds(),
-                    overwork = true
-                )
-                // переработка
-            }
-
-            WorkState.Dinner -> {
-                CardState.Dinnering(
-                    currentDayOfWeek, workEvents, TimeWithSeconds.fromSeconds(0)
-                ) //TODO Приписать логику
-            }
-
-            WorkState.Pause -> {
-                CardState.Pause(
-                    currentDayOfWeek, workEvents, TimeWithSeconds.fromSeconds(0)
-                ) //TODO Приписать логику
-            }
+        currentDayOfWeek: DayOfWeek, totalTime: Time, workEvents: PersistentList<WorkEvent>
+    ) = when (preferenceRepository.currentWorkState) {
+        WorkState.NotWorking -> {
+            CardState.Results(currentDayOfWeek, totalTime)
         }
+
+        WorkState.Working -> {
+            CardState.Working(
+                day = currentDayOfWeek,
+                events = workEvents,
+                time = totalTime.toTimeWithSeconds(),
+                overwork = true
+            )
+            // переработка
+        }
+
+        WorkState.Dinner -> {
+            CardState.Dinnering(
+                currentDayOfWeek, workEvents, TimeWithSeconds.fromSeconds(0)
+            ) //TODO Приписать логику
+        }
+
+        WorkState.Pause -> {
+            CardState.Pause(
+                currentDayOfWeek, workEvents, TimeWithSeconds.fromSeconds(0)
+            ) //TODO Приписать логику
+        }
+    }
 }

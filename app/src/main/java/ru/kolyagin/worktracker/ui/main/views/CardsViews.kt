@@ -93,10 +93,11 @@ fun WorkTimer(
 fun EventList(
     modifier: Modifier,
     events: ImmutableList<WorkEvent>,
+    day: Int,
     contentColor: Color = MaterialTheme.colors.primary,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
     onClickDeleteEvent: (WorkEvent) -> Unit,
-    onAddPeriod: () -> Unit,
+    onAddPeriod: (Int) -> Unit,
     onClickEvent: () -> Unit,
 ) {
     Column(
@@ -120,10 +121,10 @@ fun EventList(
                         text = it.timeStart.toString() + "-" + it.timeEnd.toString(),
                         modifier = Modifier.weight(1F),
                     )
-                    Text(text = it.name)
+                    Text(text = if (it.name == "dinner") stringResource(id = R.string.dinner) else it.name)
                     Icon(
                         modifier = Modifier
-                            .clickable(onClick = remember(events) {{ onClickDeleteEvent(it)} })
+                            .clickable(onClick = remember(events) { { onClickDeleteEvent(it) } })
                             .align(Alignment.CenterVertically)
                             .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
                         painter = painterResource(id = R.drawable.delete),
@@ -137,7 +138,7 @@ fun EventList(
             border = BorderStroke(2.dp, contentColor),
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedButtonShapes.medium,
-            onClick = onAddPeriod,
+            onClick = { onAddPeriod(day) },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = backgroundColor,
                 contentColor = contentColor

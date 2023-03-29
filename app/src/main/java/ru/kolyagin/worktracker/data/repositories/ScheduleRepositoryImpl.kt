@@ -11,9 +11,12 @@ import ru.kolyagin.worktracker.data.database.entities.WorkEventEntity
 import ru.kolyagin.worktracker.data.database.entities.WorkPeriodEntity
 import ru.kolyagin.worktracker.data.database.entities.mapToDomain
 import ru.kolyagin.worktracker.domain.models.DayWorkInfo
+import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
+import ru.kolyagin.worktracker.utils.Constants.DINNER_HOURS
+import ru.kolyagin.worktracker.utils.Constants.DINNER_MINUTES
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 import javax.inject.Inject
 
@@ -26,12 +29,26 @@ class ScheduleRepositoryImpl @Inject constructor(
         val groups = workPeriodEntities.groupBy { it.day }
         val eventGroups = events.groupBy({ it.day }) { it.mapToDomain() }
         dayScheduleEntities.map { scheduleEntity ->
+            val eventsList: ImmutableList<WorkEvent> = if (scheduleEntity.isDinnerInclude) {
+                val dinner = WorkEvent(
+                    id = 0,
+                    timeStart = Time(DINNER_HOURS, DINNER_MINUTES),
+                    timeEnd = Time(DINNER_HOURS + 1, DINNER_MINUTES),
+                    name = "dinner",
+                    isDinner = true
+                )
+                (eventGroups[scheduleEntity.day]?.plus(listOf(dinner)))?.toImmutableList()
+                    ?: persistentListOf()
+            } else {
+                eventGroups[scheduleEntity.day]?.toImmutableList() ?: persistentListOf()
+            }
+
             DayWorkInfo(
                 day = DayOfWeek.values()[scheduleEntity.day],
                 periods = groups[scheduleEntity.day]?.map { it.mapToDomain() }?.toImmutableList()
                     ?: persistentListOf(),
                 isDinnerInclude = scheduleEntity.isDinnerInclude,
-                events = eventGroups[scheduleEntity.day]?.toImmutableList() ?: persistentListOf()
+                events = eventsList
             )
         }.toImmutableList()
     }
@@ -64,13 +81,13 @@ class ScheduleRepositoryImpl @Inject constructor(
             for (i in 0 until 6) scheduleDao.addEvent(
                 i,
                 event.name,
-                event.isLunch,
+                event.isDinner,
                 event.timeStart,
                 event.timeEnd
             )
 
         }
-        scheduleDao.addEvent(dayOfWeek, event.name, event.isLunch, event.timeStart, event.timeEnd)
+        scheduleDao.addEvent(dayOfWeek, event.name, event.isDinner, event.timeStart, event.timeEnd)
     }
 
     override suspend fun deleteWorkEvent(workEvent: WorkEvent) {
@@ -87,7 +104,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 workEvent.timeStart,
                 workEvent.timeEnd,
                 dayOfWeek,
-                workEvent.isLunch
+                workEvent.isDinner
             )
         )
     }

@@ -29,7 +29,7 @@ fun WorkingScreenContent(
     onClickGoToDinner: () -> Unit,
     onClickDeleteDay: () -> Unit = {},
     onClickDeleteEvent: (WorkEvent) -> Unit = {},
-    onAddPeriod: () -> Unit = {},
+    onAddPeriod: (Int) -> Unit = {},
     onClickEvent: () -> Unit = {},
     onClickEndWork: () -> Unit = {}
 ) {
@@ -74,6 +74,7 @@ fun WorkingScreenContent(
             events = state.events,
             onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
+            day = state.day.ordinal,
             onClickEvent = onClickEvent
         )
         Button(

@@ -33,7 +33,7 @@ fun WorkStartScreenContent(
     state: CardState.WorkStart,
     onClickStartWork: () -> Unit,
     onClickDeleteEvent: (WorkEvent) -> Unit = {},
-    onAddPeriod: () -> Unit = {},
+    onAddPeriod: (Int) -> Unit = {},
     onClickEvent: () -> Unit = {},
     onClickDeleteDay: () -> Unit = {}
 ) {
@@ -83,6 +83,7 @@ fun WorkStartScreenContent(
             onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
             onClickEvent = onClickEvent,
+            day = state.day.ordinal,
             contentColor = textColor
         )
     }

@@ -30,7 +30,7 @@ fun DinneringScreenContent(
     onClickReturnFromDinner: () -> Unit,
     onClickEndWork: () -> Unit = {},
     onClickDeleteEvent: (WorkEvent) -> Unit = {},
-    onAddPeriod: () -> Unit = {},
+    onAddPeriod: (Int) -> Unit = {},
     onClickEvent: () -> Unit = {},
     onClickDeleteDay: () -> Unit = {}
 ) {
@@ -67,6 +67,7 @@ fun DinneringScreenContent(
             events = state.events,
             onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
+            day = state.day.ordinal,
             onClickEvent = onClickEvent,
             contentColor = MaterialTheme.colors.onSecondary,
             backgroundColor = MaterialTheme.colors.secondary

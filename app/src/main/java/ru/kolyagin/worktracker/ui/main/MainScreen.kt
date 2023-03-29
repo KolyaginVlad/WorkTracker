@@ -1,5 +1,6 @@
 package ru.kolyagin.worktracker.ui.main
 
+import android.app.TimePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,6 +32,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ru.kolyagin.worktracker.R
+import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.ui.destinations.SettingsScreenDestination
 import ru.kolyagin.worktracker.ui.main.content.DinneringScreenContent
 import ru.kolyagin.worktracker.ui.main.content.PauseScreenContent
@@ -48,12 +51,29 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val context= LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.init()
         viewModel.event.collect {
             when (it) {
                 is MainEvent.OpenSettings -> {
                     navigator.navigate(SettingsScreenDestination.route)
+                }
+                is MainEvent.AddTimeStart->{
+                    TimePickerDialog(
+                        context,
+                        { _, hour: Int, minute: Int ->
+                            viewModel.onTimePicked(Time(hour, minute))
+                        }, 13, 0, true
+                    ).show()
+                }
+                is MainEvent.AddTimeEnd->{
+                    TimePickerDialog(
+                        context,
+                        { _, hour: Int, minute: Int ->
+                            viewModel.onTimePicked(Time(hour, minute))
+                        },14, 0, true
+                    ).show()
                 }
             }
         }
@@ -106,7 +126,8 @@ fun MainScreen(
                         is CardState.WorkStart -> WorkStartScreenContent(
                             state = currentState,
                             onClickStartWork = viewModel::onClickStartWork,
-                            onClickDeleteEvent = viewModel::onClickDeleteEvent
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                            onAddPeriod = viewModel::onClickAddEvent
                         )
 
                         is CardState.Dinnering -> DinneringScreenContent(

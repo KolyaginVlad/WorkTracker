@@ -34,5 +34,5 @@ fun WorkEventEntity.mapToDomain() =
         timeStart = timeStart,
         timeEnd = timeEnd,
         name = name,
-        isLunch=isLunch
+        isDinner=isLunch
     )
