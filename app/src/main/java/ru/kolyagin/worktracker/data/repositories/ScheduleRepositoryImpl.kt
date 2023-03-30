@@ -11,12 +11,9 @@ import ru.kolyagin.worktracker.data.database.entities.WorkEventEntity
 import ru.kolyagin.worktracker.data.database.entities.WorkPeriodEntity
 import ru.kolyagin.worktracker.data.database.entities.mapToDomain
 import ru.kolyagin.worktracker.domain.models.DayWorkInfo
-import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
-import ru.kolyagin.worktracker.utils.Constants.DINNER_HOURS
-import ru.kolyagin.worktracker.utils.Constants.DINNER_MINUTES
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 import javax.inject.Inject
 
@@ -29,15 +26,6 @@ class ScheduleRepositoryImpl @Inject constructor(
         val groups = workPeriodEntities.groupBy { it.day }
         val eventGroups = events.groupBy({ it.day }) { it.mapToDomain() }
         dayScheduleEntities.map { scheduleEntity ->
-            if (scheduleEntity.isDinnerInclude) {
-                val dinner = WorkEvent(
-                    id = 0,
-                    timeStart = Time(DINNER_HOURS, DINNER_MINUTES),
-                    timeEnd = Time(DINNER_HOURS + 1, DINNER_MINUTES),
-                    name = "dinner",
-                    isDinner = true
-                )
-            }
             val eventsList = eventGroups[scheduleEntity.day]?.toImmutableList()
                 ?: persistentListOf()
 
@@ -88,7 +76,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteWorkEvent(workEvent: WorkEvent) {
-       scheduleDao.deleteEvent(workEvent.id)
+        scheduleDao.deleteEvent(workEvent.id)
     }
 
     override suspend fun deleteDinner(dayOfWeek: Int) {
