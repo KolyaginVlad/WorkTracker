@@ -40,6 +40,7 @@ import ru.kolyagin.worktracker.ui.main.content.ResultsScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkEndScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkStartScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkingScreenContent
+import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
 import ru.kolyagin.worktracker.ui.views.TopBar
 
@@ -64,14 +65,14 @@ fun MainScreen(
                     TimePickerDialog(
                         context,
                         { _, hour: Int, minute: Int ->
-                            viewModel.onTimePicked(Time(hour, minute))
-                        }, 13, 0, true
+                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.END)
+                        }, 14, 0, true
                     ).show()
                     TimePickerDialog(
                         context,
                         { _, hour: Int, minute: Int ->
-                            viewModel.onTimePicked(Time(hour, minute))
-                        }, 14, 0, true
+                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.START)
+                        }, 12, 0, true
                     ).show()
                 }
 
@@ -79,14 +80,14 @@ fun MainScreen(
                     TimePickerDialog(
                         context,
                         { _, hour: Int, minute: Int ->
-                            viewModel.onTimeChanging(Time(hour, minute))
-                        }, it.timeStart.hours, it.timeStart.minutes, true
+                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.END)
+                        }, it.timeEnd.hours, it.timeEnd.minutes, true
                     ).show()
                     TimePickerDialog(
                         context,
                         { _, hour: Int, minute: Int ->
-                            viewModel.onTimeChanging(Time(hour, minute))
-                        }, it.timeEnd.hours, it.timeEnd.minutes, true
+                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.START)
+                        }, it.timeStart.hours, it.timeStart.minutes, true
                     ).show()
                 }
             }

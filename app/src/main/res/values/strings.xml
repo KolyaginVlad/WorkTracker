@@ -40,7 +40,7 @@
     <string name="time_dinnering">time dinnering</string>
     <string name="finish_work">FINISH WORK</string>
     <string name="time_pause">time pause</string>
-
+    <string name="break_work">break</string>
 
     <plurals name="hoursL">
         <item quantity="one">%d hour</item>

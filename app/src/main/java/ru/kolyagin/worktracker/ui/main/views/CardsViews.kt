@@ -15,7 +15,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -96,7 +95,7 @@ fun EventList(
     day: Int,
     contentColor: Color = MaterialTheme.colors.primary,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
-    onClickDeleteEvent: (WorkEvent,Int) -> Unit,
+    onClickDeleteEvent: (WorkEvent, Int) -> Unit,
     onAddPeriod: (Int) -> Unit,
     onClickEvent: (Int, WorkEvent) -> Unit
 ) {
@@ -108,7 +107,7 @@ fun EventList(
                 border = BorderStroke(2.dp, contentColor),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedButtonShapes.medium,
-                onClick = {onClickEvent(day,it)},
+                onClick = { onClickEvent(day, it) },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = backgroundColor,
                     contentColor = contentColor
@@ -121,10 +120,18 @@ fun EventList(
                         text = it.timeStart.toString() + "-" + it.timeEnd.toString(),
                         modifier = Modifier.weight(1F),
                     )
-                    Text(text = if (it.name == "dinner") stringResource(id = R.string.dinner) else it.name)
+                    Text(
+                        text = when (it.name) {
+                            "dinner" -> stringResource(id = R.string.dinner)
+                            "break" -> stringResource(id = R.string.break_work)
+                            else -> {
+                                it.name
+                            }
+                        }
+                    )
                     Icon(
                         modifier = Modifier
-                            .clickable(onClick =  { onClickDeleteEvent(it,day) })
+                            .clickable(onClick = { onClickDeleteEvent(it, day) })
                             .align(Alignment.CenterVertically)
                             .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
                         painter = painterResource(id = R.drawable.delete),

@@ -34,14 +34,9 @@ class MainViewModel @Inject constructor(
     private var selectedDayOfWeek: Int? = null
     private var selectedWorkEvent: WorkEvent? = null
     private var addingEvent: WorkEvent = WorkEvent(
-        id = 0,
-        timeStart = Time(13, 0),
-        timeEnd = Time(14, 0),
-        name = "перерыв",
-        isDinner = false
+        id = 0, timeStart = Time(13, 0), timeEnd = Time(14, 0), name = "break", isDinner = false
     )
-    private var enteringTimeStart: Boolean = true
-
+    private var changingEvent: WorkEvent = addingEvent
 
     init {
         updateState {
@@ -104,11 +99,7 @@ class MainViewModel @Inject constructor(
                             days = (listOf(currentState) + daysWithOutCurrent).toPersistentList()
                         )
                     }
-                    delay(
-                        ChronoUnit.MILLIS.between(
-                            currentTime.plusSeconds(1), LocalTime.now()
-                        )
-                    )
+                    delay(ChronoUnit.MILLIS.between(LocalTime.now(), currentTime.plusSeconds(1)))
                 }
             }
         }
@@ -175,35 +166,43 @@ class MainViewModel @Inject constructor(
         trySendEvent(MainEvent.AddEventTime)
     }
 
-    fun onTimePicked(time: Time) {
+    fun onTimePicked(time: Time, periodPart: PeriodPart) {
         selectedDayOfWeek?.let { dayOfWeek ->
             launchViewModelScope {
                 addingEvent.let {
-                    if (enteringTimeStart) {
+                    if (periodPart == PeriodPart.START) {
                         addingEvent = it.copy(timeStart = time)
                     } else {
                         addingEvent = it.copy(timeEnd = time)
-                        scheduleRepository.addWorkEvent(dayOfWeek, it)
+                        if (addingEvent.timeStart >= addingEvent.timeEnd) {
+                            addingEvent = it.copy(
+                                timeStart = addingEvent.timeEnd, timeEnd = addingEvent.timeStart
+                            )
+                        }
+                        scheduleRepository.addWorkEvent(dayOfWeek, addingEvent)
                     }
                 }
-                enteringTimeStart = !enteringTimeStart
             }
         }
     }
 
-    fun onTimeChanging(time: Time) {
+    fun onTimeChanging(time: Time, periodPart: PeriodPart) {
         selectedDayOfWeek?.let { dayOfWeek ->
             launchViewModelScope {
+                var newEvent: WorkEvent = addingEvent
                 selectedWorkEvent?.let {
-                    val newPeriod = if (enteringTimeStart) {
+                    newEvent = if (periodPart == PeriodPart.START) {
                         it.copy(timeStart = time)
                     } else {
                         it.copy(timeEnd = time)
                     }
-                    scheduleRepository.setWorkEventTime(newPeriod, dayOfWeek)
+                    if (newEvent.timeStart >= newEvent.timeEnd) {
+                        newEvent =
+                            it.copy(timeStart = newEvent.timeEnd, timeEnd = newEvent.timeStart)
+                    }
+                    scheduleRepository.setWorkEventTime(newEvent, dayOfWeek)
                 }
-                selectedDayOfWeek = null
-                enteringTimeStart = !enteringTimeStart
+                selectedWorkEvent = newEvent
             }
         }
     }

@@ -37,6 +37,7 @@ interface ScheduleRepository {
     suspend fun deleteDinner(
         dayOfWeek: Int
     )
+
     suspend fun setWorkEventTime(
         workEvent: WorkEvent, dayOfWeek: Int
     )

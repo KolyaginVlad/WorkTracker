@@ -13,7 +13,7 @@ class ActivityCallbacks @Inject constructor(
     @Named(Constants.NOTIFICATION_SCOPE) private val scope: CoroutineScope,
     private val notificationsManager: NotificationsManager
 ): Application.ActivityLifecycleCallbacks {
-    
+
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
     override fun onActivityStarted(activity: Activity) {}

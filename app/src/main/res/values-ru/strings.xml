@@ -40,6 +40,7 @@
     <string name="start_lunch">УЙТИ НА ОБЕД</string>
     <string name="finish_work">ЗАВЕРШИТЬ РАБОТУ</string>
     <string name="time_pause">время паузы</string>
+    <string name="break_work">перерыв</string>
 
     <plurals name="hoursL">
         <item quantity="one">%d час</item>
