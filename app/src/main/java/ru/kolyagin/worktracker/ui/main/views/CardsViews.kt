@@ -96,9 +96,9 @@ fun EventList(
     day: Int,
     contentColor: Color = MaterialTheme.colors.primary,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
-    onClickDeleteEvent: (WorkEvent) -> Unit,
+    onClickDeleteEvent: (WorkEvent,Int) -> Unit,
     onAddPeriod: (Int) -> Unit,
-    onClickEvent: () -> Unit,
+    onClickEvent: (Int, WorkEvent) -> Unit
 ) {
     Column(
         modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -108,7 +108,7 @@ fun EventList(
                 border = BorderStroke(2.dp, contentColor),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedButtonShapes.medium,
-                onClick = onClickEvent,
+                onClick = {onClickEvent(day,it)},
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = backgroundColor,
                     contentColor = contentColor
@@ -124,7 +124,7 @@ fun EventList(
                     Text(text = if (it.name == "dinner") stringResource(id = R.string.dinner) else it.name)
                     Icon(
                         modifier = Modifier
-                            .clickable(onClick = remember(events) { { onClickDeleteEvent(it) } })
+                            .clickable(onClick =  { onClickDeleteEvent(it,day) })
                             .align(Alignment.CenterVertically)
                             .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
                         painter = painterResource(id = R.drawable.delete),

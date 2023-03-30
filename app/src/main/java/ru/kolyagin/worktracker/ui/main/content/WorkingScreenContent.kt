@@ -28,9 +28,9 @@ fun WorkingScreenContent(
     onClickStartPause: () -> Unit,
     onClickGoToDinner: () -> Unit,
     onClickDeleteDay: () -> Unit = {},
-    onClickDeleteEvent: (WorkEvent) -> Unit = {},
+    onClickDeleteEvent: (WorkEvent,Int) -> Unit = {_,_->},
     onAddPeriod: (Int) -> Unit = {},
-    onClickEvent: () -> Unit = {},
+    onClickEvent: (Int, WorkEvent) -> Unit = {_,_->},
     onClickEndWork: () -> Unit = {}
 ) {
     Column {

@@ -29,8 +29,17 @@ class ScheduleRepositoryImpl @Inject constructor(
         val groups = workPeriodEntities.groupBy { it.day }
         val eventGroups = events.groupBy({ it.day }) { it.mapToDomain() }
         dayScheduleEntities.map { scheduleEntity ->
-            val eventsList= eventGroups[scheduleEntity.day]?.toImmutableList()
-                    ?: persistentListOf()
+            if (scheduleEntity.isDinnerInclude) {
+                val dinner = WorkEvent(
+                    id = 0,
+                    timeStart = Time(DINNER_HOURS, DINNER_MINUTES),
+                    timeEnd = Time(DINNER_HOURS + 1, DINNER_MINUTES),
+                    name = "dinner",
+                    isDinner = true
+                )
+            }
+            val eventsList = eventGroups[scheduleEntity.day]?.toImmutableList()
+                ?: persistentListOf()
 
             DayWorkInfo(
                 day = DayOfWeek.values()[scheduleEntity.day],
@@ -60,8 +69,8 @@ class ScheduleRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun setDinner(dayOfWeek: DayOfWeek, isDinnerInclude: Boolean) {
-        scheduleDao.setDinner(dayOfWeek.ordinal, isDinnerInclude)
+    override suspend fun setDinner(dayOfWeek: Int, isDinnerInclude: Boolean) {
+        scheduleDao.setDinner(dayOfWeek, isDinnerInclude)
     }
 
 
@@ -74,13 +83,22 @@ class ScheduleRepositoryImpl @Inject constructor(
                 event.timeStart,
                 event.timeEnd
             )
-
         }
         scheduleDao.addEvent(dayOfWeek, event.name, event.isDinner, event.timeStart, event.timeEnd)
     }
 
     override suspend fun deleteWorkEvent(workEvent: WorkEvent) {
-        scheduleDao.deleteEvent(workEvent.id)
+       scheduleDao.deleteEvent(workEvent.id)
+    }
+
+    override suspend fun deleteDinner(dayOfWeek: Int) {
+        scheduleDao.getWorkEvents().collect { workEventEntities ->
+            workEventEntities.forEach {
+                if (it.isDinner && it.day == dayOfWeek) {
+                    scheduleDao.deleteEvent(it.id)
+                }
+            }
+        }
     }
 
     override suspend fun setWorkEventTime(

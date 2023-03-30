@@ -2,9 +2,11 @@ package ru.kolyagin.worktracker.ui.settings
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.kolyagin.worktracker.domain.models.Time
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
+import ru.kolyagin.worktracker.utils.Constants
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 import javax.inject.Inject
@@ -54,7 +56,19 @@ class SettingsViewModel @Inject constructor(
 
     fun onDinnerChange(dayOfWeek: DayOfWeek, isDinnerInclude: Boolean) {
         launchViewModelScope {
-            scheduleRepository.setDinner(dayOfWeek, isDinnerInclude)
+            val dinner = WorkEvent(
+                id = 0,
+                timeStart = Time(Constants.DINNER_HOURS, Constants.DINNER_MINUTES),
+                timeEnd = Time(Constants.DINNER_HOURS + 1, Constants.DINNER_MINUTES),
+                name = "dinner",
+                isDinner = true
+            )
+            scheduleRepository.setDinner(dayOfWeek.ordinal, isDinnerInclude)
+            if (isDinnerInclude) {
+                scheduleRepository.addWorkEvent(dayOfWeek.ordinal, dinner)
+            } else {
+                scheduleRepository.deleteDinner(dayOfWeek.ordinal)
+            }
         }
     }
 

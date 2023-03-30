@@ -51,7 +51,7 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
-    val context= LocalContext.current
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.init()
         viewModel.event.collect {
@@ -59,7 +59,8 @@ fun MainScreen(
                 is MainEvent.OpenSettings -> {
                     navigator.navigate(SettingsScreenDestination.route)
                 }
-                is MainEvent.AddEventTime->{
+
+                is MainEvent.AddEventTime -> {
                     TimePickerDialog(
                         context,
                         { _, hour: Int, minute: Int ->
@@ -70,15 +71,22 @@ fun MainScreen(
                         context,
                         { _, hour: Int, minute: Int ->
                             viewModel.onTimePicked(Time(hour, minute))
-                        },14, 0, true
+                        }, 14, 0, true
                     ).show()
                 }
-                is MainEvent.ChangeEventTime->{
+
+                is MainEvent.ChangeEventTime -> {
                     TimePickerDialog(
                         context,
                         { _, hour: Int, minute: Int ->
-                            viewModel.onTimePicked(Time(hour, minute))
-                        },14, 0, true
+                            viewModel.onTimeChanging(Time(hour, minute))
+                        }, it.timeStart.hours, it.timeStart.minutes, true
+                    ).show()
+                    TimePickerDialog(
+                        context,
+                        { _, hour: Int, minute: Int ->
+                            viewModel.onTimeChanging(Time(hour, minute))
+                        }, it.timeEnd.hours, it.timeEnd.minutes, true
                     ).show()
                 }
             }
@@ -133,26 +141,30 @@ fun MainScreen(
                             state = currentState,
                             onClickStartWork = viewModel::onClickStartWork,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
-                            onAddPeriod = viewModel::onClickAddEvent
+                            onAddPeriod = viewModel::onClickAddEvent,
+                            onClickEvent = viewModel::onClickEvent
                         )
 
                         is CardState.Dinnering -> DinneringScreenContent(
                             state = currentState,
                             onClickReturnFromDinner = viewModel::onClickReturnFromDinner,
-                            onClickDeleteEvent = viewModel::onClickDeleteEvent
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                            onClickEvent = viewModel::onClickEvent
                         )
 
                         is CardState.Working -> WorkingScreenContent(
                             state = currentState,
                             onClickStartPause = viewModel::onClickStartPause,
                             onClickGoToDinner = viewModel::onClickGoToDinner,
-                            onClickDeleteEvent = viewModel::onClickDeleteEvent
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                            onClickEvent = viewModel::onClickEvent
                         )
 
                         is CardState.Pause -> PauseScreenContent(
                             state = currentState,
                             onClickEndPause = viewModel::onClickEndPause,
-                            onClickDeleteEvent = viewModel::onClickDeleteEvent
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                            onClickEvent = viewModel::onClickEvent
                         )
 
                         is CardState.WorkEnd -> WorkEndScreenContent(

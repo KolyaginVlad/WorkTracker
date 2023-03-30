@@ -29,9 +29,9 @@ fun DinneringScreenContent(
     state: CardState.Dinnering,
     onClickReturnFromDinner: () -> Unit,
     onClickEndWork: () -> Unit = {},
-    onClickDeleteEvent: (WorkEvent) -> Unit = {},
+    onClickDeleteEvent: (WorkEvent,Int) -> Unit = {_,_->},
     onAddPeriod: (Int) -> Unit = {},
-    onClickEvent: () -> Unit = {},
+    onClickEvent: (Int, WorkEvent) -> Unit = {_,_->},
     onClickDeleteDay: () -> Unit = {}
 ) {
     Column(modifier = Modifier.background(MaterialTheme.colors.secondary)) {

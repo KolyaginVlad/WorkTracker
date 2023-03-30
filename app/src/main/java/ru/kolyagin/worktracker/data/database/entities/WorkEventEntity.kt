@@ -25,8 +25,8 @@ data class WorkEventEntity(
     @ColumnInfo("day")
     val day: Int,
 
-    @ColumnInfo("isLunch")
-    val isLunch: Boolean,
+    @ColumnInfo("isDinner")
+    val isDinner: Boolean,
 )
 fun WorkEventEntity.mapToDomain() =
     WorkEvent(
@@ -34,5 +34,5 @@ fun WorkEventEntity.mapToDomain() =
         timeStart = timeStart,
         timeEnd = timeEnd,
         name = name,
-        isDinner=isLunch
+        isDinner=isDinner
     )

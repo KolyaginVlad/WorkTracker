@@ -15,7 +15,7 @@ interface ScheduleRepository {
     )
 
     suspend fun deletePeriod(
-        workPeriod: WorkPeriod
+        workPeriod: WorkPeriod,
     )
 
     suspend fun setTime(
@@ -23,12 +23,21 @@ interface ScheduleRepository {
     )
 
     suspend fun setDinner(
-        dayOfWeek: DayOfWeek, isDinnerInclude: Boolean
+        dayOfWeek: Int, isDinnerInclude: Boolean
     )
 
-    suspend fun addWorkEvent(dayOfWeek: Int,event: WorkEvent)
+    suspend fun addWorkEvent(
+        dayOfWeek: Int, event: WorkEvent
+    )
 
-    suspend fun deleteWorkEvent(workEvent: WorkEvent)
+    suspend fun deleteWorkEvent(
+        workEvent: WorkEvent
+    )
 
-    suspend fun setWorkEventTime( workEvent: WorkEvent, dayOfWeek: Int)
+    suspend fun deleteDinner(
+        dayOfWeek: Int
+    )
+    suspend fun setWorkEventTime(
+        workEvent: WorkEvent, dayOfWeek: Int
+    )
 }

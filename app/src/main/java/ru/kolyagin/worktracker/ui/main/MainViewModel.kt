@@ -14,6 +14,7 @@ import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.domain.models.WorkState
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
+import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 import java.time.LocalDate
@@ -31,7 +32,7 @@ class MainViewModel @Inject constructor(
     private var events: Map<Int, List<WorkEvent>> = mapOf()
 
     private var selectedDayOfWeek: Int? = null
-    private var selectedWorkPeriod: WorkEvent? = null
+    private var selectedWorkEvent: WorkEvent? = null
     private var addingEvent: WorkEvent = WorkEvent(
         id = 0,
         timeStart = Time(13, 0),
@@ -57,29 +58,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun init() {/* launchViewModelScope {
-             scheduleRepository.addWorkEvent(
-                 -1,
-                 WorkEvent(
-                     id = 0,
-                     timeStart = Time(0, 10),
-                     timeEnd = Time(10, 1),
-                     name = "HIHIHIIHIHIHHI",
-                     isDinner = false
-                 )
-             )
-             scheduleRepository.addWorkEvent(
-                 1,
-                 WorkEvent(
-                     id = 0,
-                     timeStart = Time(24, 10),
-                     timeEnd = Time(10, 1),
-                     name = "LALALALALA",
-                     isDinner = false
-                 )
-             )
-
-         }//Test*/
+    fun init() {
         val listOfDays = DayOfWeek.values().toList()
         scheduleRepository.schedule().subscribe {
             timerJob?.cancel()
@@ -176,10 +155,19 @@ class MainViewModel @Inject constructor(
         //TODO Подсчитать не ушли ли мы на незапланированную\запланированную паузу во время обеда
     }
 
-    fun onClickDeleteEvent(workEvent: WorkEvent) {
+    fun onClickDeleteEvent(workEvent: WorkEvent, day: Int) {
         launchViewModelScope {
+            if (workEvent.isDinner) {
+                scheduleRepository.setDinner(day, false)
+            }
             scheduleRepository.deleteWorkEvent(workEvent)
         }
+    }
+
+    fun onClickEvent(day: Int, workEvent: WorkEvent) {
+        selectedDayOfWeek = day
+        selectedWorkEvent = workEvent
+        trySendEvent(MainEvent.ChangeEventTime(workEvent.timeStart, workEvent.timeEnd))
     }
 
     fun onClickAddEvent(day: Int) {
@@ -195,9 +183,26 @@ class MainViewModel @Inject constructor(
                         addingEvent = it.copy(timeStart = time)
                     } else {
                         addingEvent = it.copy(timeEnd = time)
-                        scheduleRepository.addWorkEvent(dayOfWeek,it)
+                        scheduleRepository.addWorkEvent(dayOfWeek, it)
                     }
                 }
+                enteringTimeStart = !enteringTimeStart
+            }
+        }
+    }
+
+    fun onTimeChanging(time: Time) {
+        selectedDayOfWeek?.let { dayOfWeek ->
+            launchViewModelScope {
+                selectedWorkEvent?.let {
+                    val newPeriod = if (enteringTimeStart) {
+                        it.copy(timeStart = time)
+                    } else {
+                        it.copy(timeEnd = time)
+                    }
+                    scheduleRepository.setWorkEventTime(newPeriod, dayOfWeek)
+                }
+                selectedDayOfWeek = null
                 enteringTimeStart = !enteringTimeStart
             }
         }
