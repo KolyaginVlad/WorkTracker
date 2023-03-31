@@ -3,6 +3,8 @@ package ru.kolyagin.worktracker.utils
 object Constants {
     const val DESCRIPTION = "DESCRIPTION"
     const val NOTIFICATION_SCOPE = "NOTIFICATION_SCOPE"
+    const val BREAK = "break"
+    const val DINNER = "dinner"
 
     const val MORNING_CONST = 0
     const val MORNING_HOURS_LIMIT = 11

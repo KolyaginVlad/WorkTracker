@@ -1,6 +1,6 @@
 package ru.kolyagin.worktracker.domain.models
 
-class Time(val hours: Int, val minutes: Int): Comparable<Time> {
+class Time(val hours: Int, val minutes: Int) : Comparable<Time> {
 
     operator fun minus(other: Time): Time {
         return fromMinutes(this.toMinutes() - other.toMinutes())

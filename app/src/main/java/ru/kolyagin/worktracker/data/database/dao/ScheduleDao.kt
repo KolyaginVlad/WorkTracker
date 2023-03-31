@@ -52,11 +52,7 @@ interface ScheduleDao {
     )
     suspend fun setDinner(id: Int, isDinnerInclude: Boolean)
 
-    @Query(
-        """
-            SELECT * FROM WorkEvent
-        """
-    )
+    @Query("SELECT * FROM WorkEvent")
     fun getWorkEvents(): Flow<List<WorkEventEntity>>
 
     @Query(
@@ -73,15 +69,18 @@ interface ScheduleDao {
         timeEnd: Time = Time(17, 0)
     )
 
-    @Query(
-        """
-            DELETE FROM WorkEvent WHERE id == :id
-        """
-    )
+    @Query("DELETE FROM WorkEvent WHERE id == :id")
 
     suspend fun deleteEvent(id: Long)
 
     @Update
     suspend fun changeEvent(workEventEntity: WorkEventEntity)
 
+    @Query(
+        """
+            DELETE FROM WorkEvent WHERE day == :dayId AND isDinner == 1
+        """
+    )
+
+    suspend fun deleteDinner(dayId: Int)
 }
