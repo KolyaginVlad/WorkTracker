@@ -43,6 +43,7 @@
     <string name="finish_work">FINISH WORK</string>
     <string name="time_pause">time pause</string>
     <string name="fix_your_state">Your work state fixed!</string>
+    <string name="time_worked">time worked</string>
 
     <plurals name="hoursL">
         <item quantity="one">%d hour</item>

@@ -2,8 +2,10 @@ package ru.kolyagin.worktracker.utils.log
 
 import android.os.Bundle
 import android.util.Log
-import ru.kolyagin.worktracker.utils.analytics.AnalyticsEvent
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
+import ru.kolyagin.worktracker.utils.analytics.AnalyticsEvent
 import java.io.Serializable
 import javax.inject.Inject
 
@@ -13,7 +15,7 @@ class LoggerImpl @Inject constructor(
 
     override fun error(throwable: Throwable) {
         throwable.printStackTrace()
-        //TODO Добавить отправку в Crashlytics
+        Firebase.crashlytics.recordException(throwable)
     }
 
     override fun error(message: String) {

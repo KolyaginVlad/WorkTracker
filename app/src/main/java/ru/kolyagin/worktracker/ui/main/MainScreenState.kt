@@ -57,5 +57,9 @@ sealed class CardState(open val day: DayOfWeek) {
     /**
      * Состояние после завершения последнего периода работы
      */
-    data class Results(override val day: DayOfWeek, val statistic: WorkStatistic) : CardState(day)
+    data class Results(
+        override val day: DayOfWeek,
+        val statistic: WorkStatistic,
+        val events: PersistentList<DayStartEvent>,
+    ) : CardState(day)
 }

@@ -104,23 +104,26 @@ fun MainScreen(
                     when (val currentState = it) {
                         is CardState.WorkStart -> WorkStartScreenContent(
                             currentState,
-                            viewModel::onClickStartWork
+                            viewModel::onClickStartWork,
                         )
 
                         is CardState.Dinnering -> DinneringScreenContent(
                             currentState,
-                            viewModel::onClickReturnFromDinner
+                            viewModel::onClickReturnFromDinner,
+                            onClickEndWork = viewModel::onClickFinishWork
                         )
 
                         is CardState.Working -> WorkingScreenContent(
                             currentState,
                             viewModel::onClickStartPause,
-                            viewModel::onClickGoToDinner
+                            viewModel::onClickGoToDinner,
+                            onClickEndWork = viewModel::onClickFinishWork
                         )
 
                         is CardState.Pause -> PauseScreenContent(
                             currentState,
-                            viewModel::onClickEndPause
+                            viewModel::onClickEndPause,
+                            onClickEndWork = viewModel::onClickFinishWork
                         )
 
                         is CardState.Results -> ResultsScreenContent(currentState)

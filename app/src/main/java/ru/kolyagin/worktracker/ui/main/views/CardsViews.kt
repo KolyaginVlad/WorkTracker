@@ -50,9 +50,9 @@ fun HeaderDay(
         )
         Icon(
             modifier = Modifier
+                .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
                 .clickable(onClick = onClickDeleteDay)
-                .align(Alignment.CenterVertically)
-                .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
+                .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.delete),
             contentDescription = null,
             tint = contentColor

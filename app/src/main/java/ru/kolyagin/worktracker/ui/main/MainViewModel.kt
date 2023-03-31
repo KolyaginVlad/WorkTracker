@@ -114,7 +114,8 @@ class MainViewModel @Inject constructor(
                 WorkState.Working -> {
                     workStatisticRepository.addWorkTime(
                         LocalDate.now(),
-                        LocalTime.now().toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet
+                        LocalTime.now()
+                            .toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet
                     )
                 }
 
@@ -318,7 +319,8 @@ class MainViewModel @Inject constructor(
             CardState.Working(
                 currentDayOfWeek,
                 persistentListOf(),
-                statistic.workTime + currentTime.toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet
+                statistic.workTime + currentTime.toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet,
+                true
                 //Переработка
             )
         }
@@ -391,7 +393,11 @@ class MainViewModel @Inject constructor(
         when (preferenceRepository.currentWorkState) {
             WorkState.NotWorking -> {
                 val statistic = workStatisticRepository.getStatistic(LocalDate.now())
-                CardState.Results(currentDayOfWeek, statistic)
+                CardState.Results(
+                    day = currentDayOfWeek,
+                    statistic = statistic,
+                    events = persistentListOf()
+                )
             }
 
             WorkState.Working -> {
