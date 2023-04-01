@@ -34,9 +34,12 @@ class MainViewModel @Inject constructor(
     private var selectedDayOfWeek: Int? = null
     private var selectedWorkEvent: WorkEvent? = null
     private var addingEvent: WorkEvent = WorkEvent(
-        id = 0, timeStart = Time(13, 0), timeEnd = Time(14, 0), name = "break", isDinner = false
+        id = 0,
+        timeStart = Time(13, 0),
+        timeEnd = Time(14, 0),
+        name = "break",
+        isDinner = false
     )
-    private var changingEvent: WorkEvent = addingEvent
 
     init {
         updateState {
@@ -61,14 +64,13 @@ class MainViewModel @Inject constructor(
                 val currentDay = LocalDate.now().dayOfWeek.ordinal.takeUnless { it == 6 } ?: 0
                 schedule = it.getOrNull(LocalDate.now().dayOfWeek.ordinal)
                 events = it.associate { Pair(it.day.ordinal, it.events) }
-                println(events)
                 val startWorkRanges =
                     schedule?.let { schedule -> getListOfTimeRangesStartWork(schedule) }
                 val workingRanges =
                     schedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
                 val currentEvents = events[currentDay]?.toPersistentList() ?: persistentListOf()
 
-                while (timerJob?.isCancelled != true) {
+                do {
                     val currentTime = LocalTime.now()
                     val time = Time(currentTime.hour, currentTime.minute)
                     updateState { state ->
@@ -81,7 +83,6 @@ class MainViewModel @Inject constructor(
                             currentTime,
                             currentEvents
                         )
-                        listOf(1, 1, 1) + listOf(1, 1)
                         val daysWithOutCurrent = (listOfDays.subList(
                             currentDay + 1, listOfDays.size
                         ) + listOfDays.subList(0, currentDay)).map { day ->
@@ -100,7 +101,7 @@ class MainViewModel @Inject constructor(
                         )
                     }
                     delay(ChronoUnit.MILLIS.between(LocalTime.now(), currentTime.plusSeconds(1)))
-                }
+                } while (timerJob?.isCancelled != true)
             }
         }
     }
