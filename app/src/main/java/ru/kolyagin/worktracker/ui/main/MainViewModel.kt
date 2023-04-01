@@ -15,6 +15,7 @@ import ru.kolyagin.worktracker.domain.models.WorkState
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
+import ru.kolyagin.worktracker.utils.Constants
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 import java.time.LocalDate
@@ -37,7 +38,7 @@ class MainViewModel @Inject constructor(
         id = 0,
         timeStart = Time(13, 0),
         timeEnd = Time(14, 0),
-        name = "break",
+        name = Constants.BREAK,
         isDinner = false
     )
 
