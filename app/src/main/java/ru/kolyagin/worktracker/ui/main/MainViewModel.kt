@@ -69,9 +69,9 @@ class MainViewModel @Inject constructor(
                     schedule?.let { schedule -> getListOfTimeRangesStartWork(schedule) }
                 val workingRanges =
                     schedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
-                val currentEvents = events[currentDay]?.toPersistentList() ?: persistentListOf()
 
                 do {
+                    val currentEvents = events[currentDay]?.toPersistentList() ?: persistentListOf()
                     val currentTime = LocalTime.now()
                     val time = Time(currentTime.hour, currentTime.minute)
                     updateState { state ->
