@@ -1,5 +1,6 @@
 package ru.kolyagin.worktracker.ui.main
 
+import android.app.TimePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,6 +32,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ru.kolyagin.worktracker.R
+import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.ui.destinations.SettingsScreenDestination
 import ru.kolyagin.worktracker.ui.main.content.DinneringScreenContent
 import ru.kolyagin.worktracker.ui.main.content.PauseScreenContent
@@ -37,6 +40,7 @@ import ru.kolyagin.worktracker.ui.main.content.ResultsScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkEndScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkStartScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkingScreenContent
+import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
 import ru.kolyagin.worktracker.ui.views.TopBar
 
@@ -48,12 +52,43 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.init()
         viewModel.event.collect {
             when (it) {
                 is MainEvent.OpenSettings -> {
                     navigator.navigate(SettingsScreenDestination.route)
+                }
+
+                is MainEvent.AddEventTime -> {
+                    TimePickerDialog(
+                        context,
+                        { _, hour: Int, minute: Int ->
+                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.END)
+                        }, 14, 0, true
+                    ).show()
+                    TimePickerDialog(
+                        context,
+                        { _, hour: Int, minute: Int ->
+                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.START)
+                        }, 12, 0, true
+                    ).show()
+                }
+
+                is MainEvent.ChangeEventTime -> {
+                    TimePickerDialog(
+                        context,
+                        { _, hour: Int, minute: Int ->
+                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.END)
+                        }, it.timeEnd.hours, it.timeEnd.minutes, true
+                    ).show()
+                    TimePickerDialog(
+                        context,
+                        { _, hour: Int, minute: Int ->
+                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.START)
+                        }, it.timeStart.hours, it.timeStart.minutes, true
+                    ).show()
                 }
             }
         }
@@ -104,29 +139,38 @@ fun MainScreen(
                 ) {
                     when (val currentState = it) {
                         is CardState.WorkStart -> WorkStartScreenContent(
-                            currentState,
-                            viewModel::onClickStartWork
+                            state = currentState,
+                            onClickStartWork = viewModel::onClickStartWork,
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                            onAddPeriod = viewModel::onClickAddEvent,
+                            onClickEvent = viewModel::onClickEvent
                         )
 
                         is CardState.Dinnering -> DinneringScreenContent(
-                            currentState,
-                            viewModel::onClickReturnFromDinner
+                            state = currentState,
+                            onClickReturnFromDinner = viewModel::onClickReturnFromDinner,
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                            onClickEvent = viewModel::onClickEvent
                         )
 
                         is CardState.Working -> WorkingScreenContent(
-                            currentState,
-                            viewModel::onClickStartPause,
-                            viewModel::onClickGoToDinner
+                            state = currentState,
+                            onClickStartPause = viewModel::onClickStartPause,
+                            onClickGoToDinner = viewModel::onClickGoToDinner,
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                            onClickEvent = viewModel::onClickEvent
                         )
 
                         is CardState.Pause -> PauseScreenContent(
-                            currentState,
-                            viewModel::onClickEndPause
+                            state = currentState,
+                            onClickEndPause = viewModel::onClickEndPause,
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                            onClickEvent = viewModel::onClickEvent
                         )
 
                         is CardState.WorkEnd -> WorkEndScreenContent(
-                            currentState,
-                            viewModel::onClickFinishWork
+                            state = currentState,
+                            onClickFinishWork = viewModel::onClickFinishWork,
                         )
 
                         is CardState.Results -> ResultsScreenContent(currentState)

@@ -15,6 +15,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,11 +25,12 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
-import ru.kolyagin.worktracker.ui.models.DayStartEvent
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.utils.toShortStringId
 import ru.kolyagin.worktracker.ui.views.Timer
+import ru.kolyagin.worktracker.utils.Constants.BREAK
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 
 @Composable
@@ -50,9 +52,9 @@ fun HeaderDay(
         )
         Icon(
             modifier = Modifier
-                .clickable(onClick = onClickDeleteDay)
-                .align(Alignment.CenterVertically)
-                .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
+				.clickable(onClick = onClickDeleteDay)
+				.align(Alignment.CenterVertically)
+				.padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
             painter = painterResource(id = R.drawable.delete),
             contentDescription = null,
             tint = contentColor
@@ -78,9 +80,9 @@ fun WorkTimer(
             Timer(
                 time = it,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 40.dp, top = 8.dp, end = 40.dp, bottom = 24.dp)
-                    .fillMaxWidth(),
+					.align(Alignment.CenterHorizontally)
+					.padding(start = 40.dp, top = 8.dp, end = 40.dp, bottom = 24.dp)
+					.fillMaxWidth(),
                 primaryColor = primaryColor,
                 disableColor = disableColor
             )
@@ -91,12 +93,13 @@ fun WorkTimer(
 @Composable
 fun EventList(
     modifier: Modifier,
-    events: ImmutableList<DayStartEvent>,
+    events: ImmutableList<WorkEvent>,
+    day: Int,
     contentColor: Color = MaterialTheme.colors.primary,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
-    onClickDeleteMeal: () -> Unit,
-    onAddPeriod: () -> Unit,
-    onClickEvent: () -> Unit,
+    onClickDeleteEvent: (WorkEvent, Int) -> Unit,
+    onAddPeriod: (Int) -> Unit,
+    onClickEvent: (Int, WorkEvent) -> Unit
 ) {
     Column(
         modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -106,7 +109,7 @@ fun EventList(
                 border = BorderStroke(2.dp, contentColor),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedButtonShapes.medium,
-                onClick = onClickEvent,
+                onClick = remember(it, day) { { onClickEvent(day, it) } },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = backgroundColor,
                     contentColor = contentColor
@@ -119,12 +122,33 @@ fun EventList(
                         text = it.timeStart.toString() + "-" + it.timeEnd.toString(),
                         modifier = Modifier.weight(1F),
                     )
-                    Text(text = it.name)
+                    Text(
+                        text = when {
+                            it.isDinner -> {
+                                stringResource(id = R.string.dinner)
+                            }
+
+                            it.name == BREAK -> {
+                                stringResource(id = R.string.break_work)
+                            }
+
+                            else -> {
+                                it.name
+                            }
+                        }
+                    )
                     Icon(
                         modifier = Modifier
-                            .clickable(onClick = onClickDeleteMeal)
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
+							.clickable(onClick = remember(it, day) {
+								{
+									onClickDeleteEvent(
+										it,
+										day
+									)
+								}
+							})
+							.align(Alignment.CenterVertically)
+							.padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
                         painter = painterResource(id = R.drawable.delete),
                         contentDescription = null,
                         tint = contentColor
@@ -136,7 +160,7 @@ fun EventList(
             border = BorderStroke(2.dp, contentColor),
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedButtonShapes.medium,
-            onClick = onAddPeriod,
+            onClick = remember(day) { { onAddPeriod(day) } },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = backgroundColor,
                 contentColor = contentColor

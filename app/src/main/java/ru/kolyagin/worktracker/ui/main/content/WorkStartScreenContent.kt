@@ -22,7 +22,7 @@ import ru.kolyagin.worktracker.ui.main.CardState
 import ru.kolyagin.worktracker.ui.main.views.EventList
 import ru.kolyagin.worktracker.ui.main.views.HeaderDay
 import ru.kolyagin.worktracker.ui.main.views.WorkTimer
-import ru.kolyagin.worktracker.ui.models.DayStartEvent
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
@@ -32,9 +32,9 @@ import ru.kolyagin.worktracker.utils.models.DayOfWeek
 fun WorkStartScreenContent(
     state: CardState.WorkStart,
     onClickStartWork: () -> Unit,
-    onClickDeleteEvent: () -> Unit = {},
-    onAddPeriod: () -> Unit = {},
-    onClickEvent: () -> Unit = {},
+    onClickDeleteEvent: (WorkEvent, Int) -> Unit = { _, _ -> },
+    onAddPeriod: (Int) -> Unit = {},
+    onClickEvent: (Int, WorkEvent) -> Unit = { _, _ -> },
     onClickDeleteDay: () -> Unit = {}
 ) {
     Column {
@@ -80,9 +80,10 @@ fun WorkStartScreenContent(
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 12.dp),
             events = state.events,
-            onClickDeleteMeal = onClickDeleteEvent,
+            onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
             onClickEvent = onClickEvent,
+            day = state.day.ordinal,
             contentColor = textColor
         )
     }
@@ -130,9 +131,9 @@ private fun WorkStartScreenPreview() {
         WorkStartScreenContent(state = CardState.WorkStart(
             DayOfWeek.Monday,
             events = persistentListOf(
-                DayStartEvent(
+                WorkEvent(
                     id = 0, timeStart = Time(19, 0), timeEnd = Time(19, 10), name = "УЖИН"
-                ), DayStartEvent(
+                ), WorkEvent(
                     id = 0, timeStart = Time(19, 0), timeEnd = Time(19, 10), name = "ОБЕД"
                 )
             ),
@@ -142,9 +143,8 @@ private fun WorkStartScreenPreview() {
             late = true
         ),
             onClickStartWork = {},
-            onClickDeleteEvent = {},
+            onClickDeleteEvent = { _, _ -> },
             onAddPeriod = {},
-            onClickEvent = {},
             onClickDeleteDay = {})
     }
 }

@@ -18,7 +18,7 @@ import ru.kolyagin.worktracker.ui.main.views.Button
 import ru.kolyagin.worktracker.ui.main.views.EventList
 import ru.kolyagin.worktracker.ui.main.views.HeaderDay
 import ru.kolyagin.worktracker.ui.main.views.WorkTimer
-import ru.kolyagin.worktracker.ui.models.DayStartEvent
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 
@@ -28,9 +28,9 @@ fun WorkingScreenContent(
     onClickStartPause: () -> Unit,
     onClickGoToDinner: () -> Unit,
     onClickDeleteDay: () -> Unit = {},
-    onClickDeleteEvent: () -> Unit = {},
-    onAddPeriod: () -> Unit = {},
-    onClickEvent: () -> Unit = {},
+    onClickDeleteEvent: (WorkEvent,Int) -> Unit = {_,_->},
+    onAddPeriod: (Int) -> Unit = {},
+    onClickEvent: (Int, WorkEvent) -> Unit = {_,_->},
     onClickEndWork: () -> Unit = {}
 ) {
     Column {
@@ -72,8 +72,9 @@ fun WorkingScreenContent(
                 .fillMaxWidth()
                 .padding(12.dp),
             events = state.events,
-            onClickDeleteMeal = onClickDeleteEvent,
+            onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
+            day = state.day.ordinal,
             onClickEvent = onClickEvent
         )
         Button(
@@ -96,12 +97,12 @@ private fun WorkingScreenPrev() {
             state = CardState.Working(
                 day = DayOfWeek.Saturday,
                 events = persistentListOf(
-                    DayStartEvent(
+                    WorkEvent(
                         id = 0,
                         timeStart = Time(19, 0),
                         timeEnd = Time(19, 10),
                         name = "УЖИН"
-                    ), DayStartEvent(
+                    ), WorkEvent(
                         id = 0,
                         timeStart = Time(19, 0),
                         timeEnd = Time(19, 10),

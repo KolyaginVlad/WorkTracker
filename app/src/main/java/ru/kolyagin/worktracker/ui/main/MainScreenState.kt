@@ -4,7 +4,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
-import ru.kolyagin.worktracker.ui.models.DayStartEvent
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.utils.base.State
 import ru.kolyagin.worktracker.utils.models.DayOfWeek
 
@@ -21,7 +21,7 @@ sealed class CardState(open val day: DayOfWeek) {
         override val day: DayOfWeek,
         val buttonActive: Boolean,
         val buttonStartEarly: Boolean,
-        val events: PersistentList<DayStartEvent>,
+        val events: PersistentList<WorkEvent>,
         val time: TimeWithSeconds? = null,
         val late: Boolean = false
     ) : CardState(day)
@@ -36,7 +36,7 @@ sealed class CardState(open val day: DayOfWeek) {
      */
     data class Working(
         override val day: DayOfWeek,
-        val events: PersistentList<DayStartEvent>,
+        val events: PersistentList<WorkEvent>,
         val time: TimeWithSeconds,
         val overwork: Boolean = false
     ) : CardState(day)
@@ -46,7 +46,7 @@ sealed class CardState(open val day: DayOfWeek) {
      */
     data class Pause(
         override val day: DayOfWeek,
-        val events: PersistentList<DayStartEvent>,
+        val events: PersistentList<WorkEvent>,
         val time: TimeWithSeconds
     ) : CardState(day)
 
@@ -55,7 +55,7 @@ sealed class CardState(open val day: DayOfWeek) {
      */
     data class Dinnering(
         override val day: DayOfWeek,
-        val events: PersistentList<DayStartEvent>,
+        val events: PersistentList<WorkEvent>,
         val time: TimeWithSeconds
     ) : CardState(day)
 

@@ -6,12 +6,14 @@ import androidx.room.TypeConverters
 import ru.kolyagin.worktracker.data.database.converters.TimeConverter
 import ru.kolyagin.worktracker.data.database.dao.ScheduleDao
 import ru.kolyagin.worktracker.data.database.entities.DayScheduleEntity
+import ru.kolyagin.worktracker.data.database.entities.WorkEventEntity
 import ru.kolyagin.worktracker.data.database.entities.WorkPeriodEntity
 
 @Database(
     entities = [
         DayScheduleEntity::class,
-        WorkPeriodEntity::class
+        WorkPeriodEntity::class,
+        WorkEventEntity::class
     ], version = 1, exportSchema = false
 )
 @TypeConverters(TimeConverter::class)
