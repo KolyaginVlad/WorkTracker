@@ -188,8 +188,9 @@ class MainViewModel @Inject constructor(
     }
 
     private fun updateTimeOfPauseAfterDinner() {
-        //FIXME Заменить на реальное время обеда из карточки
-        val dinner = TimeWithSeconds(13, 0, 0) - TimeWithSeconds(12, 0, 0)
+        val dinner =  (events[LocalDate.now().dayOfWeek.ordinal]?.toPersistentList() ?: persistentListOf())
+            .first { it.isDinner }
+            .let { it.timeEnd.toTimeWithSeconds() - it.timeStart.toTimeWithSeconds() }
         var pauseStart = preferenceRepository.timeOfCurrentStateSet
         val pauseStop = LocalTime.now().toTimeWithSeconds()
         if (dinner >= pauseStop - pauseStart)
@@ -202,10 +203,10 @@ class MainViewModel @Inject constructor(
         pauseStart: TimeWithSeconds,
         pauseStop: TimeWithSeconds
     ) = launchViewModelScope {
-        val listOfPausesWithoutDinner = listOf(
-            TimeWithSeconds(13, 0, 0)..TimeWithSeconds(13, 10, 0),
-            TimeWithSeconds(15, 0, 0)..TimeWithSeconds(15, 10, 0),
-        ) //FIXME заменить на реальные паузы без обеда
+        val listOfPausesWithoutDinner =
+            (events[LocalDate.now().dayOfWeek.ordinal]?.toPersistentList() ?: persistentListOf())
+                .filter { !it.isDinner }
+                .map { it.timeStart.toTimeWithSeconds()..it.timeEnd.toTimeWithSeconds() }
         val pause = pauseStart..pauseStop
         listOfPausesWithoutDinner.foldRight(TimeWithSeconds.fromSeconds(0)) { elem, plannedTime ->
             when {
@@ -368,11 +369,25 @@ class MainViewModel @Inject constructor(
         }
 
         startWorkRanges.any { time in it } -> {
-            getStateForStartWork(startWorkRanges, currentTime, time, currentDayOfWeek, totalTime, workEvents)
+            getStateForStartWork(
+                startWorkRanges,
+                currentTime,
+                time,
+                currentDayOfWeek,
+                totalTime,
+                workEvents
+            )
         }
 
         workingRanges.any { time in it } -> {
-            getStateForWorking(workingRanges, currentTime, time, currentDayOfWeek, totalTime, workEvents)
+            getStateForWorking(
+                workingRanges,
+                currentTime,
+                time,
+                currentDayOfWeek,
+                totalTime,
+                workEvents
+            )
         }
 
         else -> {
