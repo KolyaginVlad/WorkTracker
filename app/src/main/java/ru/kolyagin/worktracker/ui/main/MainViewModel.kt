@@ -326,7 +326,7 @@ class MainViewModel @Inject constructor(
             listOfDays[currentDay],
             currentTime,
             schedule?.totalTime,
-            currentEvents
+            events[currentDay]?.toPersistentList() ?: persistentListOf()
         )
         updateState { state ->
             val daysWithOutCurrent = (listOfDays.subList(
@@ -404,7 +404,7 @@ class MainViewModel @Inject constructor(
 
         WorkState.Working -> {
             val statistic = workStatisticRepository.getStatistic(LocalDate.now())
-            if (totalTime.toTimeWithSeconds() < statistic.workTime) {
+            if (totalTime.toTimeWithSeconds() > statistic.workTime) {
                 CardState.Working(
                     currentDayOfWeek,
                     workEvents,
@@ -460,7 +460,7 @@ class MainViewModel @Inject constructor(
 
         WorkState.Working -> {
             val statistic = workStatisticRepository.getStatistic(LocalDate.now())
-            if (totalTime.toTimeWithSeconds() < statistic.workTime) {
+            if (totalTime.toTimeWithSeconds() > statistic.workTime) {
                 val timeWork =
                     statistic.workTime + currentTime.toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet
                 CardState.Working(
@@ -481,7 +481,7 @@ class MainViewModel @Inject constructor(
 
         WorkState.Worked -> {
             val rangeIndex = workingRanges.indexOfFirst { time in it }
-            if (rangeIndex < workingRanges.size - 1) {
+            if (rangeIndex == workingRanges.size - 1) {
                 val statistic = workStatisticRepository.getStatistic(LocalDate.now())
                 CardState.Results(
                     day = currentDayOfWeek,
@@ -537,7 +537,7 @@ class MainViewModel @Inject constructor(
 
             WorkState.Working -> {
                 val statistic = workStatisticRepository.getStatistic(LocalDate.now())
-                if (totalTime.toTimeWithSeconds() < statistic.workTime) {
+                if (totalTime.toTimeWithSeconds() > statistic.workTime) {
                     CardState.Working(
                         currentDayOfWeek,
                         workEvents,

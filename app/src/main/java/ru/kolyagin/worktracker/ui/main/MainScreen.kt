@@ -37,7 +37,6 @@ import ru.kolyagin.worktracker.ui.destinations.SettingsScreenDestination
 import ru.kolyagin.worktracker.ui.main.content.DinneringScreenContent
 import ru.kolyagin.worktracker.ui.main.content.PauseScreenContent
 import ru.kolyagin.worktracker.ui.main.content.ResultsScreenContent
-import ru.kolyagin.worktracker.ui.main.content.WorkEndScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkStartScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkingScreenContent
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
@@ -150,7 +149,8 @@ fun MainScreen(
                             state = currentState,
                             onClickReturnFromDinner = viewModel::onClickReturnFromDinner,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
-                            onClickEvent = viewModel::onClickEvent
+                            onClickEvent = viewModel::onClickEvent,
+                            onClickEndWork = viewModel::onClickFinishWork
                         )
 
                         is CardState.Working -> WorkingScreenContent(
@@ -158,22 +158,24 @@ fun MainScreen(
                             onClickStartPause = viewModel::onClickStartPause,
                             onClickGoToDinner = viewModel::onClickGoToDinner,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
-                            onClickEvent = viewModel::onClickEvent
+                            onClickEvent = viewModel::onClickEvent,
+                            onClickEndWork = viewModel::onClickFinishWork
                         )
 
                         is CardState.Pause -> PauseScreenContent(
                             state = currentState,
                             onClickEndPause = viewModel::onClickEndPause,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
-                            onClickEvent = viewModel::onClickEvent
+                            onClickEvent = viewModel::onClickEvent,
+                            onClickEndWork = viewModel::onClickFinishWork
                         )
 
-                        is CardState.WorkEnd -> WorkEndScreenContent(
+                        is CardState.Results -> ResultsScreenContent(
                             state = currentState,
-                            onClickFinishWork = viewModel::onClickFinishWork,
+                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                            onClickEvent = viewModel::onClickEvent,
+                            onAddPeriod = viewModel::onClickAddEvent
                         )
-
-                        is CardState.Results -> ResultsScreenContent(currentState)
                     }
                 }
             }

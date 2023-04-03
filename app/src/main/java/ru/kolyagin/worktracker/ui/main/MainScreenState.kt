@@ -3,8 +3,8 @@ package ru.kolyagin.worktracker.ui.main
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
-import ru.kolyagin.worktracker.domain.models.WorkStatistic
 import ru.kolyagin.worktracker.domain.models.WorkEvent
+import ru.kolyagin.worktracker.domain.models.WorkStatistic
 import ru.kolyagin.worktracker.utils.base.State
 import java.time.DayOfWeek
 
@@ -60,6 +60,6 @@ sealed class CardState(open val day: DayOfWeek) {
     data class Results(
         override val day: DayOfWeek,
         val statistic: WorkStatistic,
-        val events: PersistentList<DayStartEvent>,
+        val events: PersistentList<WorkEvent>,
     ) : CardState(day)
 }

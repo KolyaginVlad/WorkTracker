@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.domain.models.WorkStatistic
 import ru.kolyagin.worktracker.ui.main.CardState
 import ru.kolyagin.worktracker.ui.main.views.EventList
@@ -23,9 +24,9 @@ import java.time.DayOfWeek
 fun ResultsScreenContent(
     state: CardState.Results,
     onClickDeleteDay: () -> Unit = {},
-    onClickDeleteEvent: () -> Unit = {},
-    onAddPeriod: () -> Unit = {},
-    onClickEvent: () -> Unit = {},
+    onClickDeleteEvent: (WorkEvent, Int) -> Unit = { _, _->},
+    onAddPeriod: (Int) -> Unit = {},
+    onClickEvent: (Int, WorkEvent) -> Unit = { _, _->},
 ) {
     Column(modifier = Modifier.padding(bottom = 12.dp)) {
         HeaderDay(
@@ -44,7 +45,8 @@ fun ResultsScreenContent(
                 .fillMaxWidth()
                 .padding(12.dp),
             events = state.events,
-            onClickDeleteMeal = onClickDeleteEvent,
+            day = state.day.ordinal,
+            onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
             onClickEvent = onClickEvent
         )
