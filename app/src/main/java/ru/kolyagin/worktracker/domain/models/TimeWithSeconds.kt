@@ -4,7 +4,6 @@ import java.time.LocalTime
 
 class TimeWithSeconds(val hours: Int, val minutes: Int, val seconds: Int) :
     Comparable<TimeWithSeconds> {
-
     operator fun minus(other: TimeWithSeconds): TimeWithSeconds {
         return fromSeconds(this.toSeconds() - other.toSeconds())
     }

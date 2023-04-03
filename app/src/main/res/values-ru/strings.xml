@@ -44,6 +44,8 @@
     <string name="time_pause">время паузы</string>
     <string name="fix_your_state">Состояние исправлено!</string>
     <string name="time_worked">времени отработано</string>
+    <string name="break_work">перерыв</string>
+
     <plurals name="hoursL">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>
