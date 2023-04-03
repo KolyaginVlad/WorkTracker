@@ -80,6 +80,7 @@ class AlarmNotificationsManager @Inject constructor(
                                     Constants.PRE_WORK_MINUTES_OFFSET
                                 )
                             ) {
+                                action = Constants.PRE_WORK_ACTION
                                 putExtra(Constants.DESCRIPTION, R.string.start_work_description)
                             }
                         }
@@ -110,6 +111,7 @@ class AlarmNotificationsManager @Inject constructor(
                                     Constants.FIN_WORK_MINUTES_OFFSET
                                 )
                             ) {
+                                action = Constants.FIN_WORK_ACTION
                                 putExtra(Constants.DESCRIPTION, R.string.evening_finish_work_description)
                             }
                         }
@@ -140,6 +142,7 @@ class AlarmNotificationsManager @Inject constructor(
                                     Constants.FIN_WORK_MINUTES_OFFSET
                                 )
                             ) {
+                                action = Constants.FIN_WORK_ACTION
                                 putExtra(Constants.DESCRIPTION, R.string.finish_work_description)
                             }
                         }

@@ -1,6 +1,8 @@
 package ru.kolyagin.worktracker.utils
 
 object Constants {
+    const val PRE_WORK_ACTION = "ru.kolyagin.worktracker.pre_work_action"
+    const val FIN_WORK_ACTION = "ru.kolyagin.worktracker.fin_work_action"
     const val FIX_STATE_ACTION = "ru.kolyagin.worktracker.fix_state_action"
     const val FIX_STATE_CONST = 100
 

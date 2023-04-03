@@ -30,9 +30,27 @@ class NotificationReceiver @Inject constructor(
 
     override fun onReceive(context: Context, intent: Intent) {
         notificationManager.rescheduleNotifications()
-        if (intent.action == Constants.FIX_STATE_ACTION) {
-            preferencesRepository.currentWorkState = WorkState.NotWorking
-            preferencesRepository.isDinnerEnableToday = true
+        when (intent.action) {
+            Constants.FIX_STATE_ACTION -> {
+                val prevState = preferencesRepository.currentWorkState
+                preferencesRepository.currentWorkState = WorkState.NotWorking
+                preferencesRepository.isDinnerEnableToday = true
+                if (prevState == WorkState.NotWorking || prevState == WorkState.Worked) {
+                    return
+                }
+            }
+            Constants.PRE_WORK_ACTION -> {
+                val state = preferencesRepository.currentWorkState
+                if (state != WorkState.NotWorking && state != WorkState.Worked) {
+                    return
+                }
+            }
+            Constants.FIN_WORK_ACTION -> {
+                val state = preferencesRepository.currentWorkState
+                if (state != WorkState.Working && state != WorkState.Dinner && state != WorkState.Pause) {
+                    return
+                }
+            }
         }
         val notificationIntent =
             Intent(context.applicationContext, MainActivity::class.java).apply {
