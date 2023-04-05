@@ -80,6 +80,7 @@ class AlarmNotificationsManager @Inject constructor(
                                     Constants.PRE_WORK_MINUTES_OFFSET
                                 )
                             ) {
+                                action = Constants.PRE_WORK_ACTION
                                 putExtra(Constants.DESCRIPTION, R.string.start_work_description)
                             }
                         }
@@ -110,6 +111,7 @@ class AlarmNotificationsManager @Inject constructor(
                                     Constants.FIN_WORK_MINUTES_OFFSET
                                 )
                             ) {
+                                action = Constants.FIN_WORK_ACTION
                                 putExtra(Constants.DESCRIPTION, R.string.evening_finish_work_description)
                             }
                         }
@@ -140,11 +142,25 @@ class AlarmNotificationsManager @Inject constructor(
                                     Constants.FIN_WORK_MINUTES_OFFSET
                                 )
                             ) {
+                                action = Constants.FIN_WORK_ACTION
                                 putExtra(Constants.DESCRIPTION, R.string.finish_work_description)
                             }
                         }
                     }
 
+            }
+        }
+    }
+
+    override fun scheduleFixStateNotification() {
+        DayOfWeek.values().forEach {
+            scheduleAlarm(
+                it.ordinal,
+                Constants.FIX_STATE_CONST,
+                Time(23,59)
+            ) {
+                action = Constants.FIX_STATE_ACTION
+                putExtra(Constants.DESCRIPTION, R.string.fix_your_state)
             }
         }
     }
@@ -178,6 +194,8 @@ class AlarmNotificationsManager @Inject constructor(
         schedulePreWorkNotification()
         scheduleEveningNotification()
         scheduleFinWorkNotification()
+
+        scheduleFixStateNotification()
     }
 
     private fun scheduleAlarm(

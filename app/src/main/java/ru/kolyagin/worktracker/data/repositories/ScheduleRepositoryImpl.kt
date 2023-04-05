@@ -13,7 +13,7 @@ import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.domain.models.mapToEntity
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(

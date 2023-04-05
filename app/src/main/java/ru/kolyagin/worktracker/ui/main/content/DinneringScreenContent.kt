@@ -22,7 +22,7 @@ import ru.kolyagin.worktracker.ui.main.views.WorkTimer
 import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.theme.SurfaceDisabled
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 
 @Composable
 fun DinneringScreenContent(
@@ -34,7 +34,11 @@ fun DinneringScreenContent(
     onClickEvent: (Int, WorkEvent) -> Unit = {_,_->},
     onClickDeleteDay: () -> Unit = {}
 ) {
-    Column(modifier = Modifier.background(MaterialTheme.colors.secondary)) {
+    Column(
+        modifier = Modifier
+            .background(MaterialTheme.colors.secondary)
+            .padding(bottom = 12.dp)
+    ) {
         HeaderDay(
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,7 +94,7 @@ private fun PausePrev() {
     WorkTrackerTheme {
         PauseScreenContent(
             state = CardState.Pause(
-                day = DayOfWeek.Saturday,
+                day = DayOfWeek.SATURDAY,
                 events = persistentListOf(
                     WorkEvent(
                         id = 0,

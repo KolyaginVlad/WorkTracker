@@ -8,12 +8,14 @@
     <string name="thursday">Thursday</string>
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
     <string name="shortMonday">mon</string>
     <string name="shortTuesday">tue</string>
     <string name="shortWednesday">wed</string>
     <string name="shortThursday">thu</string>
     <string name="shortFriday">fri</string>
     <string name="shortSaturday">sat</string>
+    <string name="shortSunday">sun</string>
     <string name="dinner">Dinner</string>
     <string name="dinner_description">It\'s time to eat!</string>
     <string name="morning_start_work_description">Wake up! It\'s time to work!</string>
@@ -40,6 +42,8 @@
     <string name="time_dinnering">time dinnering</string>
     <string name="finish_work">FINISH WORK</string>
     <string name="time_pause">time pause</string>
+    <string name="fix_your_state">Your work state fixed!</string>
+    <string name="time_worked">time worked</string>
     <string name="break_work">break</string>
 
     <plurals name="hoursL">

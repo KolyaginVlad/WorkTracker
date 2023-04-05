@@ -2,8 +2,11 @@ package ru.kolyagin.worktracker.data.repositories
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
 import ru.kolyagin.worktracker.domain.models.WorkState
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
+import ru.kolyagin.worktracker.utils.toSeconds
+import java.time.LocalTime
 import javax.inject.Inject
 
 class PreferenceRepositoryImpl @Inject constructor(
@@ -13,12 +16,33 @@ class PreferenceRepositoryImpl @Inject constructor(
         get() = WorkState.values()[sharedPreferences.getInt(CURRENT_WORK_STATE, 0)]
         set(value) {
             sharedPreferences.edit {
+                val now = LocalTime.now().toSeconds()
                 putInt(CURRENT_WORK_STATE, value.ordinal)
+                putLong(
+                    CURRENT_WORK_STATE_SET_SECONDS,
+                    now
+                )
+            }
+        }
+    override val timeOfCurrentStateSet: TimeWithSeconds
+        get() = TimeWithSeconds.fromSeconds(
+            sharedPreferences.getLong(
+                CURRENT_WORK_STATE_SET_SECONDS,
+                0
+            )
+        )
+    override var isDinnerEnableToday: Boolean
+        get() = sharedPreferences.getBoolean(IS_DINNER_ENABLE_TODAY, true)
+        set(value) {
+            sharedPreferences.edit {
+                putBoolean(IS_DINNER_ENABLE_TODAY, value)
             }
         }
 
 
     companion object {
         const val CURRENT_WORK_STATE = "currentWorkState"
+        const val CURRENT_WORK_STATE_SET_SECONDS = "current_work_state_set_seconds"
+        const val IS_DINNER_ENABLE_TODAY = "is_dinner_enable_today"
     }
 }

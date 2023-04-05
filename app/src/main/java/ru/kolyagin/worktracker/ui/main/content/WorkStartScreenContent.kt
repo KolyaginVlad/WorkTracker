@@ -26,7 +26,7 @@ import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 
 @Composable
 fun WorkStartScreenContent(
@@ -129,7 +129,7 @@ fun StartButton(
 private fun WorkStartScreenPreview() {
     WorkTrackerTheme {
         WorkStartScreenContent(state = CardState.WorkStart(
-            DayOfWeek.Monday,
+            DayOfWeek.MONDAY,
             events = persistentListOf(
                 WorkEvent(
                     id = 0, timeStart = Time(19, 0), timeEnd = Time(19, 10), name = "УЖИН"

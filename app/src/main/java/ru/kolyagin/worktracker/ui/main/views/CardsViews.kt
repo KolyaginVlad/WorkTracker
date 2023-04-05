@@ -31,7 +31,7 @@ import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.utils.toShortStringId
 import ru.kolyagin.worktracker.ui.views.Timer
 import ru.kolyagin.worktracker.utils.Constants.BREAK
-import ru.kolyagin.worktracker.utils.models.DayOfWeek
+import java.time.DayOfWeek
 
 @Composable
 fun HeaderDay(
@@ -52,9 +52,9 @@ fun HeaderDay(
         )
         Icon(
             modifier = Modifier
-				.clickable(onClick = onClickDeleteDay)
-				.align(Alignment.CenterVertically)
-				.padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
+				.padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+                .clickable(onClick = onClickDeleteDay)
+                .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.delete),
             contentDescription = null,
             tint = contentColor

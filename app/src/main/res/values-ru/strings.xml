@@ -8,12 +8,14 @@
     <string name="thursday">Четверг</string>
     <string name="friday">Пятница</string>
     <string name="saturday">Суббота</string>
+    <string name="sunday">Воскресенье</string>
     <string name="shortMonday">пн</string>
     <string name="shortTuesday">вт</string>
     <string name="shortWednesday">ср</string>
     <string name="shortThursday">чт</string>
     <string name="shortFriday">пт</string>
     <string name="shortSaturday">сб</string>
+    <string name="shortSunday">вс</string>
     <string name="dinner">Обед</string>
     <string name="dinner_description">Пора кушать!</string>
     <string name="morning_start_work_description">Просыпайся! Пора на работу!</string>
@@ -40,6 +42,8 @@
     <string name="start_lunch">УЙТИ НА ОБЕД</string>
     <string name="finish_work">ЗАВЕРШИТЬ РАБОТУ</string>
     <string name="time_pause">время паузы</string>
+    <string name="fix_your_state">Состояние исправлено!</string>
+    <string name="time_worked">времени отработано</string>
     <string name="break_work">перерыв</string>
 
     <plurals name="hoursL">
@@ -57,15 +61,18 @@
         <item quantity="one">час</item>
         <item quantity="few">часа</item>
         <item quantity="many">часов</item>
+        <item quantity="other">часов</item>
     </plurals>
     <plurals name="minutes">
         <item quantity="one">минута</item>
         <item quantity="few">минуты</item>
         <item quantity="many">минут</item>
+        <item quantity="other">минут</item>
     </plurals>
     <plurals name="seconds">
         <item quantity="one">секунда</item>
         <item quantity="few">секунды</item>
         <item quantity="many">секунд</item>
+        <item quantity="other">секунд</item>
     </plurals>
 </resources>
