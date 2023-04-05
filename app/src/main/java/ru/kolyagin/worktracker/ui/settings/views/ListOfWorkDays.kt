@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,6 +35,7 @@ import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
+import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
 import ru.kolyagin.worktracker.ui.theme.Red
 import ru.kolyagin.worktracker.ui.theme.Secondary
 import ru.kolyagin.worktracker.ui.theme.SurfaceDisabled
@@ -74,14 +76,15 @@ private fun WorkDay(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.shadow(
-            elevation = 4.dp,
-            shape = RoundedCornerShape(8.dp)
-        )
+        modifier = Modifier
+            .fillMaxSize()
+            ,
+        shape = RoundedCornerShape(40.dp),
+        backgroundColor = OnPrimaryHighEmphasis
     ) {
         Column(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(18.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
