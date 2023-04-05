@@ -17,6 +17,12 @@ object Constants {
     const val MORNING_MINUTES_LIMIT = 30
     const val MORNING_HOURS_OFFSET = 2
     const val MORNING_MINUTES_OFFSET = 0
+    const val MORNING_OFFSET = 120
+    const val MORNING_START = 540
+    const val MORNING_END = 690
+    const val DINNER_TIME = 780
+    const val WORK_START_TIME = 30
+    const val WORK_END_TIME = 10
 
     const val NOT_WORK_DINNER_CONST = 10
 
