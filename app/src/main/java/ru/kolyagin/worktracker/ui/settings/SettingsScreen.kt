@@ -2,7 +2,6 @@ package ru.kolyagin.worktracker.ui.settings
 
 import android.app.TimePickerDialog
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -102,7 +101,6 @@ private fun SettingsScreenContent(
                 .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
                 .background(MaterialTheme.colors.background)
                 .padding(top = 16.dp)
-                //.verticalScroll(scrollState)
                 .constrainAs(content) {
                     top.linkTo(topBar.bottom, margin = (-48).dp)
                 },

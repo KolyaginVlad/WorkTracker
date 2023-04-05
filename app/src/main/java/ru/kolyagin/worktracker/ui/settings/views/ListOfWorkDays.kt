@@ -6,14 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideTextStyle
-import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -22,7 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +39,8 @@ import ru.kolyagin.worktracker.ui.theme.Red
 import ru.kolyagin.worktracker.ui.theme.Secondary
 import ru.kolyagin.worktracker.ui.theme.SurfaceDisabled
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
-import ru.kolyagin.worktracker.ui.utils.toStringId
+import ru.kolyagin.worktracker.ui.utils.toShortStringId
+import ru.kolyagin.worktracker.ui.views.CustomSwitch
 import java.time.DayOfWeek
 
 @Composable
@@ -73,12 +73,11 @@ private fun WorkDay(
     onDeletePeriod: (WorkPeriod) -> Unit,
     onAddPeriod: (DayOfWeek) -> Unit,
     onDinnerChange: (DayOfWeek, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colors.primaryVariant,
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxSize()
-            ,
+        modifier = modifier,
         shape = RoundedCornerShape(40.dp),
         backgroundColor = OnPrimaryHighEmphasis
     ) {
@@ -93,12 +92,15 @@ private fun WorkDay(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(id = dayWorkInfo.day.toStringId()),
-                    fontSize = 20.sp
+                    text = stringResource(id = dayWorkInfo.day.toShortStringId()),
+                    style = MaterialTheme.typography.h4,
+                    modifier = Modifier.weight(1F),
+                    color = contentColor
                 )
                 Text(
                     text = dayWorkInfo.totalTime.toString(),
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = contentColor
                 )
             }
             Dinner(
@@ -107,7 +109,8 @@ private fun WorkDay(
                     {
                         onDinnerChange(dayWorkInfo.day, it)
                     }
-                }
+                },
+                contentColor = contentColor
             )
             ProvideTextStyle(
                 value = TextStyle(
@@ -139,7 +142,8 @@ private fun WorkDay(
 @Composable
 fun Dinner(
     isInclude: Boolean,
-    onDinnerChange: (Boolean) -> Unit
+    onDinnerChange: (Boolean) -> Unit,
+    contentColor: Color
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -148,9 +152,14 @@ fun Dinner(
     ) {
         Text(
             text = stringResource(id = R.string.dinner),
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            color = contentColor
         )
-        Switch(checked = isInclude, onCheckedChange = onDinnerChange)
+        CustomSwitch(
+            checked = isInclude,
+            onCheckedChange = onDinnerChange,
+            modifier = Modifier,
+        )
     }
 }
 
@@ -228,7 +237,8 @@ private fun ListOfDaysPrev() {
                 DayWorkInfo(
                     DayOfWeek.TUESDAY,
                     persistentListOf(
-                        WorkPeriod(2,
+                        WorkPeriod(
+                            2,
                             Time(8, 0),
                             Time(11, 20)
                         ),
@@ -270,7 +280,7 @@ private fun ListOfDaysPrev() {
                             Time(19, 0)
                         ),
                     ),
-                    false
+                    true
                 ),
                 DayWorkInfo(
                     DayOfWeek.FRIDAY,
