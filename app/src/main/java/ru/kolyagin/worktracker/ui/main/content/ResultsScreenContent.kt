@@ -38,7 +38,8 @@ fun ResultsScreenContent(
         )
         WorkTimer(
             time = state.statistic.workTime,
-            title = stringResource(id = R.string.time_worked)
+            title = stringResource(id = R.string.time_worked),
+            secondsChanger = 0
         )
         EventList(
             modifier = Modifier
