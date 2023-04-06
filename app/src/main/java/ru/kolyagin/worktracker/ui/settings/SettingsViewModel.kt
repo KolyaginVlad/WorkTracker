@@ -78,10 +78,15 @@ class SettingsViewModel @Inject constructor(
         selectedDayOfWeek?.let { dayOfWeek ->
             launchViewModelScope {
                 selectedWorkPeriod?.let {
-                    val newPeriod = if (selectedPeriodPart == PeriodPart.START) {
+                    var newPeriod = if (selectedPeriodPart == PeriodPart.START) {
                         it.copy(timeStart = time)
                     } else {
                         it.copy(timeEnd = time)
+                    }
+                    if (newPeriod.timeStart >= newPeriod.timeEnd) {
+                        newPeriod = it.copy(
+                            timeStart = newPeriod.timeEnd, timeEnd = newPeriod.timeStart
+                        )
                     }
                     scheduleRepository.setTime(newPeriod, dayOfWeek)
                 }

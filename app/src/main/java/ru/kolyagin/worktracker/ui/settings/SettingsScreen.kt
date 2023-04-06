@@ -105,12 +105,6 @@ private fun SettingsScreenContent(
                     top.linkTo(topBar.bottom, margin = (-48).dp)
                 },
         ) {
-            TotalScheduleInfo(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 15.dp),
-                totalTime = state.totalTime
-            )
             ListOfWorkDays(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -120,7 +114,8 @@ private fun SettingsScreenContent(
                 onClickPeriod = onClickPeriod,
                 onDeletePeriod = onDeletePeriod,
                 onAddPeriod = onAddPeriod,
-                onDinnerChange = onDinnerChange
+                onDinnerChange = onDinnerChange,
+                totalTime = state.totalTime
             )
             Spacer(size = 8.dp)
         }

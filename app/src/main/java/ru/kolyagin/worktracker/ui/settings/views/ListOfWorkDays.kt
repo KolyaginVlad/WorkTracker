@@ -45,6 +45,7 @@ import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.utils.toShortStringId
 import ru.kolyagin.worktracker.ui.views.AddButton
 import ru.kolyagin.worktracker.ui.views.CustomSwitch
+import ru.kolyagin.worktracker.ui.views.Spacer
 import java.time.DayOfWeek
 
 @Composable
@@ -54,9 +55,15 @@ fun ListOfWorkDays(
     onDeletePeriod: (WorkPeriod) -> Unit,
     onAddPeriod: (DayOfWeek) -> Unit,
     onDinnerChange: (DayOfWeek, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    totalTime:Time
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        TotalScheduleInfo(
+            modifier = Modifier
+                .fillMaxWidth(),
+            totalTime = totalTime
+        )
         listOfWorkPeriods.forEach {
             WorkDay(
                 modifier = Modifier.fillMaxWidth(),
@@ -103,10 +110,11 @@ private fun WorkDay(
                 )
                 Text(
                     text = dayWorkInfo.totalTime.toString(),
-                    fontSize = 20.sp,
-                    color = contentColor
-                )
+                    color = contentColor,
+                    style = MaterialTheme.typography.h4,
+                    )
             }
+            Spacer(size = 5.dp)
             Dinner(
                 isInclude = dayWorkInfo.isDinnerInclude,
                 onDinnerChange = remember(dayWorkInfo) {
@@ -116,6 +124,7 @@ private fun WorkDay(
                 },
                 contentColor = contentColor
             )
+            Spacer(size = 10.dp)
             ProvideTextStyle(
                 value = TextStyle(
                     color = SurfaceDisabled
@@ -124,7 +133,7 @@ private fun WorkDay(
                 Periods(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 12.dp),
+                        .padding(vertical = 6.dp),
                     dayWorkInfo = dayWorkInfo,
                     onClickPeriod = onClickPeriod,
                     onDeletePeriod = onDeletePeriod
@@ -134,7 +143,8 @@ private fun WorkDay(
                 day = dayWorkInfo.day.ordinal,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp),
+                    .padding(top = 10.dp)
+                ,
                 onAddPeriod = remember(dayWorkInfo) {
                     {
                         onAddPeriod(dayWorkInfo.day)
@@ -244,6 +254,7 @@ private fun ColumnScope.Periods(
 private fun ListOfDaysPrev() {
     WorkTrackerTheme {
         ListOfWorkDays(
+            totalTime = Time(0,0),
             listOfWorkPeriods = persistentListOf(
                 DayWorkInfo(
                     DayOfWeek.MONDAY,
@@ -330,7 +341,7 @@ private fun ListOfDaysPrev() {
             onClickPeriod = { _, _, _ -> },
             onDeletePeriod = { _ -> },
             onAddPeriod = { _ -> },
-            onDinnerChange = { _, _ -> }
+            onDinnerChange = { _, _ -> },
         )
     }
 }
