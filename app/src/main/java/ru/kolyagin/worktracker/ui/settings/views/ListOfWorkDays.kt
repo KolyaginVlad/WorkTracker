@@ -109,7 +109,7 @@ private fun WorkDay(
                     color = contentColor
                 )
                 Text(
-                    text = dayWorkInfo.totalTime.toString(),
+                    text = dayWorkInfo.timeWithOutConflux.toString(),
                     color = contentColor,
                     style = MaterialTheme.typography.h4,
                     )

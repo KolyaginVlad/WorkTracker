@@ -10,8 +10,17 @@ data class DayWorkInfo(
     val isDinnerInclude: Boolean,
     val events: ImmutableList<WorkEvent> = persistentListOf()
 ) {
-    val totalTime = calculateTotalTime(periods)?:Time(0, 0)
+    val totalTime = (
+            periods
+                .map { it.timeEnd - it.timeStart }
+                .takeIf { it.isNotEmpty() }
+                ?.reduceRight { time, acc ->
+                    acc + time
+                } ?: Time.fromMinutes(if (isDinnerInclude) 60 else 0)
+            ) - Time.fromMinutes(if (isDinnerInclude) 60 else 0)
+    val timeWithOutConflux=calculateTotalTime(periods)?:Time(0,0)
 }
+
 
 fun calculateTotalTime(intervals: ImmutableList<WorkPeriod>): Time? {
     if (intervals.isEmpty()) return null
