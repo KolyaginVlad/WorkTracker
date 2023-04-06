@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariant
+import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 
 @Composable
@@ -26,15 +27,16 @@ fun CustomSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier,
-    width: Dp = 36.dp,
-    height: Dp = 20.dp,
+    width: Dp = 40.dp,
+    height: Dp = 24.dp,
+    checkedThumbColor: Color = OnPrimaryHighEmphasis,
+    uncheckedThumbColor: Color = OnPrimaryHighEmphasis,
     checkedTrackColor: Color = PrimaryVariant,
-    uncheckedTrackColor: Color = OnPrimaryHighEmphasis,
+    uncheckedTrackColor: Color = PrimaryVariantDisabled,
     gapBetweenThumbAndTrackEdge: Dp = 3.dp,
-    borderWidth: Dp = 1.dp,
     cornerSize: Int = 50,
-    iconInnerPadding: Dp = 1.dp,
-    thumbSize: Dp = 14.dp
+    iconInnerPadding: Dp = 0.dp,
+    thumbSize: Dp = 16.dp
 ) {
     val interactionSource = remember {
         MutableInteractionSource()
@@ -47,11 +49,6 @@ fun CustomSwitch(
                 shape = RoundedCornerShape(percent = cornerSize)
             )
             .size(width = width, height = height)
-            .border(
-                width = borderWidth,
-                color = checkedTrackColor,
-                shape = RoundedCornerShape(percent = cornerSize)
-            )
             .clickable
                 (
                 indication = null,
@@ -78,7 +75,7 @@ fun CustomSwitch(
             )
             {
                 drawTrack(
-                    if (checked) uncheckedTrackColor else checkedTrackColor,
+                    if (checked) checkedThumbColor else uncheckedThumbColor,
                     thumbSize.toPx(),
                     thumbSize.toPx()
                 )
