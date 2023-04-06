@@ -1,13 +1,17 @@
 package ru.kolyagin.worktracker.ui.settings.views
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -16,20 +20,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
+import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TotalScheduleInfo(
     totalTime: Time,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colors.primary,
 ) {
     Card(
-        modifier = modifier
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(8.dp)
-            )
+        modifier = modifier,
+        shape = RoundedCornerShape(40.dp),
+        backgroundColor = OnPrimaryHighEmphasis
     ) {
         Text(
             modifier = Modifier.padding(24.dp),
@@ -46,7 +50,8 @@ fun TotalScheduleInfo(
                     totalTime.minutes
                 )
             }",
-            fontSize = 24.sp,
+            style = MaterialTheme.typography.h5,
+            color = contentColor,
             textAlign = TextAlign.Center
         )
     }

@@ -108,7 +108,7 @@ private fun SettingsScreenContent(
             TotalScheduleInfo(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
+                    .padding(horizontal = 16.dp, vertical = 15.dp),
                 totalTime = state.totalTime
             )
             ListOfWorkDays(
