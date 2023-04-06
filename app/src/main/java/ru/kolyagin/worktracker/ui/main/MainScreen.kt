@@ -150,6 +150,7 @@ fun MainScreen(
                             onClickReturnFromDinner = viewModel::onClickReturnFromDinner,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
                             onClickEvent = viewModel::onClickEvent,
+                            onAddPeriod = viewModel::onClickAddEvent,
                             onClickEndWork = viewModel::onClickFinishWork
                         )
 
@@ -159,6 +160,7 @@ fun MainScreen(
                             onClickGoToDinner = viewModel::onClickGoToDinner,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
                             onClickEvent = viewModel::onClickEvent,
+                            onAddPeriod = viewModel::onClickAddEvent,
                             onClickEndWork = viewModel::onClickFinishWork
                         )
 
@@ -167,6 +169,7 @@ fun MainScreen(
                             onClickEndPause = viewModel::onClickEndPause,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
                             onClickEvent = viewModel::onClickEvent,
+                            onAddPeriod = viewModel::onClickAddEvent,
                             onClickEndWork = viewModel::onClickFinishWork
                         )
 

@@ -4,8 +4,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.Time.Companion.toTimeWithSeconds
@@ -23,7 +21,6 @@ import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +29,6 @@ class MainViewModel @Inject constructor(
     private val preferenceRepository: PreferenceRepository,
     private val workStatisticRepository: WorkStatisticRepository
 ) : BaseViewModel<MainScreenState, MainEvent>(MainScreenState()) {
-    private var timerJob: Job? = null
     private var schedule: DayWorkInfo? = null
     private var events: Map<Int, List<WorkEvent>> = mapOf()
 
@@ -64,8 +60,7 @@ class MainViewModel @Inject constructor(
     fun init() {
         val listOfDays = DayOfWeek.values().toList()
         scheduleRepository.schedule().subscribe {
-            timerJob?.cancel()
-            timerJob = launchViewModelScope {
+            launchViewModelScope {
                 val currentDay = LocalDate.now().dayOfWeek.ordinal
                 schedule = it.getOrNull(LocalDate.now().dayOfWeek.ordinal)
                 events = it.associate { Pair(it.day.ordinal, it.events) }
@@ -74,8 +69,9 @@ class MainViewModel @Inject constructor(
                 val workingRanges =
                     schedule?.let { schedule -> getListOfTimeRangesWorking(schedule) }
 
-                do {
                     val currentEvents = events[currentDay]?.toPersistentList() ?: persistentListOf()
+                    val isDinnerEnable = schedule?.isDinnerInclude == true &&
+                            preferenceRepository.isDinnerEnableToday
                     val currentTime = LocalTime.now()
                     val time = Time(currentTime.hour, currentTime.minute)
                     val currentState = getCurrentState(
@@ -85,6 +81,7 @@ class MainViewModel @Inject constructor(
                         listOfDays[currentDay],
                         currentTime,
                         schedule?.totalTime,
+                        isDinnerEnable,
                         currentEvents
                     )
                     updateState { state ->
@@ -105,8 +102,6 @@ class MainViewModel @Inject constructor(
                             days = (listOf(currentState) + daysWithOutCurrent).toPersistentList()
                         )
                     }
-                    delay(ChronoUnit.MILLIS.between(LocalTime.now(), currentTime.plusSeconds(1)))
-                } while (timerJob?.isCancelled != true)
             }
         }
     }
@@ -188,9 +183,10 @@ class MainViewModel @Inject constructor(
     }
 
     private fun updateTimeOfPauseAfterDinner() {
-        val dinner =  (events[LocalDate.now().dayOfWeek.ordinal]?.toPersistentList() ?: persistentListOf())
-            .first { it.isDinner }
-            .let { it.timeEnd.toTimeWithSeconds() - it.timeStart.toTimeWithSeconds() }
+        val dinner =
+            (events[LocalDate.now().dayOfWeek.ordinal]?.toPersistentList() ?: persistentListOf())
+                .first { it.isDinner }
+                .let { it.timeEnd.toTimeWithSeconds() - it.timeStart.toTimeWithSeconds() }
         var pauseStart = preferenceRepository.timeOfCurrentStateSet
         val pauseStop = LocalTime.now().toTimeWithSeconds()
         if (dinner >= pauseStop - pauseStart)
@@ -320,6 +316,8 @@ class MainViewModel @Inject constructor(
         val currentTime = LocalTime.now()
         val time = Time(currentTime.hour, currentTime.minute)
         val listOfDays = DayOfWeek.values().toList()
+        val isDinnerEnable = schedule?.isDinnerInclude == true &&
+                preferenceRepository.isDinnerEnableToday
         val currentState = getCurrentState(
             startWorkRanges,
             workingRanges,
@@ -327,6 +325,7 @@ class MainViewModel @Inject constructor(
             listOfDays[currentDay],
             currentTime,
             schedule?.totalTime,
+            isDinnerEnable,
             events[currentDay]?.toPersistentList() ?: persistentListOf()
         )
         updateState { state ->
@@ -356,6 +355,7 @@ class MainViewModel @Inject constructor(
         currentDayOfWeek: DayOfWeek,
         currentTime: LocalTime,
         totalTime: Time?,
+        isDinnerEnable: Boolean,
         workEvents: PersistentList<WorkEvent>
     ) = when {
         startWorkRanges == null || workingRanges == null || totalTime == null -> {
@@ -375,6 +375,7 @@ class MainViewModel @Inject constructor(
                 time,
                 currentDayOfWeek,
                 totalTime,
+                isDinnerEnable,
                 workEvents
             )
         }
@@ -386,12 +387,13 @@ class MainViewModel @Inject constructor(
                 time,
                 currentDayOfWeek,
                 totalTime,
+                isDinnerEnable,
                 workEvents
             )
         }
 
         else -> {
-            getStateForEndWork(currentDayOfWeek, currentTime, totalTime, workEvents)
+            getStateForEndWork(currentDayOfWeek, currentTime, totalTime, isDinnerEnable, workEvents)
         }
     }
 
@@ -401,6 +403,7 @@ class MainViewModel @Inject constructor(
         time: Time,
         currentDayOfWeek: DayOfWeek,
         totalTime: Time,
+        isDinnerEnable: Boolean,
         workEvents: PersistentList<WorkEvent>
     ) = when (preferenceRepository.currentWorkState) {
         WorkState.NotWorking, WorkState.Worked -> {
@@ -424,12 +427,14 @@ class MainViewModel @Inject constructor(
                     currentDayOfWeek,
                     workEvents,
                     statistic.workTime + currentTime.toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet,
+                    isDinnerEnable,
                 )
             } else {
                 CardState.Working(
                     currentDayOfWeek,
                     workEvents,
                     statistic.workTime + currentTime.toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet - totalTime.toTimeWithSeconds(),
+                    isDinnerEnable,
                     true
                 )
             }
@@ -458,6 +463,7 @@ class MainViewModel @Inject constructor(
         time: Time,
         currentDayOfWeek: DayOfWeek,
         totalTime: Time,
+        isDinnerEnable: Boolean,
         workEvents: PersistentList<WorkEvent>
     ) = when (preferenceRepository.currentWorkState) {
         WorkState.NotWorking -> {
@@ -482,12 +488,14 @@ class MainViewModel @Inject constructor(
                     day = currentDayOfWeek,
                     events = workEvents,
                     time = timeWork,
+                    isDinnerEnable = isDinnerEnable,
                 )
             } else {
                 CardState.Working(
                     currentDayOfWeek,
                     workEvents,
                     statistic.workTime + currentTime.toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet - totalTime.toTimeWithSeconds(),
+                    isDinnerEnable,
                     true
                 )
             }
@@ -538,6 +546,7 @@ class MainViewModel @Inject constructor(
         currentDayOfWeek: DayOfWeek,
         currentTime: LocalTime,
         totalTime: Time,
+        isDinnerEnable: Boolean,
         workEvents: PersistentList<WorkEvent>
     ) =
         when (preferenceRepository.currentWorkState) {
@@ -557,12 +566,14 @@ class MainViewModel @Inject constructor(
                         currentDayOfWeek,
                         workEvents,
                         statistic.workTime + currentTime.toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet,
+                        isDinnerEnable,
                     )
                 } else {
                     CardState.Working(
                         currentDayOfWeek,
                         workEvents,
                         statistic.workTime + currentTime.toTimeWithSeconds() - preferenceRepository.timeOfCurrentStateSet - totalTime.toTimeWithSeconds(),
+                        isDinnerEnable,
                         true
                     )
                 }

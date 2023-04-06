@@ -68,6 +68,7 @@ fun WorkTimer(
     title: String,
     primaryColor: Color = MaterialTheme.colors.primaryVariant,
     disableColor: Color = PrimaryVariantDisabled,
+    secondsChanger: Int = 1,
 ) {
     time?.let {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -84,7 +85,8 @@ fun WorkTimer(
 					.padding(start = 40.dp, top = 8.dp, end = 40.dp, bottom = 24.dp)
 					.fillMaxWidth(),
                 primaryColor = primaryColor,
-                disableColor = disableColor
+                disableColor = disableColor,
+                secondsChanger = secondsChanger
             )
         }
     }

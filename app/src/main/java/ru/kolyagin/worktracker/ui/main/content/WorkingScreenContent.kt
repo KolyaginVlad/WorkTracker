@@ -13,13 +13,14 @@ import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.main.CardState
 import ru.kolyagin.worktracker.ui.main.views.Button
 import ru.kolyagin.worktracker.ui.main.views.EventList
 import ru.kolyagin.worktracker.ui.main.views.HeaderDay
 import ru.kolyagin.worktracker.ui.main.views.WorkTimer
-import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.views.Spacer
 import java.time.DayOfWeek
 
 @Composable
@@ -47,26 +48,30 @@ fun WorkingScreenContent(
                 id = R.string.overwork_time
             )
         )
+        Spacer(12.dp)
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(horizontal = 12.dp),
             onClick = onClickStartPause,
             text = stringResource(id = R.string.pause_work),
             backgroundColor = MaterialTheme.colors.secondary,
             contentColor = MaterialTheme.colors.onSecondary,
             borderColor = MaterialTheme.colors.secondary
         )
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            onClick = onClickGoToDinner,
-            text = stringResource(id = R.string.start_lunch),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary,
-            borderColor = MaterialTheme.colors.secondary
-        )
+        if (state.isDinnerEnable) {
+            Spacer(12.dp)
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                onClick = onClickGoToDinner,
+                text = stringResource(id = R.string.start_lunch),
+                backgroundColor = MaterialTheme.colors.secondary,
+                contentColor = MaterialTheme.colors.onSecondary,
+                borderColor = MaterialTheme.colors.secondary
+            )
+        }
         EventList(
             modifier = Modifier
                 .fillMaxWidth()
