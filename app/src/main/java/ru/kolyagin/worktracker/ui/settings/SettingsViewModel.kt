@@ -73,7 +73,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-
     fun onTimePicked(time: Time) {
         selectedDayOfWeek?.let { dayOfWeek ->
             launchViewModelScope {

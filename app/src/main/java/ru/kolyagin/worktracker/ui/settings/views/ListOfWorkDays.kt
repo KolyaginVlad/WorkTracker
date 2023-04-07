@@ -38,7 +38,6 @@ import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariant
-import ru.kolyagin.worktracker.ui.theme.Red
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.theme.SurfaceDisabled
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
@@ -56,7 +55,7 @@ fun ListOfWorkDays(
     onAddPeriod: (DayOfWeek) -> Unit,
     onDinnerChange: (DayOfWeek, Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    totalTime:Time
+    totalTime: Time
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         TotalScheduleInfo(
@@ -112,7 +111,7 @@ private fun WorkDay(
                     text = dayWorkInfo.timeWithOutConflux.toString(),
                     color = contentColor,
                     style = MaterialTheme.typography.h4,
-                    )
+                )
             }
             Spacer(size = 5.dp)
             Dinner(
@@ -143,8 +142,7 @@ private fun WorkDay(
                 day = dayWorkInfo.day.ordinal,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp)
-                ,
+                    .padding(top = 10.dp),
                 onAddPeriod = remember(dayWorkInfo) {
                     {
                         onAddPeriod(dayWorkInfo.day)
@@ -254,7 +252,7 @@ private fun ColumnScope.Periods(
 private fun ListOfDaysPrev() {
     WorkTrackerTheme {
         ListOfWorkDays(
-            totalTime = Time(0,0),
+            totalTime = Time(0, 0),
             listOfWorkPeriods = persistentListOf(
                 DayWorkInfo(
                     DayOfWeek.MONDAY,
