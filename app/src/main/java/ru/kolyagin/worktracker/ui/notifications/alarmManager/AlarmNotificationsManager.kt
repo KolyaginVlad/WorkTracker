@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
+import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
 import ru.kolyagin.worktracker.utils.Constants
@@ -25,6 +26,7 @@ import javax.inject.Named
 class AlarmNotificationsManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val scheduleRepository: ScheduleRepository,
+    private val preferenceRepository: PreferenceRepository,
     @Named(Constants.NOTIFICATION_SCOPE) private val scope: CoroutineScope
 ) : NotificationsManager {
 
@@ -35,22 +37,14 @@ class AlarmNotificationsManager @Inject constructor(
                     .takeIf { it.isNotEmpty() }
                     ?.minOfOrNull { it.timeStart }
                     ?.takeIf {
-                        it < Time(
-                            Constants.MORNING_HOURS_LIMIT,
-                            Constants.MORNING_MINUTES_LIMIT
-                        ) && it > Time(
-                            Constants.MORNING_HOURS_OFFSET,
-                            Constants.MORNING_MINUTES_OFFSET
-                        )
+                        it in preferenceRepository.morningRange
+                                && it > preferenceRepository.morningNotificationOffset
                     }
                     ?.let { workStart ->
                         scheduleAlarm(
                             dayWorkInfo.day.ordinal,
                             Constants.MORNING_CONST,
-                            workStart - Time(
-                                Constants.MORNING_HOURS_OFFSET,
-                                Constants.MORNING_MINUTES_OFFSET
-                            )
+                            workStart - preferenceRepository.morningNotificationOffset
                         ) {
                             putExtra(Constants.DESCRIPTION, R.string.morning_start_work_description)
                         }
@@ -67,18 +61,12 @@ class AlarmNotificationsManager @Inject constructor(
                     ?.map { it.timeStart }
                     ?.forEach {
                         it.takeIf {
-                            it >= Time(
-                                Constants.MORNING_HOURS_LIMIT,
-                                Constants.MORNING_MINUTES_LIMIT
-                            )
+                            it >= preferenceRepository.morningRange.endInclusive
                         }?.let { workStart ->
                             scheduleAlarm(
                                 dayWorkInfo.day.ordinal,
                                 Constants.PRE_WORK_CONST,
-                                workStart - Time(
-                                    Constants.PRE_WORK_HOURS_OFFSET,
-                                    Constants.PRE_WORK_MINUTES_OFFSET
-                                )
+                                workStart - preferenceRepository.timeBeforeStartWork
                             ) {
                                 action = Constants.PRE_WORK_ACTION
                                 putExtra(Constants.DESCRIPTION, R.string.start_work_description)
@@ -106,13 +94,13 @@ class AlarmNotificationsManager @Inject constructor(
                             scheduleAlarm(
                                 dayWorkInfo.day.ordinal,
                                 Constants.EVENING_CONST,
-                                workEnd - Time(
-                                    Constants.FIN_WORK_HOURS_OFFSET,
-                                    Constants.FIN_WORK_MINUTES_OFFSET
-                                )
+                                workEnd - preferenceRepository.timeBeforeEndWork
                             ) {
                                 action = Constants.FIN_WORK_ACTION
-                                putExtra(Constants.DESCRIPTION, R.string.evening_finish_work_description)
+                                putExtra(
+                                    Constants.DESCRIPTION,
+                                    R.string.evening_finish_work_description
+                                )
                             }
                         }
                     }
@@ -137,10 +125,7 @@ class AlarmNotificationsManager @Inject constructor(
                             scheduleAlarm(
                                 dayWorkInfo.day.ordinal,
                                 Constants.FIN_WORK_CONST,
-                                workEnd - Time(
-                                    Constants.FIN_WORK_HOURS_OFFSET,
-                                    Constants.FIN_WORK_MINUTES_OFFSET
-                                )
+                                workEnd - preferenceRepository.timeBeforeEndWork
                             ) {
                                 action = Constants.FIN_WORK_ACTION
                                 putExtra(Constants.DESCRIPTION, R.string.finish_work_description)
@@ -157,7 +142,7 @@ class AlarmNotificationsManager @Inject constructor(
             scheduleAlarm(
                 it.ordinal,
                 Constants.FIX_STATE_CONST,
-                Time(23,59)
+                Time(23, 59)
             ) {
                 action = Constants.FIX_STATE_ACTION
                 putExtra(Constants.DESCRIPTION, R.string.fix_your_state)
@@ -167,10 +152,7 @@ class AlarmNotificationsManager @Inject constructor(
 
     override fun scheduleDinnerNotification() {
         scope.launch {
-            val time = Time(
-                Constants.DINNER_HOURS,
-                Constants.DINNER_MINUTES
-            )
+            val time = preferenceRepository.dinnerTimeInNotWorkingTime
             scheduleRepository.schedule().firstOrNull()?.forEach { dayWorkInfo ->
                 if (!dayWorkInfo.isDinnerInclude && dayWorkInfo.periods.all {
                         time !in it.timeStart..it.timeEnd
