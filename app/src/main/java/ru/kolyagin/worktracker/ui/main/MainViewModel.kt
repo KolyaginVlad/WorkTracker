@@ -74,12 +74,12 @@ class MainViewModel @Inject constructor(
                     schedule?.let { schedule ->
                         getListOfTimeRangesStartWork(schedule)
                             ?.map { it.start.toTimeWithSeconds()..it.endInclusive.toTimeWithSeconds() }
-                    }
+                    }?.sortedBy { it.start }
                 val workingRanges =
                     schedule?.let { schedule ->
                         getListOfTimeRangesWorking(schedule)
                             ?.map { it.start.toTimeWithSeconds()..it.endInclusive.toTimeWithSeconds() }
-                    }
+                    }?.sortedBy { it.start }
                 val currentEvents = events[currentDay]?.toPersistentList() ?: persistentListOf()
                 val isDinnerEnable = schedule?.isDinnerInclude == true &&
                         preferenceRepository.isDinnerEnableToday
@@ -329,11 +329,11 @@ class MainViewModel @Inject constructor(
             schedule?.let { schedule ->
                 getListOfTimeRangesStartWork(schedule)
                     ?.map { it.start.toTimeWithSeconds()..it.endInclusive.toTimeWithSeconds() }
-            }
+            }?.sortedBy { it.start }
         val workingRanges = schedule?.let { schedule ->
             getListOfTimeRangesWorking(schedule)
                 ?.map { it.start.toTimeWithSeconds()..it.endInclusive.toTimeWithSeconds() }
-        }
+        }?.sortedBy { it.start }
         val currentTime = LocalTime.now()
         val time = currentTime.toTimeWithSeconds()
         val listOfDays = DayOfWeek.values().toList()
@@ -390,6 +390,9 @@ class MainViewModel @Inject constructor(
         }
 
         startWorkRanges.any { time in it } -> {
+            if (preferenceRepository.currentWorkState == WorkState.Worked) {
+                preferenceRepository.currentWorkState = WorkState.NotWorking
+            }
             getStateForStartWork(
                 startWorkRanges,
                 currentTime,
@@ -534,14 +537,13 @@ class MainViewModel @Inject constructor(
                 )
             } else {
                 val range = workingRanges[rangeIndex + 1]
-                val timeLate = currentTime.toTimeWithSeconds() - range.start
+                val time = range.start - currentTime.toTimeWithSeconds()
                 CardState.WorkStart(
                     day = currentDayOfWeek,
                     buttonActive = true,
                     buttonStartEarly = false,
                     events = workEvents,
-                    time = timeLate,
-                    late = true
+                    time = time,
                 )
             }
         }

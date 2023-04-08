@@ -174,6 +174,7 @@ fun MainScreen(
 
                         is CardState.Results -> ResultsScreenContent(
                             state = currentState,
+                            onClickStartWork = viewModel::onClickStartWork,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
                             onClickEvent = viewModel::onClickEvent,
                             onAddPeriod = viewModel::onClickAddEvent
