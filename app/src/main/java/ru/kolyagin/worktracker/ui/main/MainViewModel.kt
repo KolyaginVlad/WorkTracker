@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.Time.Companion.toTimeWithSeconds
@@ -114,7 +115,7 @@ class MainViewModel @Inject constructor(
                         )
                     }
                     delay(ChronoUnit.MILLIS.between(LocalTime.now(), currentTime.plusSeconds(1)))
-                } while (timerJob?.isActive == true)
+                } while (isActive)
             }
         }
     }
