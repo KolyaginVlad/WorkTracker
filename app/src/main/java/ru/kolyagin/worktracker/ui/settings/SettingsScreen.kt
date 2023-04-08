@@ -30,7 +30,6 @@ import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.settings.views.ListOfWorkDays
-import ru.kolyagin.worktracker.ui.settings.views.TotalScheduleInfo
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TopBar
@@ -80,7 +79,7 @@ private fun SettingsScreenContent(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
+            .fillMaxHeight()
     ) {
         val (topBar, content) = createRefs()
         val scrollState = rememberScrollState()

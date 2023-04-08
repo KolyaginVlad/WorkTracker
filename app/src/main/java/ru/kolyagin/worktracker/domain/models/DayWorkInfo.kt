@@ -18,7 +18,9 @@ data class DayWorkInfo(
                     acc + time
                 } ?: Time.fromMinutes(if (isDinnerInclude) 60 else 0)
             ) - Time.fromMinutes(if (isDinnerInclude) 60 else 0)
-    val timeWithOutConflux = calculateTotalTime(periods) ?: Time(0, 0)
+    val timeWithOutConflux = ((calculateTotalTime(periods)
+        ?: (Time.fromMinutes(if (isDinnerInclude) 60 else 0)))
+                - Time.fromMinutes(if (isDinnerInclude) 60 else 0))
 }
 
 
