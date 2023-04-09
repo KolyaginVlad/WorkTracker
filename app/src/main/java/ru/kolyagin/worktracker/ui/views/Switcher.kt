@@ -26,7 +26,7 @@ import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 fun CustomSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     width: Dp = 40.dp,
     height: Dp = 24.dp,
     checkedThumbColor: Color = OnPrimaryHighEmphasis,

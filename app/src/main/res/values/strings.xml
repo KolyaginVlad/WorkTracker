@@ -45,6 +45,16 @@
     <string name="fix_your_state">Your work state fixed!</string>
     <string name="time_worked">time worked</string>
     <string name="break_work">break</string>
+    <string name="notification_settings">notification settings</string>
+    <string name="enable_morning_notification">Enable morning notification</string>
+    <string name="enable_dinner_notification">Enable dinner notification</string>
+    <string name="enable_start_work_notification">Enable start work notification</string>
+    <string name="enable_end_work_notification">Enable end work notification</string>
+    <string name="morning_range">Morning range</string>
+    <string name="morning_offset">Offset from start first work period</string>
+    <string name="start_offset">Offset from start work period</string>
+    <string name="end_offset">Offset from end work period</string>
+    <string name="time_dinner">Time dinnering</string>
 
     <plurals name="hoursL">
         <item quantity="one">%d hour</item>

@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.WorkTracker" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.WorkTracker" parent="android:Theme.Material.Light.NoActionBar" >
+        <item name="android:timePickerDialogTheme">@style/TimePickerDialogTheme</item>
+    </style>
+
+    <style name="TimePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:textColorPrimary">#91819E</item>
+        <item name="android:colorAccent">#91819E</item>
+        <item name="android:timePickerStyle">@style/TimePickerDialogStyle</item>
+    </style>
+
+    <style name="TimePickerDialogStyle" parent="@android:style/Widget.Material.Light.TimePicker">
+        <item name="android:timePickerMode">clock</item>
+        <item name="android:headerBackground">#91819E</item>
+        <item name="android:headerTimeTextAppearance">@style/TextAppearance.TimePickerDialogStyle.TimeLabel</item>
+        <item name="android:numbersTextColor">@drawable/text_color</item>
+        <item name="android:numbersInnerTextColor">#91819E</item>
+        <item name="android:numbersSelectorColor">#91819E</item>
+        <item name="android:numbersBackgroundColor">#EEEDF2</item>
+
+    </style>
+
+    <style name="TextAppearance.TimePickerDialogStyle.TimeLabel" parent="@android:style/TextAppearance.Material">
+
+        <item name="android:textSize">60sp</item> <!-- from -->
+        <item name="android:textColor">#FFFFFF</item>
+
+    </style>
+
+    <style name="Label">
+
+    </style>
 </resources>
