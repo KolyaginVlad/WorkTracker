@@ -199,8 +199,9 @@ class MainViewModel @Inject constructor(
     private fun updateTimeOfPauseAfterDinner() {
         val dinner =
             (events[LocalDate.now().dayOfWeek.ordinal]?.toPersistentList() ?: persistentListOf())
-                .first { it.isDinner }
-                .let { it.timeEnd.toTimeWithSeconds() - it.timeStart.toTimeWithSeconds() }
+                .find { it.isDinner }
+                ?.let { it.timeEnd.toTimeWithSeconds() - it.timeStart.toTimeWithSeconds() }
+                ?: TimeWithSeconds(1,0,0)
         var pauseStart = preferenceRepository.timeOfCurrentStateSet
         val pauseStop = LocalTime.now().toTimeWithSeconds()
         if (dinner >= pauseStop - pauseStart)

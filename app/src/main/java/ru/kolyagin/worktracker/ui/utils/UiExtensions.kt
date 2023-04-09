@@ -1,6 +1,7 @@
 package ru.kolyagin.worktracker.ui.utils
 
 import androidx.annotation.StringRes
+import androidx.compose.ui.unit.Dp
 import ru.kolyagin.worktracker.R
 import java.time.DayOfWeek
 
@@ -28,3 +29,6 @@ fun DayOfWeek.toShortStringId(): Int =
         DayOfWeek.SATURDAY -> R.string.shortSaturday
         DayOfWeek.SUNDAY -> R.string.shortSunday
     }
+
+fun max(dp1: Dp, dp: Dp) =
+    if (dp1 > dp) dp1 else dp

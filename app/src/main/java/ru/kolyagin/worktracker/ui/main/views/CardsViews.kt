@@ -159,7 +159,9 @@ fun EventList(
         AddButton(
             day = day,
             modifier = Modifier.fillMaxWidth(),
-            onAddPeriod = onAddPeriod
+            onAddPeriod = onAddPeriod,
+            backgroundColor = backgroundColor,
+            contentColor = contentColor
         )
     }
 }
