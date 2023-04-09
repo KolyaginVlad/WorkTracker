@@ -2,6 +2,7 @@ package ru.kolyagin.worktracker.domain.models
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import ru.kolyagin.worktracker.domain.models.Time.Companion.toMinutes
 import java.time.DayOfWeek
 
 data class DayWorkInfo(
