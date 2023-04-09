@@ -1,5 +1,6 @@
 package ru.kolyagin.worktracker.ui.settings.views
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,19 +10,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ProvideTextStyle
-import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,16 +36,21 @@ import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
-import ru.kolyagin.worktracker.ui.theme.Red
-import ru.kolyagin.worktracker.ui.theme.Secondary
+import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
+import ru.kolyagin.worktracker.ui.theme.PrimaryVariant
+import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.theme.SurfaceDisabled
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
-import ru.kolyagin.worktracker.ui.utils.toStringId
+import ru.kolyagin.worktracker.ui.utils.toShortStringId
+import ru.kolyagin.worktracker.ui.views.AddButton
+import ru.kolyagin.worktracker.ui.views.CustomSwitch
+import ru.kolyagin.worktracker.ui.views.Spacer
 import java.time.DayOfWeek
 
 @Composable
 fun ListOfWorkDays(
     listOfWorkPeriods: ImmutableList<DayWorkInfo>,
+    totalTime: Time,
     onClickPeriod: (DayOfWeek, WorkPeriod, PeriodPart) -> Unit,
     onDeletePeriod: (WorkPeriod) -> Unit,
     onAddPeriod: (DayOfWeek) -> Unit,
@@ -51,6 +58,11 @@ fun ListOfWorkDays(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        TotalScheduleInfo(
+            modifier = Modifier
+                .fillMaxWidth(),
+            totalTime = totalTime
+        )
         listOfWorkPeriods.forEach {
             WorkDay(
                 modifier = Modifier.fillMaxWidth(),
@@ -71,17 +83,17 @@ private fun WorkDay(
     onDeletePeriod: (WorkPeriod) -> Unit,
     onAddPeriod: (DayOfWeek) -> Unit,
     onDinnerChange: (DayOfWeek, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colors.primaryVariant,
 ) {
     Card(
-        modifier = modifier.shadow(
-            elevation = 4.dp,
-            shape = RoundedCornerShape(8.dp)
-        )
+        modifier = modifier,
+        shape = RoundedCornerShape(40.dp),
+        backgroundColor = OnPrimaryHighEmphasis
     ) {
         Column(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(18.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -90,44 +102,53 @@ private fun WorkDay(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(id = dayWorkInfo.day.toStringId()),
-                    fontSize = 20.sp
+                    text = stringResource(id = dayWorkInfo.day.toShortStringId()),
+                    style = MaterialTheme.typography.h4,
+                    modifier = Modifier.weight(1F),
+                    color = contentColor
                 )
                 Text(
-                    text = dayWorkInfo.totalTime.toString(),
-                    fontSize = 20.sp
+                    text = dayWorkInfo.timeWithOutConflux.toString(),
+                    color = contentColor,
+                    style = MaterialTheme.typography.h4,
                 )
             }
+            Spacer(size = 5.dp)
             Dinner(
                 isInclude = dayWorkInfo.isDinnerInclude,
                 onDinnerChange = remember(dayWorkInfo) {
                     {
                         onDinnerChange(dayWorkInfo.day, it)
                     }
-                }
+                },
+                contentColor = contentColor
             )
+            Spacer(size = 10.dp)
             ProvideTextStyle(
                 value = TextStyle(
                     color = SurfaceDisabled
                 )
             ) {
                 Periods(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
                     dayWorkInfo = dayWorkInfo,
                     onClickPeriod = onClickPeriod,
                     onDeletePeriod = onDeletePeriod
                 )
             }
-            Icon(
-                modifier = Modifier.clickable(
-                    onClick = remember(dayWorkInfo) {
-                        {
-                            onAddPeriod(dayWorkInfo.day)
-                        }
+            AddButton(
+                day = dayWorkInfo.day.ordinal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                onAddPeriod = remember(dayWorkInfo) {
+                    {
+                        onAddPeriod(dayWorkInfo.day)
                     }
-                ),
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = Secondary
+                },
+                height = 16.dp
             )
         }
     }
@@ -136,7 +157,8 @@ private fun WorkDay(
 @Composable
 fun Dinner(
     isInclude: Boolean,
-    onDinnerChange: (Boolean) -> Unit
+    onDinnerChange: (Boolean) -> Unit,
+    contentColor: Color
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -145,62 +167,82 @@ fun Dinner(
     ) {
         Text(
             text = stringResource(id = R.string.dinner),
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            color = contentColor
         )
-        Switch(checked = isInclude, onCheckedChange = onDinnerChange)
+        CustomSwitch(
+            checked = isInclude,
+            onCheckedChange = onDinnerChange,
+            modifier = Modifier,
+        )
     }
 }
 
 @Composable
 private fun ColumnScope.Periods(
     dayWorkInfo: DayWorkInfo,
+    modifier: Modifier,
     onClickPeriod: (DayOfWeek, WorkPeriod, PeriodPart) -> Unit,
-    onDeletePeriod: (WorkPeriod) -> Unit
+    onDeletePeriod: (WorkPeriod) -> Unit,
+    contentColor: Color = MaterialTheme.colors.primary,
+    backgroundColor: Color = MaterialTheme.colors.onPrimary,
 ) {
     dayWorkInfo.periods.forEach {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
+        OutlinedButton(
+            border = BorderStroke(2.dp, contentColor),
+            modifier = modifier,
+            shape = RoundedButtonShapes.medium,
+            onClick = {},
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = backgroundColor,
+                contentColor = contentColor
+            )
         ) {
-            Text(
+            Box(
                 modifier = Modifier
-                    .clickable(
-                        onClick = remember(dayWorkInfo) {
-                            {
-                                onClickPeriod(dayWorkInfo.day, it, PeriodPart.START)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+            ) {
+                Text(
+                    modifier = Modifier
+                        .clickable(
+                            onClick = remember(dayWorkInfo) {
+                                {
+                                    onClickPeriod(dayWorkInfo.day, it, PeriodPart.START)
+                                }
                             }
-                        }
-                    )
-                    .align(Alignment.CenterStart),
-                text = it.timeStart.toString()
-            )
-            Icon(
-                modifier = Modifier
-                    .clickable(
-                        onClick = remember(dayWorkInfo) {
-                            {
-                                onDeletePeriod(it)
+                        )
+                        .align(Alignment.CenterStart),
+                    text = it.timeStart.toString()
+                )
+                Icon(
+                    modifier = Modifier
+                        .clickable(
+                            onClick = remember(dayWorkInfo) {
+                                {
+                                    onDeletePeriod(it)
+                                }
                             }
-                        }
-                    )
-                    .align(Alignment.Center),
-                imageVector = Icons.Default.Delete,
-                contentDescription = null,
-                tint = Red
-            )
-            Text(
-                modifier = Modifier
-                    .clickable(
-                        onClick = remember(dayWorkInfo) {
-                            {
-                                onClickPeriod(dayWorkInfo.day, it, PeriodPart.END)
+                        )
+                        .align(Alignment.Center),
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = PrimaryVariant
+                )
+                Text(
+                    modifier = Modifier
+                        .clickable(
+                            onClick = remember(dayWorkInfo) {
+                                {
+                                    onClickPeriod(dayWorkInfo.day, it, PeriodPart.END)
+                                }
                             }
-                        }
-                    )
-                    .align(Alignment.CenterEnd),
-                text = it.timeEnd.toString()
-            )
+                        )
+
+                        .align(Alignment.CenterEnd),
+                    text = it.timeEnd.toString()
+                )
+            }
         }
     }
 }
@@ -210,6 +252,7 @@ private fun ColumnScope.Periods(
 private fun ListOfDaysPrev() {
     WorkTrackerTheme {
         ListOfWorkDays(
+            totalTime = Time(0, 0),
             listOfWorkPeriods = persistentListOf(
                 DayWorkInfo(
                     DayOfWeek.MONDAY,
@@ -225,7 +268,8 @@ private fun ListOfDaysPrev() {
                 DayWorkInfo(
                     DayOfWeek.TUESDAY,
                     persistentListOf(
-                        WorkPeriod(2,
+                        WorkPeriod(
+                            2,
                             Time(8, 0),
                             Time(11, 20)
                         ),
@@ -267,7 +311,7 @@ private fun ListOfDaysPrev() {
                             Time(19, 0)
                         ),
                     ),
-                    false
+                    true
                 ),
                 DayWorkInfo(
                     DayOfWeek.FRIDAY,
@@ -295,7 +339,7 @@ private fun ListOfDaysPrev() {
             onClickPeriod = { _, _, _ -> },
             onDeletePeriod = { _ -> },
             onAddPeriod = { _ -> },
-            onDinnerChange = { _, _ -> }
+            onDinnerChange = { _, _ -> },
         )
     }
 }

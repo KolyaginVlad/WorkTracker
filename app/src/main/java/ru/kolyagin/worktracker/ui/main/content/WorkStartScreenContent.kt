@@ -24,6 +24,8 @@ import ru.kolyagin.worktracker.ui.main.views.EventList
 import ru.kolyagin.worktracker.ui.main.views.HeaderDay
 import ru.kolyagin.worktracker.ui.main.views.WorkTimer
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
+import ru.kolyagin.worktracker.ui.theme.Red
+import ru.kolyagin.worktracker.ui.theme.RedDisable
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import java.time.DayOfWeek
@@ -49,8 +51,8 @@ fun WorkStartScreenContent(
             title = stringResource(
                 id = R.string.late_time
             )
-            textColor = MaterialTheme.colors.secondary
-            disablseColor = MaterialTheme.colors.secondary
+            textColor = Red
+            disablseColor = RedDisable
         }
         HeaderDay(
             modifier = Modifier

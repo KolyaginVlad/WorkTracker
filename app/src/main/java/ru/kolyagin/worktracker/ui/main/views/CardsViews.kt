@@ -29,6 +29,7 @@ import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.utils.toShortStringId
+import ru.kolyagin.worktracker.ui.views.AddButton
 import ru.kolyagin.worktracker.ui.views.Timer
 import ru.kolyagin.worktracker.utils.Constants.BREAK
 import java.time.DayOfWeek
@@ -52,7 +53,7 @@ fun HeaderDay(
         )
 //        Icon(
 //            modifier = Modifier
-//				.padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+                //				.padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
 //                .clickable(onClick = onClickDeleteDay)
 //                .align(Alignment.CenterVertically),
 //            painter = painterResource(id = R.drawable.delete),
@@ -80,9 +81,9 @@ fun WorkTimer(
             Timer(
                 time = it,
                 modifier = Modifier
-					.align(Alignment.CenterHorizontally)
-					.padding(start = 40.dp, top = 8.dp, end = 40.dp, bottom = 24.dp)
-					.fillMaxWidth(),
+                    .align(Alignment.CenterHorizontally)
+                    .padding(start = 40.dp, top = 8.dp, end = 40.dp, bottom = 24.dp)
+                    .fillMaxWidth(),
                 primaryColor = primaryColor,
                 disableColor = disableColor,
             )
@@ -139,9 +140,8 @@ fun EventList(
                     )
                     Icon(
                         modifier = Modifier
-							.align(Alignment.CenterVertically)
-							.padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
-                            .clickable(onClick = remember(it, day) {
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp).clickable(onClick = remember(it, day) {
                                 {
                                     onClickDeleteEvent(
                                         it,
@@ -156,23 +156,11 @@ fun EventList(
                 }
             }
         }
-        OutlinedButton(
-            border = BorderStroke(2.dp, contentColor),
+        AddButton(
+            day = day,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedButtonShapes.medium,
-            onClick = remember(day) { { onAddPeriod(day) } },
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = backgroundColor,
-                contentColor = contentColor
-            )
-        ) {
-            Icon(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
-                painter = painterResource(id = R.drawable.plus),
-                contentDescription = null,
-                tint = contentColor
-            )
-        }
+            onAddPeriod = onAddPeriod
+        )
     }
 }
 
