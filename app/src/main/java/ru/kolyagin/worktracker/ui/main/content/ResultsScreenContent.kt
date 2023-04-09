@@ -3,6 +3,7 @@ package ru.kolyagin.worktracker.ui.main.content
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,6 +24,7 @@ import java.time.DayOfWeek
 @Composable
 fun ResultsScreenContent(
     state: CardState.Results,
+    onClickStartWork: () -> Unit = {},
     onClickDeleteDay: () -> Unit = {},
     onClickDeleteEvent: (WorkEvent, Int) -> Unit = { _, _->},
     onAddPeriod: (Int) -> Unit = {},
@@ -38,7 +40,16 @@ fun ResultsScreenContent(
         )
         WorkTimer(
             time = state.statistic.workTime,
-            title = stringResource(id = R.string.time_worked)
+            title = stringResource(id = R.string.time_worked),
+        )
+        StartButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 0.dp),
+            onClickStartWork = onClickStartWork,
+            buttonActive = true,
+            startEarly = false,
+            contentColor = MaterialTheme.colors.primaryVariant
         )
         EventList(
             modifier = Modifier

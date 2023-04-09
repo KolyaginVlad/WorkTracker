@@ -53,7 +53,6 @@ fun MainScreen(
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        viewModel.init()
         viewModel.event.collect {
             when (it) {
                 is MainEvent.OpenSettings -> {
@@ -150,6 +149,7 @@ fun MainScreen(
                             onClickReturnFromDinner = viewModel::onClickReturnFromDinner,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
                             onClickEvent = viewModel::onClickEvent,
+                            onAddPeriod = viewModel::onClickAddEvent,
                             onClickEndWork = viewModel::onClickFinishWork
                         )
 
@@ -159,6 +159,7 @@ fun MainScreen(
                             onClickGoToDinner = viewModel::onClickGoToDinner,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
                             onClickEvent = viewModel::onClickEvent,
+                            onAddPeriod = viewModel::onClickAddEvent,
                             onClickEndWork = viewModel::onClickFinishWork
                         )
 
@@ -167,11 +168,13 @@ fun MainScreen(
                             onClickEndPause = viewModel::onClickEndPause,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
                             onClickEvent = viewModel::onClickEvent,
+                            onAddPeriod = viewModel::onClickAddEvent,
                             onClickEndWork = viewModel::onClickFinishWork
                         )
 
                         is CardState.Results -> ResultsScreenContent(
                             state = currentState,
+                            onClickStartWork = viewModel::onClickStartWork,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
                             onClickEvent = viewModel::onClickEvent,
                             onAddPeriod = viewModel::onClickAddEvent

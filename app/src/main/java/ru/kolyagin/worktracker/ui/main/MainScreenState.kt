@@ -33,6 +33,7 @@ sealed class CardState(open val day: DayOfWeek) {
         override val day: DayOfWeek,
         val events: PersistentList<WorkEvent>,
         val time: TimeWithSeconds,
+        val isDinnerEnable: Boolean = true,
         val overwork: Boolean = false
     ) : CardState(day)
 

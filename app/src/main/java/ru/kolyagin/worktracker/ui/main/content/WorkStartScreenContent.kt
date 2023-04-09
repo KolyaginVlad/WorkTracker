@@ -18,11 +18,11 @@ import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
+import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.main.CardState
 import ru.kolyagin.worktracker.ui.main.views.EventList
 import ru.kolyagin.worktracker.ui.main.views.HeaderDay
 import ru.kolyagin.worktracker.ui.main.views.WorkTimer
-import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.Red
 import ru.kolyagin.worktracker.ui.theme.RedDisable
@@ -66,7 +66,7 @@ fun WorkStartScreenContent(
             time = state.time,
             title = title,
             primaryColor = textColor,
-            disableColor = disablseColor
+            disableColor = disablseColor,
         )
         StartButton(
             modifier = Modifier

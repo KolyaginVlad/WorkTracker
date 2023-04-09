@@ -51,15 +51,15 @@ fun HeaderDay(
             modifier = Modifier.weight(1F),
             color = contentColor
         )
-        Icon(
-            modifier = Modifier
-                .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
-                .clickable(onClick = onClickDeleteDay)
-                .align(Alignment.CenterVertically),
-            painter = painterResource(id = R.drawable.delete),
-            contentDescription = null,
-            tint = contentColor
-        )
+//        Icon(
+//            modifier = Modifier
+                //				.padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+//                .clickable(onClick = onClickDeleteDay)
+//                .align(Alignment.CenterVertically),
+//            painter = painterResource(id = R.drawable.delete),
+//            contentDescription = null,
+//            tint = contentColor
+//        )
     }
 }
 
@@ -85,7 +85,7 @@ fun WorkTimer(
                     .padding(start = 40.dp, top = 8.dp, end = 40.dp, bottom = 24.dp)
                     .fillMaxWidth(),
                 primaryColor = primaryColor,
-                disableColor = disableColor
+                disableColor = disableColor,
             )
         }
     }
@@ -105,7 +105,7 @@ fun EventList(
     Column(
         modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        events.forEach {
+        events.sortedBy { it.timeStart }.forEach {
             OutlinedButton(
                 border = BorderStroke(2.dp, contentColor),
                 modifier = Modifier.fillMaxWidth(),
@@ -140,16 +140,15 @@ fun EventList(
                     )
                     Icon(
                         modifier = Modifier
-                            .clickable(onClick = remember(it, day) {
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp).clickable(onClick = remember(it, day) {
                                 {
                                     onClickDeleteEvent(
                                         it,
                                         day
                                     )
                                 }
-                            })
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
+                            }),
                         painter = painterResource(id = R.drawable.delete),
                         contentDescription = null,
                         tint = contentColor
