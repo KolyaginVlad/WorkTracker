@@ -47,8 +47,9 @@ fun TopBar(
         onBackPressed?.let {
             Row(
                 modifier = Modifier
-                    .clickable(onClick = it)
-                    .align(Alignment.TopStart).padding(top = 16.dp, start = 16.dp),
+                    .align(Alignment.TopStart)
+                    .padding(top = 16.dp, start = 16.dp)
+                    .clickable(onClick = it),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(

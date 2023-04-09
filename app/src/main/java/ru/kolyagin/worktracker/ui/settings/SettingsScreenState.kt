@@ -10,7 +10,7 @@ data class SettingsScreenState(
     val listOfWorkPeriods: ImmutableList<DayWorkInfo> = persistentListOf()
 ) : State() {
     val totalTime = listOfWorkPeriods
-        .map { it.totalTime }
+        .map { it.timeWithOutConflux }
         .takeIf { it.isNotEmpty() }
         ?.reduceRight { time, acc ->
             acc + time

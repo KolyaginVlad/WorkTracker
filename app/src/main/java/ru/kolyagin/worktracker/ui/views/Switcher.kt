@@ -53,10 +53,8 @@ fun CustomSwitch(
                 (
                 indication = null,
                 interactionSource = interactionSource,
-            )
-            {
-                onCheckedChange(!checked)
-            },
+                onClick = remember(checked){{onCheckedChange(!checked)}}
+            ),
     ) {
         Box(
             modifier = Modifier
