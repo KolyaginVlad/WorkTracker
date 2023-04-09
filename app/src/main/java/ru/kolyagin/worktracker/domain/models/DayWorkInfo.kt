@@ -2,7 +2,6 @@ package ru.kolyagin.worktracker.domain.models
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import ru.kolyagin.worktracker.domain.models.Time.Companion.toMinutes
 import java.time.DayOfWeek
 
 data class DayWorkInfo(
@@ -11,16 +10,18 @@ data class DayWorkInfo(
     val isDinnerInclude: Boolean,
     val events: ImmutableList<WorkEvent> = persistentListOf()
 ) {
-    val totalTime = ((
+    val totalTime = (
             periods
                 .map { it.timeEnd - it.timeStart }
                 .takeIf { it.isNotEmpty() }
                 ?.reduceRight { time, acc ->
                     acc + time
                 } ?: Time.fromMinutes(if (isDinnerInclude) 60 else 0)
-            ) - Time.fromMinutes(if (isDinnerInclude) 60 else 0)).takeIf { it.toMinutes() > 0 }
+            ) - Time.fromMinutes(if (isDinnerInclude) 60 else 0)
+    val timeWithOutConflux = ((calculateTotalTime(periods)
+        ?: (Time.fromMinutes(if (isDinnerInclude) 60 else 0)))
+                - Time.fromMinutes(if (isDinnerInclude) 60 else 0)).takeIf { it.toMinutes() > 0 }
         ?: Time.fromMinutes(0)
-    val timeWithOutConflux = calculateTotalTime(periods) ?: Time(0, 0)
 }
 
 

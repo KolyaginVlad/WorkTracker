@@ -79,7 +79,7 @@ private fun SettingsScreenContent(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
+            .fillMaxHeight()
     ) {
         val (topBar, content) = createRefs()
         val scrollState = rememberScrollState()

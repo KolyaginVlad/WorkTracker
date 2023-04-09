@@ -50,12 +50,12 @@ import java.time.DayOfWeek
 @Composable
 fun ListOfWorkDays(
     listOfWorkPeriods: ImmutableList<DayWorkInfo>,
+    totalTime: Time,
     onClickPeriod: (DayOfWeek, WorkPeriod, PeriodPart) -> Unit,
     onDeletePeriod: (WorkPeriod) -> Unit,
     onAddPeriod: (DayOfWeek) -> Unit,
     onDinnerChange: (DayOfWeek, Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    totalTime: Time
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         TotalScheduleInfo(
