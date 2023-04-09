@@ -4,7 +4,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
-import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.utils.base.State
 
 data class SettingsScreenState(
