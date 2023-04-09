@@ -53,7 +53,6 @@ fun MainScreen(
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        viewModel.init()
         viewModel.event.collect {
             when (it) {
                 is MainEvent.OpenSettings -> {
@@ -175,6 +174,7 @@ fun MainScreen(
 
                         is CardState.Results -> ResultsScreenContent(
                             state = currentState,
+                            onClickStartWork = viewModel::onClickStartWork,
                             onClickDeleteEvent = viewModel::onClickDeleteEvent,
                             onClickEvent = viewModel::onClickEvent,
                             onAddPeriod = viewModel::onClickAddEvent

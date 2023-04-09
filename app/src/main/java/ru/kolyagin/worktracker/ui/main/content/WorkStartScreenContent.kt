@@ -65,7 +65,6 @@ fun WorkStartScreenContent(
             title = title,
             primaryColor = textColor,
             disableColor = disablseColor,
-            secondsChanger = -1
         )
         StartButton(
             modifier = Modifier
