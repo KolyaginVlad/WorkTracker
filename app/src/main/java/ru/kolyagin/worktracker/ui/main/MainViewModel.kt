@@ -81,9 +81,10 @@ class MainViewModel @Inject constructor(
                             ?.map { it.start.toTimeWithSeconds()..it.endInclusive.toTimeWithSeconds() }
                     }?.sortedBy { it.start }
                 val currentEvents = events[currentDay]?.toPersistentList() ?: persistentListOf()
-                val isDinnerEnable = schedule?.isDinnerInclude == true &&
-                        preferenceRepository.isDinnerEnableToday
+
                 do {
+                    val isDinnerEnable = schedule?.isDinnerInclude == true &&
+                            preferenceRepository.isDinnerEnableToday
                     val currentTime = LocalTime.now()
                     val time = currentTime.toTimeWithSeconds()
                     val currentState = getCurrentState(
