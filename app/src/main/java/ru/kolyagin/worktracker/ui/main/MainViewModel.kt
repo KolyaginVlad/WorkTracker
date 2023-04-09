@@ -325,7 +325,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun updateCardState() = launchViewModelScope {
-        val currentDay = LocalDate.now().dayOfWeek.ordinal.takeUnless { it == 6 } ?: 0
+        val currentDay = LocalDate.now().dayOfWeek.ordinal
         val startWorkRanges =
             schedule?.let { schedule ->
                 getListOfTimeRangesStartWork(schedule)
