@@ -2,6 +2,13 @@ package ru.kolyagin.worktracker.data.repositories
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import ru.kolyagin.worktracker.data.database.dao.SalaryRateDao
+import ru.kolyagin.worktracker.data.database.entities.mapToDomain
+import ru.kolyagin.worktracker.domain.models.DaySalaryRate
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.Time.Companion.toMinutes
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
@@ -9,12 +16,39 @@ import ru.kolyagin.worktracker.domain.models.WorkState
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.utils.Constants
 import ru.kolyagin.worktracker.utils.toSeconds
+import java.time.DayOfWeek
 import java.time.LocalTime
 import javax.inject.Inject
 
 class PreferenceRepositoryImpl @Inject constructor(
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val salaryRateDao: SalaryRateDao
 ) : PreferenceRepository {
+    override fun salary(): Flow<ImmutableList<DaySalaryRate>> = salaryRateDao.getSalaryRate()
+        .map { salaryRateEntities ->
+            salaryRateEntities.map { it.mapToDomain() }.toPersistentList()
+        }
+
+
+    override suspend fun addsalary(
+        day: DayOfWeek,
+        rate: Long
+    ) {
+        salaryRateDao.addSalaryRate(day.ordinal,rate)
+    }
+
+    override suspend fun deleteSalary(
+        day: DayOfWeek,
+    ) {
+        salaryRateDao.deleteSalaryRate(day.ordinal)
+    }
+
+    override suspend fun setSalary(
+        day: DayOfWeek, rate: Long
+    ) {
+        salaryRateDao.setSalaryRate(day.ordinal,rate)
+    }
+
     override var currentWorkState: WorkState
         get() = WorkState.values()[sharedPreferences.getInt(CURRENT_WORK_STATE, 0)]
         set(value) {

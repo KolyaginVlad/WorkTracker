@@ -1,0 +1,40 @@
+package ru.kolyagin.worktracker.data.database.dao
+
+import androidx.room.Dao
+import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
+import ru.kolyagin.worktracker.data.database.entities.DaySalaryRateEntity
+
+@Dao
+interface SalaryRateDao {
+    @Query(
+        """
+            SELECT * FROM DaySalaryRate
+        """
+    )
+    fun getSalaryRate(): Flow<List<DaySalaryRateEntity>>
+
+    @Query(
+        """
+             INSERT INTO DaySalaryRate (day,rate) VALUES (:day,:rate)
+        """
+    )
+    suspend fun addSalaryRate(
+        day: Int, rate: Long
+    )
+
+    @Query(
+        """
+            DELETE FROM DaySalaryRate WHERE day == :dayId 
+        """
+    )
+    suspend fun deleteSalaryRate(dayId: Int)
+
+    @Query(
+        """
+            UPDATE DaySalaryRate SET rate = :rate WHERE day == :id
+        """
+    )
+    suspend fun setSalaryRate(id: Int, rate: Long)
+
+}

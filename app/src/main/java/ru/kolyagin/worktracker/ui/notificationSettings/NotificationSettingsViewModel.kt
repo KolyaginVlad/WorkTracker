@@ -1,9 +1,12 @@
 package ru.kolyagin.worktracker.ui.notificationSettings
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
+import java.time.DayOfWeek
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,8 +23,34 @@ class NotificationSettingsViewModel @Inject constructor(
         dinnerTime = preferenceRepository.dinnerTimeInNotWorkingTime,
         startWorkOffset = preferenceRepository.timeBeforeStartWork,
         endWorkOffset = preferenceRepository.timeBeforeEndWork,
+        salaryRates = persistentListOf()
     )
 ) {
+    init {
+        preferenceRepository.salary().subscribe { salaries ->
+            updateState {
+                it.copy(salaryRates = salaries.toPersistentList())
+            }
+        }
+    }
+
+    fun onAddSalary(day: DayOfWeek, rate: Long) {
+        launchViewModelScope {
+            preferenceRepository.addsalary(day, rate)
+        }
+    }
+
+    fun onSetSalary(day: DayOfWeek, rate: Long) {
+        launchViewModelScope {
+            preferenceRepository.setSalary(day, rate)
+        }
+    }
+
+    fun onDeleteSalary(day: DayOfWeek) {
+        launchViewModelScope {
+            preferenceRepository.deleteSalary(day)
+        }
+    }
 
     fun onMorningNotificationEnableChange(enable: Boolean) {
         updateState {
