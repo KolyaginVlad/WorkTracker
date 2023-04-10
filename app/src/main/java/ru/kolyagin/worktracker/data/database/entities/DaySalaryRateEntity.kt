@@ -22,6 +22,7 @@ data class DaySalaryRateEntity(
 
 fun DaySalaryRateEntity.mapToDomain() =
     DaySalaryRate(
-        day = DayOfWeek.of(day+1),
+        id = id,
+        day = DayOfWeek.of(day + 1),
         rate = rate
     )

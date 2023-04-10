@@ -27,7 +27,7 @@ fun SalaryCard(
     salary: ImmutableList<DaySalaryRate>,
     onSalaryAdd: (DayOfWeek, Long) -> Unit,
     onSetSalary: (DayOfWeek, Long) -> Unit,
-    onDeleteSalary: (DayOfWeek) -> Unit,
+    onDeleteSalary: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -36,7 +36,7 @@ fun SalaryCard(
         backgroundColor = OnPrimaryHighEmphasis
     ) {
         Column(
-            modifier = Modifier.padding(vertical = 40.dp, horizontal = 12.dp),
+            modifier = Modifier.padding(vertical = 25.dp, horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Text(
@@ -62,8 +62,8 @@ private fun SalaryCardPreview() {
     WorkTrackerTheme {
         SalaryCard(
             salary = persistentListOf(
-                DaySalaryRate(DayOfWeek.MONDAY, 10),
-                DaySalaryRate(DayOfWeek.WEDNESDAY, 2000)
+                DaySalaryRate(1, DayOfWeek.MONDAY, 10),
+                DaySalaryRate(2, DayOfWeek.WEDNESDAY, 2000)
             ),
             onDeleteSalary = { _ -> },
             onSalaryAdd = { _, _ -> },

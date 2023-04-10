@@ -25,10 +25,10 @@ interface SalaryRateDao {
 
     @Query(
         """
-            DELETE FROM DaySalaryRate WHERE day == :dayId 
+            DELETE FROM DaySalaryRate WHERE id == :Id 
         """
     )
-    suspend fun deleteSalaryRate(dayId: Int)
+    suspend fun deleteSalaryRate(Id: Long)
 
     @Query(
         """

@@ -27,6 +27,7 @@ import ru.kolyagin.worktracker.domain.models.DaySalaryRate
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.utils.toShortStringId
 import java.time.DayOfWeek
+import java.util.Locale
 
 
 @Composable
@@ -37,7 +38,7 @@ fun ListSalary(
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
     onSalaryAdd: (DayOfWeek, Long) -> Unit,
     onSetSalary: (DayOfWeek, Long) -> Unit,
-    onDeleteSalary: (DayOfWeek) -> Unit,
+    onDeleteSalary: (Long) -> Unit,
 ) {
     Column(
         modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -55,26 +56,26 @@ fun ListSalary(
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 18.dp)
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = it.rate.toString()+stringResource(id = R.string.money_per_hour),
+                        text = it.rate.toString() + stringResource(id = R.string.money_per_hour),
                         color = MaterialTheme.colors.primaryVariant,
                         modifier = Modifier.weight(1F)
                     )
                     Text(
-                        text = stringResource(id = it.day.toShortStringId()),
+                        text = stringResource(id = it.day.toShortStringId()).uppercase(Locale.ROOT),
                         color = MaterialTheme.colors.primaryVariant,
                     )
                     Icon(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+                            .padding(start = 16.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
                             .clickable(onClick = remember(it) {
                                 {
                                     onDeleteSalary(
-                                        it.day,
+                                        it.id,
                                     )
                                 }
                             }),
@@ -97,7 +98,8 @@ fun ListSalary(
 
 var Salary = DaySalaryRate(
     day = DayOfWeek.MONDAY,
-    rate = 500
+    rate = 500,
+    id = 0
 )
 
 

@@ -34,19 +34,19 @@ class PreferenceRepositoryImpl @Inject constructor(
         day: DayOfWeek,
         rate: Long
     ) {
-        salaryRateDao.addSalaryRate(day.ordinal,rate)
+        salaryRateDao.addSalaryRate(day.ordinal, rate)
     }
 
     override suspend fun deleteSalary(
-        day: DayOfWeek,
+        id: Long,
     ) {
-        salaryRateDao.deleteSalaryRate(day.ordinal)
+        salaryRateDao.deleteSalaryRate(id)
     }
 
     override suspend fun setSalary(
         day: DayOfWeek, rate: Long
     ) {
-        salaryRateDao.setSalaryRate(day.ordinal,rate)
+        salaryRateDao.setSalaryRate(day.ordinal, rate)
     }
 
     override var currentWorkState: WorkState

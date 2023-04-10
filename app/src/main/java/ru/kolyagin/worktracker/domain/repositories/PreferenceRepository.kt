@@ -17,7 +17,7 @@ interface PreferenceRepository {
     )
 
     suspend fun deleteSalary(
-        day: DayOfWeek,
+        id: Long,
     )
 
     suspend fun setSalary(

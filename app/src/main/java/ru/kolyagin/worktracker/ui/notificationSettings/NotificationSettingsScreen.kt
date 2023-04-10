@@ -95,7 +95,7 @@ private fun NotificationSettingsScreenContent(
     onEndWorkOffsetClick: () -> Unit,
     onSalaryAdd: (DayOfWeek, Long) -> Unit,
     onSetSalary: (DayOfWeek, Long) -> Unit,
-    onDeleteSalary: (DayOfWeek) -> Unit,
+    onDeleteSalary: (Long) -> Unit,
 ) {
     ConstraintLayout(
         modifier = Modifier

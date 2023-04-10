@@ -46,9 +46,9 @@ class NotificationSettingsViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteSalary(day: DayOfWeek) {
+    fun onDeleteSalary(id: Long) {
         launchViewModelScope {
-            preferenceRepository.deleteSalary(day)
+            preferenceRepository.deleteSalary(id)
         }
     }
 
