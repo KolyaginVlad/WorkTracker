@@ -103,7 +103,7 @@ fun EventList(
     onClickEvent: (Int, WorkEvent) -> Unit
 ) {
     Column(
-        modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         events.sortedBy { it.timeStart }.forEach {
             OutlinedButton(
