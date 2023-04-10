@@ -149,7 +149,7 @@ fun MainScreen(
                 )
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
+                .clip(RoundedCornerShape(topStart = 56.dp, topEnd = 56.dp))
                 .background(MaterialTheme.colors.background)
                 .verticalScroll(scrollState)
                 .padding(top = 16.dp)
@@ -159,9 +159,10 @@ fun MainScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
                     shape = RoundedCornerShape(40.dp),
-                    backgroundColor = OnPrimaryHighEmphasis
+                    backgroundColor = OnPrimaryHighEmphasis,
+                    elevation = 0.dp
                 ) {
                     when (val currentState = it) {
                         is CardState.WorkStart -> WorkStartScreenContent(

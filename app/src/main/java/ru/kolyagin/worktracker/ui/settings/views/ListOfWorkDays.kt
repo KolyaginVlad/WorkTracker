@@ -89,7 +89,8 @@ private fun WorkDay(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(40.dp),
-        backgroundColor = OnPrimaryHighEmphasis
+        backgroundColor = OnPrimaryHighEmphasis,
+        elevation = 0.dp
     ) {
         Column(
             modifier = Modifier
