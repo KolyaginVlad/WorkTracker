@@ -159,9 +159,10 @@ fun MainScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
                     shape = RoundedCornerShape(40.dp),
-                    backgroundColor = OnPrimaryHighEmphasis
+                    backgroundColor = OnPrimaryHighEmphasis,
+                    elevation = 0.dp
                 ) {
                     when (val currentState = it) {
                         is CardState.WorkStart -> WorkStartScreenContent(
