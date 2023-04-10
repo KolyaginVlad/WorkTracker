@@ -59,7 +59,7 @@ fun ListSalary(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = it.rate.toString(),
+                        text = it.rate.toString()+stringResource(id = R.string.money_per_hour),
                         color = MaterialTheme.colors.primaryVariant,
                         modifier = Modifier.weight(1F)
                     )

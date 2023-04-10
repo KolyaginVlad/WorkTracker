@@ -56,6 +56,7 @@
     <string name="end_offset">Offset from end work period</string>
     <string name="time_dinner">Time dinnering</string>
     <string name="hourly_rate">hourly rate</string>
+    <string name="money_per_hour">$ per hour</string>
 
     <plurals name="hoursL">
         <item quantity="one">%d hour</item>

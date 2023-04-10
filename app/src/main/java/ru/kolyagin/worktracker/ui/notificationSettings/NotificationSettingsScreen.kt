@@ -32,9 +32,11 @@ import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.ui.notificationSettings.content.DinnerCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.EndWorkCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.MorningCard
+import ru.kolyagin.worktracker.ui.notificationSettings.content.SalaryCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.StartWorkCard
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.views.TopBar
+import java.time.DayOfWeek
 
 @Destination
 @Composable
@@ -71,6 +73,9 @@ fun NotificationSettingsScreen(
         onStartWorkOffsetClick = viewModel::onStartWorkOffsetClick,
         onEndWorkNotificationEnableChange = viewModel::onEndWorkNotificationEnableChange,
         onEndWorkOffsetClick = viewModel::onEndWorkOffsetClick,
+        onSalaryAdd = viewModel::onAddSalary,
+        onSetSalary = viewModel::onSetSalary,
+        onDeleteSalary = viewModel::onDeleteSalary
     )
 }
 
@@ -88,6 +93,9 @@ private fun NotificationSettingsScreenContent(
     onStartWorkOffsetClick: () -> Unit,
     onEndWorkNotificationEnableChange: (Boolean) -> Unit,
     onEndWorkOffsetClick: () -> Unit,
+    onSalaryAdd: (DayOfWeek, Long) -> Unit,
+    onSetSalary: (DayOfWeek, Long) -> Unit,
+    onDeleteSalary: (DayOfWeek) -> Unit,
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -119,6 +127,15 @@ private fun NotificationSettingsScreenContent(
                 },
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            SalaryCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                salary = state.salaryRates,
+                onSalaryAdd = onSalaryAdd,
+                onSetSalary = onSetSalary,
+                onDeleteSalary = onDeleteSalary
+            )
             MorningCard(
                 modifier = Modifier
                     .fillMaxSize()
@@ -132,7 +149,6 @@ private fun NotificationSettingsScreenContent(
                 onEndTimeClick = onMorningEndTimeClick,
                 onOffsetClick = onMorningOffsetClick,
             )
-
             DinnerCard(
                 modifier = Modifier
                     .fillMaxSize()
@@ -173,7 +189,7 @@ private fun NotificationSettingsPreview() {
         NotificationSettingsScreenContent(
             navigator = EmptyDestinationsNavigator,
             state = NotificationSettingsScreenState(),
-            {},{},{},{},{},{},{},{},{},{},
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, { _, _ -> }, { _, _ -> }, { _ -> }
         )
     }
 }
