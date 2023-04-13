@@ -15,6 +15,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +37,7 @@ import ru.kolyagin.worktracker.ui.notificationSettings.content.EndWorkCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.MorningCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.SalaryCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.StartWorkCard
+import ru.kolyagin.worktracker.ui.notificationSettings.views.CustomAddDialog
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.views.TopBar
 import java.time.DayOfWeek
@@ -46,6 +50,9 @@ fun NotificationSettingsScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val openAddDialog = remember { mutableStateOf(false) }
+    val openEditDialog = remember { mutableStateOf(false) }
+    var dayStart by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         viewModel.event.collect {
             when (it) {
@@ -57,8 +64,27 @@ fun NotificationSettingsScreen(
                         }, it.time.hours, it.time.minutes, false
                     ).show()
                 }
+
+                is NotificationSettingsEvent.AddSalary -> {
+                    openAddDialog.value = true
+                }
+
+                is NotificationSettingsEvent.SetSalary -> {
+                    openEditDialog.value = true
+                    dayStart = it.day.ordinal
+                }
             }
         }
+    }
+    if (openAddDialog.value) {
+        CustomAddDialog(onSubmit = viewModel::addSalary, openDialogCustom = openAddDialog)
+    }
+    if (openEditDialog.value) {
+        CustomAddDialog(
+            onSubmit = viewModel::setSalary,
+            openDialogCustom = openEditDialog,
+            daystart = dayStart
+        )
     }
     NotificationSettingsScreenContent(
         navigator = navigator,
@@ -93,8 +119,8 @@ private fun NotificationSettingsScreenContent(
     onStartWorkOffsetClick: () -> Unit,
     onEndWorkNotificationEnableChange: (Boolean) -> Unit,
     onEndWorkOffsetClick: () -> Unit,
-    onSalaryAdd: (DayOfWeek, Long) -> Unit,
-    onSetSalary: (DayOfWeek, Long) -> Unit,
+    onSalaryAdd: () -> Unit,
+    onSetSalary: (DayOfWeek) -> Unit,
     onDeleteSalary: (Long) -> Unit,
 ) {
     ConstraintLayout(
@@ -189,7 +215,7 @@ private fun NotificationSettingsPreview() {
         NotificationSettingsScreenContent(
             navigator = EmptyDestinationsNavigator,
             state = NotificationSettingsScreenState(),
-            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, { _, _ -> }, { _, _ -> }, { _ -> }
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, { }, { }, { _ -> }
         )
     }
 }

@@ -36,8 +36,8 @@ fun ListSalary(
     salaryRates: ImmutableList<DaySalaryRate>,
     contentColor: Color = MaterialTheme.colors.primary,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
-    onSalaryAdd: (DayOfWeek, Long) -> Unit,
-    onSetSalary: (DayOfWeek, Long) -> Unit,
+    onSalaryAdd: () -> Unit,
+    onSetSalary: (DayOfWeek) -> Unit,
     onDeleteSalary: (Long) -> Unit,
 ) {
     Column(
@@ -48,7 +48,7 @@ fun ListSalary(
                 border = BorderStroke(2.dp, contentColor),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedButtonShapes.medium,
-                onClick = remember(it) { { /*onClickEvent(day, it)*/ } },
+                onClick = remember(it) { { onSetSalary(it.day) } },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = backgroundColor,
                     contentColor = contentColor
@@ -87,7 +87,6 @@ fun ListSalary(
             }
         }
         AddButtonSalary(
-            salaryRate = Salary,
             modifier = Modifier.fillMaxWidth(),
             onSalaryAdd = onSalaryAdd,
             backgroundColor = backgroundColor,
@@ -96,20 +95,12 @@ fun ListSalary(
     }
 }
 
-var Salary = DaySalaryRate(
-    day = DayOfWeek.MONDAY,
-    rate = 500,
-    id = 0
-)
-
-
 @Composable
 fun AddButtonSalary(
-    salaryRate: DaySalaryRate,
     modifier: Modifier,
     contentColor: Color = MaterialTheme.colors.primary,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
-    onSalaryAdd: (DayOfWeek, Long) -> Unit,
+    onSalaryAdd: () -> Unit,
     height: Dp = 18.dp,
     width: Dp = 16.dp,
 ) {
@@ -117,7 +108,7 @@ fun AddButtonSalary(
         border = BorderStroke(2.dp, contentColor),
         modifier = modifier,
         shape = RoundedButtonShapes.medium,
-        onClick = remember(salaryRate) { { onSalaryAdd(salaryRate.day, salaryRate.rate) } },
+        onClick = onSalaryAdd,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = backgroundColor,
             contentColor = contentColor

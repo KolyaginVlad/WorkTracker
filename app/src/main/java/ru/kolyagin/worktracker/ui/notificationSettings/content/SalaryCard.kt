@@ -25,8 +25,8 @@ import java.time.DayOfWeek
 @Composable
 fun SalaryCard(
     salary: ImmutableList<DaySalaryRate>,
-    onSalaryAdd: (DayOfWeek, Long) -> Unit,
-    onSetSalary: (DayOfWeek, Long) -> Unit,
+    onSalaryAdd: () -> Unit,
+    onSetSalary: (DayOfWeek) -> Unit,
     onDeleteSalary: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -66,8 +66,8 @@ private fun SalaryCardPreview() {
                 DaySalaryRate(2, DayOfWeek.WEDNESDAY, 2000)
             ),
             onDeleteSalary = { _ -> },
-            onSalaryAdd = { _, _ -> },
-            onSetSalary = { _, _ -> },
+            onSalaryAdd = { },
+            onSetSalary = { },
         )
     }
 }

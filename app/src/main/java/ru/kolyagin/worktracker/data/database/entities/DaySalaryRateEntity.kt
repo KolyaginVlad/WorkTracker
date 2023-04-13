@@ -2,11 +2,12 @@ package ru.kolyagin.worktracker.data.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import ru.kolyagin.worktracker.domain.models.DaySalaryRate
 import java.time.DayOfWeek
 
-@Entity("DaySalaryRate")
+@Entity("DaySalaryRate", indices = [Index(value = arrayOf("day"), unique = true)])
 data class DaySalaryRateEntity(
 
     @PrimaryKey(autoGenerate = true)

@@ -34,15 +34,37 @@ class NotificationSettingsViewModel @Inject constructor(
         }
     }
 
-    fun onAddSalary(day: DayOfWeek, rate: Long) {
+    fun addSalary(forallDays: Boolean, day: Int, rate: Long) {
         launchViewModelScope {
-            preferenceRepository.addsalary(day, rate)
+            if (forallDays) {
+                for (i in 0 until 7) preferenceRepository.addsalary(DayOfWeek.of(i + 1), rate)
+            } else {
+                preferenceRepository.addsalary(DayOfWeek.of(day + 1), rate)
+            }
         }
     }
 
-    fun onSetSalary(day: DayOfWeek, rate: Long) {
+    fun setSalary(forallDays: Boolean, day: Int, rate: Long) {
         launchViewModelScope {
-            preferenceRepository.setSalary(day, rate)
+            if (forallDays) {
+                for (i in 0 until 7) preferenceRepository.setSalary(DayOfWeek.of(i + 1), rate)
+            } else {
+                preferenceRepository.setSalary(DayOfWeek.of(day + 1), rate)
+            }
+        }
+    }
+
+    fun onAddSalary() {
+        launchViewModelScope {
+            sendEvent(NotificationSettingsEvent.AddSalary)
+            //   preferenceRepository.addsalary(day, rate)
+        }
+    }
+
+    fun onSetSalary(day: DayOfWeek) {
+        launchViewModelScope {
+            sendEvent(NotificationSettingsEvent.SetSalary(day))
+            //preferenceRepository.setSalary(day, rate)
         }
     }
 
