@@ -124,7 +124,7 @@ fun CustomDialogUI(
                 value = checked,
                 onCheck = { checked = !checked }
             )
-            if (!checked) DaySelector(
+            if (!checked && daystart==0) DaySelector(
                 day,
                 modifier = Modifier.padding(start = 59.dp, end = 59.dp, bottom = 24.dp)
             )
