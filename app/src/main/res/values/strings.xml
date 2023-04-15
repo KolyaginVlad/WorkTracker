@@ -55,9 +55,10 @@
     <string name="start_offset">Offset from start work period</string>
     <string name="end_offset">Offset from end work period</string>
     <string name="time_dinner">Time dinnering</string>
+    <string name="dialog_hourly_rate">Hourly rate</string>
     <string name="hourly_rate">hourly rate</string>
-    <string name="money_per_hour"> PER HOUR</string>
-    <string name="take_for_every_day">take for every day</string>
+    <string name="money_per_hour">$ PER HOUR</string>
+    <string name="take_for_every_day">submit for every day</string>
     <string name="submit">submit</string>
     <string name="cancel">cancel</string>
 

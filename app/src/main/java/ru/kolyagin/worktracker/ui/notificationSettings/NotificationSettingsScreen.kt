@@ -83,7 +83,8 @@ fun NotificationSettingsScreen(
         CustomAddDialog(
             onSubmit = viewModel::setSalary,
             openDialogCustom = openEditDialog,
-            daystart = dayStart
+            daystart = dayStart,
+            showDaySelector = false
         )
     }
     NotificationSettingsScreenContent(

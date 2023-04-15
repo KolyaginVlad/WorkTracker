@@ -56,6 +56,7 @@
     <string name="end_offset">Смещение от конца рабочего периода</string>
     <string name="time_dinner">Время обеда</string>
     <string name="hourly_rate">почасовая ставка</string>
+    <string name="dialog_hourly_rate">Часовая ставка</string>
     <string name="money_per_hour">₽ В ЧАС</string>
     <string name="take_for_every_day">применить для всех дней</string>
     <string name="submit">применить</string>

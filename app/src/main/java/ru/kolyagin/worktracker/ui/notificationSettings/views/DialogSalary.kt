@@ -1,21 +1,12 @@
 package ru.kolyagin.worktracker.ui.notificationSettings.views
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.DraggableState
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
@@ -30,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -44,14 +34,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.text.isDigitsOnly
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.ui.main.views.Button
-import ru.kolyagin.worktracker.ui.theme.StatePrimaryWhite38
-import ru.kolyagin.worktracker.ui.theme.StatePrimaryWhite74
 import ru.kolyagin.worktracker.ui.theme.SurfaceHighEmphasis
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
-import ru.kolyagin.worktracker.ui.utils.toShortStringId
-import ru.kolyagin.worktracker.ui.views.Spacer
-import java.lang.Math.abs
-import java.time.DayOfWeek
 import java.util.Locale
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -60,22 +44,23 @@ fun CustomAddDialog(
     onSubmit: (Boolean, Int, Long) -> Unit,
     openDialogCustom: MutableState<Boolean>,
     modifier: Modifier = Modifier,
-    daystart: Int = 0
+    daystart: Int = 0,
+    showDaySelector: Boolean = true
 ) {
     Dialog(
         onDismissRequest = { openDialogCustom.value = false },
         properties = DialogProperties(usePlatformDefaultWidth = false),
-        ) {
+    ) {
         Surface(
             color = Color.Transparent,
-            modifier = modifier.width(360.dp),
-            elevation = 49.dp
+            modifier = modifier.fillMaxWidth(0.95F)
         ) {
             CustomDialogUI(
                 openDialogCustom = openDialogCustom,
                 onSubmit = onSubmit,
                 modifier = Modifier,
-                daystart = daystart
+                daystart = daystart,
+                showDaySelector = showDaySelector
             )
         }
     }
@@ -86,7 +71,8 @@ fun CustomDialogUI(
     modifier: Modifier,
     openDialogCustom: MutableState<Boolean>,
     onSubmit: (Boolean, Int, Long) -> Unit,
-    daystart: Int = 0
+    daystart: Int,
+    showDaySelector: Boolean
 ) {
     var salaryRate by remember {
         mutableStateOf("0")
@@ -108,7 +94,7 @@ fun CustomDialogUI(
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(id = R.string.hourly_rate),
+                text = stringResource(id = R.string.dialog_hourly_rate),
                 color = MaterialTheme.colors.primaryVariant,
                 modifier = Modifier.align(CenterHorizontally)
             )
@@ -124,9 +110,12 @@ fun CustomDialogUI(
                 value = checked,
                 onCheck = { checked = !checked }
             )
-            if (!checked && daystart==0) DaySelector(
+            if (showDaySelector && !checked) DaySelector(
                 day,
-                modifier = Modifier.padding(start = 59.dp, end = 59.dp, bottom = 24.dp)
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
+                    .fillMaxWidth(0.7F)
+                    .align(CenterHorizontally)
             )
             TextField(colors = TextFieldDefaults.textFieldColors(
                 textColor = SurfaceHighEmphasis,
@@ -158,7 +147,8 @@ fun CustomDialogUI(
             Row(
                 modifier = Modifier
                     .padding(top = 32.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
                     borderColor = MaterialTheme.colors.primaryVariant,
@@ -166,15 +156,13 @@ fun CustomDialogUI(
                         onSubmit(checked, day.value, salaryRate.toLong())
                         openDialogCustom.value = !openDialogCustom.value
                     },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier,
                     backgroundColor = MaterialTheme.colors.primaryVariant,
                     text = stringResource(id = R.string.submit).uppercase(Locale.ROOT),
                     contentColor = MaterialTheme.colors.onPrimary
                 )
-                Spacer(size = 10.dp)
                 Button(
-                    modifier = Modifier.weight(1f),
-                    // .padding(top = 32.dp, start = 16.dp)
+                    modifier = Modifier,
                     onClick = { openDialogCustom.value = !openDialogCustom.value },
                     backgroundColor = MaterialTheme.colors.onPrimary,
                     text = stringResource(id = R.string.cancel).uppercase(Locale.ROOT),
@@ -186,113 +174,15 @@ fun CustomDialogUI(
 }
 
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun DaySelector(
-    dayOfWeek: MutableState<Int>,
-    modifier: Modifier = Modifier
-) {
-    var isSwipeToTheLeft = false
-    val draggableState = DraggableState { delta ->
-        isSwipeToTheLeft = delta >= 0
-    }
-    Row(modifier = modifier) {
-        AnimatedContent(
-            targetState = dayOfWeek.value,
-            transitionSpec = {
-                fadeIn() with fadeOut()
-                /* Анимация перелистывания
-                if (targetState > initialState) {
-                  slideInHorizontally { height -> height } + fadeIn() with
-                          slideOutHorizontally { height -> -height } + fadeOut()
-              } else {
-                  slideInHorizontally  { height -> -height } + fadeIn() with
-                          slideOutHorizontally { height -> height } + fadeOut()
-              }.using(
-                  SizeTransform(clip = false)
-              )*/
-            }
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .draggable(
-                        state = draggableState,
-                        orientation = Orientation.Horizontal,
-                        onDragStarted = { },
-                        onDragStopped = {
-                            if (!isSwipeToTheLeft) {
-                                if (dayOfWeek.value >= 6) dayOfWeek.value = 0
-                                else dayOfWeek.value++
-                            } else {
-                                if (dayOfWeek.value <= 0) dayOfWeek.value = 6
-                                else dayOfWeek.value--
-                            }
-                        })
-
-            ) {
-                for (i in dayOfWeek.value - 2 until dayOfWeek.value + 3) {
-                    var intkodOfDay = i
-                    var delta = abs(intkodOfDay - dayOfWeek.value)
-                    when (i) {
-                        -1 -> {
-                            intkodOfDay = 6
-                            delta = 1
-                        }
-
-                        -2 -> {
-                            intkodOfDay = 5
-                            delta = 2
-                        }
-
-                        7 -> {
-                            intkodOfDay = 0
-                            delta = 1
-                        }
-
-                        8 -> {
-                            intkodOfDay = 1
-                            delta = 2
-                        }
-                    }
-                    val str =
-                        stringResource(
-                            id = DayOfWeek.of(intkodOfDay + 1).toShortStringId()
-                        )
-                    when (delta) {
-                        0 -> Text(
-                            text = str,
-                            style = MaterialTheme.typography.h4,
-                            color = MaterialTheme.colors.primary
-                        )
-
-                        1 -> Text(
-                            text = str,
-                            style = MaterialTheme.typography.h5,
-                            color = StatePrimaryWhite38
-                        )
-
-                        2 -> Text(
-                            text = str,
-                            style = MaterialTheme.typography.h5,
-                            color = StatePrimaryWhite74
-                        )
-
-                    }
-                }
-            }
-        }
-    }
-}
-
 @SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = false, locale = "ru", backgroundColor = 0xFFFFFFFF)
 @Composable
 private fun SalaryDialogPrev() {
     WorkTrackerTheme {
-        CustomDialogUI(Modifier, mutableStateOf(true), { _, _, _ -> })
+        CustomAddDialog(
+            modifier = Modifier,
+            openDialogCustom = mutableStateOf(true),
+            onSubmit = { _, _, _ -> })
     }
 }
 
