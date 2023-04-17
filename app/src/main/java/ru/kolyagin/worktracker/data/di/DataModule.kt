@@ -81,6 +81,11 @@ class DataProvidesModule {
 
     @Provides
     @Singleton
+    fun providesSalaryRateDao(database: AppDatabase) =
+        database.getSalaryRateDao()
+
+    @Provides
+    @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences =
         context.getSharedPreferences("WorkTracker", Context.MODE_PRIVATE)
 

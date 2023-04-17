@@ -1,9 +1,12 @@
 package ru.kolyagin.worktracker.ui.notificationSettings
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
+import java.time.DayOfWeek
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,8 +23,56 @@ class NotificationSettingsViewModel @Inject constructor(
         dinnerTime = preferenceRepository.dinnerTimeInNotWorkingTime,
         startWorkOffset = preferenceRepository.timeBeforeStartWork,
         endWorkOffset = preferenceRepository.timeBeforeEndWork,
+        salaryRates = persistentListOf()
     )
 ) {
+    init {
+        preferenceRepository.salary().subscribe { salaries ->
+            updateState {
+                it.copy(salaryRates = salaries.toPersistentList())
+            }
+        }
+    }
+
+    fun addSalary(forallDays: Boolean, day: Int, rate: Long) {
+        launchViewModelScope {
+            if (forallDays) {
+                for (i in 0 until 7) preferenceRepository.addsalary(DayOfWeek.of(i + 1), rate)
+            } else {
+                preferenceRepository.addsalary(DayOfWeek.of(day + 1), rate)
+            }
+        }
+    }
+
+    fun setSalary(forallDays: Boolean, day: Int, rate: Long) {
+        launchViewModelScope {
+            if (forallDays) {
+                for (i in 0 until 7) preferenceRepository.setSalary(DayOfWeek.of(i + 1), rate)
+            } else {
+                preferenceRepository.setSalary(DayOfWeek.of(day + 1), rate)
+            }
+        }
+    }
+
+    fun onAddSalary() {
+        launchViewModelScope {
+            sendEvent(NotificationSettingsEvent.AddSalary)
+            //   preferenceRepository.addsalary(day, rate)
+        }
+    }
+
+    fun onSetSalary(day: DayOfWeek) {
+        launchViewModelScope {
+            sendEvent(NotificationSettingsEvent.SetSalary(day))
+            //preferenceRepository.setSalary(day, rate)
+        }
+    }
+
+    fun onDeleteSalary(id: Long) {
+        launchViewModelScope {
+            preferenceRepository.deleteSalary(id)
+        }
+    }
 
     fun onMorningNotificationEnableChange(enable: Boolean) {
         updateState {

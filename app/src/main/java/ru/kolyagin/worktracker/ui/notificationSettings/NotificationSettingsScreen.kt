@@ -15,6 +15,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -32,9 +35,12 @@ import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.ui.notificationSettings.content.DinnerCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.EndWorkCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.MorningCard
+import ru.kolyagin.worktracker.ui.notificationSettings.content.SalaryCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.StartWorkCard
+import ru.kolyagin.worktracker.ui.notificationSettings.views.CustomAddDialog
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.views.TopBar
+import java.time.DayOfWeek
 
 @Destination
 @Composable
@@ -44,6 +50,9 @@ fun NotificationSettingsScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val openAddDialog = remember { mutableStateOf(false) }
+    val openEditDialog = remember { mutableStateOf(false) }
+    var dayStart by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         viewModel.event.collect {
             when (it) {
@@ -55,8 +64,28 @@ fun NotificationSettingsScreen(
                         }, it.time.hours, it.time.minutes, false
                     ).show()
                 }
+
+                is NotificationSettingsEvent.AddSalary -> {
+                    openAddDialog.value = true
+                }
+
+                is NotificationSettingsEvent.SetSalary -> {
+                    openEditDialog.value = true
+                    dayStart = it.day.ordinal
+                }
             }
         }
+    }
+    if (openAddDialog.value) {
+        CustomAddDialog(onSubmit = viewModel::addSalary, openDialogCustom = openAddDialog)
+    }
+    if (openEditDialog.value) {
+        CustomAddDialog(
+            onSubmit = viewModel::setSalary,
+            openDialogCustom = openEditDialog,
+            daystart = dayStart,
+            showDaySelector = false
+        )
     }
     NotificationSettingsScreenContent(
         navigator = navigator,
@@ -71,6 +100,9 @@ fun NotificationSettingsScreen(
         onStartWorkOffsetClick = viewModel::onStartWorkOffsetClick,
         onEndWorkNotificationEnableChange = viewModel::onEndWorkNotificationEnableChange,
         onEndWorkOffsetClick = viewModel::onEndWorkOffsetClick,
+        onSalaryAdd = viewModel::onAddSalary,
+        onSetSalary = viewModel::onSetSalary,
+        onDeleteSalary = viewModel::onDeleteSalary
     )
 }
 
@@ -88,6 +120,9 @@ private fun NotificationSettingsScreenContent(
     onStartWorkOffsetClick: () -> Unit,
     onEndWorkNotificationEnableChange: (Boolean) -> Unit,
     onEndWorkOffsetClick: () -> Unit,
+    onSalaryAdd: () -> Unit,
+    onSetSalary: (DayOfWeek) -> Unit,
+    onDeleteSalary: (Long) -> Unit,
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -119,6 +154,15 @@ private fun NotificationSettingsScreenContent(
                 },
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            SalaryCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                salary = state.salaryRates,
+                onSalaryAdd = onSalaryAdd,
+                onSetSalary = onSetSalary,
+                onDeleteSalary = onDeleteSalary
+            )
             MorningCard(
                 modifier = Modifier
                     .fillMaxSize()
@@ -132,7 +176,6 @@ private fun NotificationSettingsScreenContent(
                 onEndTimeClick = onMorningEndTimeClick,
                 onOffsetClick = onMorningOffsetClick,
             )
-
             DinnerCard(
                 modifier = Modifier
                     .fillMaxSize()
@@ -173,7 +216,7 @@ private fun NotificationSettingsPreview() {
         NotificationSettingsScreenContent(
             navigator = EmptyDestinationsNavigator,
             state = NotificationSettingsScreenState(),
-            {},{},{},{},{},{},{},{},{},{},
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, { }, { }, { _ -> }
         )
     }
 }
