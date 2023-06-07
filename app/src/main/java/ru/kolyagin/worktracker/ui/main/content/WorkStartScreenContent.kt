@@ -107,6 +107,7 @@ fun StartButton(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedButtonShapes.medium,
             onClick = onClickStartWork,
+            elevation = ButtonDefaults.elevation(defaultElevation = 0.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = contentColor,
                 disabledBackgroundColor = PrimaryVariantDisabled,
@@ -115,7 +116,7 @@ fun StartButton(
             )
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
                 style = MaterialTheme.typography.button,
                 text = if (startEarly) stringResource(id = R.string.work_start_early)
                 else stringResource(

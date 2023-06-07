@@ -128,7 +128,7 @@ private fun SettingsScreenContent(
                 )
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
+                .clip(RoundedCornerShape(topStart = 56.dp, topEnd = 56.dp))
                 .background(MaterialTheme.colors.background)
                 .verticalScroll(scrollState)
                 .padding(top = 16.dp)

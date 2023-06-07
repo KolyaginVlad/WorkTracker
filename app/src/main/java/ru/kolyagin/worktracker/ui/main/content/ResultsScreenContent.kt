@@ -30,7 +30,7 @@ fun ResultsScreenContent(
     onAddPeriod: (Int) -> Unit = {},
     onClickEvent: (Int, WorkEvent) -> Unit = { _, _->},
 ) {
-    Column(modifier = Modifier.padding(bottom = 12.dp)) {
+    Column(modifier = Modifier) {
         HeaderDay(
             modifier = Modifier
                 .fillMaxWidth()

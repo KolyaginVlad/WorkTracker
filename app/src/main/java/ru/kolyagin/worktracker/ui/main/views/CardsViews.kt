@@ -103,7 +103,7 @@ fun EventList(
     onClickEvent: (Int, WorkEvent) -> Unit
 ) {
     Column(
-        modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         events.sortedBy { it.timeStart }.forEach {
             OutlinedButton(
@@ -141,7 +141,8 @@ fun EventList(
                     Icon(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp).clickable(onClick = remember(it, day) {
+                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+                            .clickable(onClick = remember(it, day) {
                                 {
                                     onClickDeleteEvent(
                                         it,
@@ -178,6 +179,7 @@ fun Button(
 ) {
     Button(
         modifier = modifier,
+        elevation= ButtonDefaults.elevation(defaultElevation = 0.dp),
         shape = RoundedButtonShapes.medium,
         border = BorderStroke(2.dp, borderColor),
         onClick = onClick,

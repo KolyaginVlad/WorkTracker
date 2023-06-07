@@ -42,6 +42,7 @@ fun TopBar(
                 .align(Alignment.TopCenter),
             painter = painterResource(id = R.drawable.header),
             contentScale = ContentScale.Crop,
+            alignment = Alignment.TopCenter,
             contentDescription = null
         )
         onBackPressed?.let {
