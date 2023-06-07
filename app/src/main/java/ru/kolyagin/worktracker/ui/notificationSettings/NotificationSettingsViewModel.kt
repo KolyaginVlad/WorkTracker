@@ -57,14 +57,12 @@ class NotificationSettingsViewModel @Inject constructor(
     fun onAddSalary() {
         launchViewModelScope {
             sendEvent(NotificationSettingsEvent.AddSalary)
-            //   preferenceRepository.addsalary(day, rate)
         }
     }
 
     fun onSetSalary(day: DayOfWeek) {
         launchViewModelScope {
             sendEvent(NotificationSettingsEvent.SetSalary(day))
-            //preferenceRepository.setSalary(day, rate)
         }
     }
 

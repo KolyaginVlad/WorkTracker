@@ -1,6 +1,5 @@
 package ru.kolyagin.worktracker.ui.main
 
-import android.app.TimePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -29,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +46,7 @@ import ru.kolyagin.worktracker.ui.main.content.PauseScreenContent
 import ru.kolyagin.worktracker.ui.main.content.ResultsScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkStartScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkingScreenContent
+import ru.kolyagin.worktracker.ui.main.views.EventsTimePickerDialog
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
 import ru.kolyagin.worktracker.ui.utils.max
@@ -63,7 +62,19 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+    // val context = LocalContext.current
+    val openTimeAddDialog = remember {
+        mutableStateOf(false)
+    }
+    val openTimeSecondAddDialog = remember {
+        mutableStateOf(false)
+    }
+    val openTimeEditDialog = remember {
+        mutableStateOf(false)
+    }
+    val openTimeSecondEditDialog = remember {
+        mutableStateOf(false)
+    }
     LaunchedEffect(Unit) {
         viewModel.event.collect {
             when (it) {
@@ -72,37 +83,35 @@ fun MainScreen(
                 }
 
                 is MainEvent.AddEventTime -> {
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.END)
-                        }, 14, 0, true
-                    ).show()
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.START)
-                        }, 12, 0, true
-                    ).show()
+                    openTimeAddDialog.value = true
+                    openTimeSecondAddDialog.value = true
                 }
 
                 is MainEvent.ChangeEventTime -> {
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.END)
-                        }, it.timeEnd.hours, it.timeEnd.minutes, true
-                    ).show()
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.START)
-                        }, it.timeStart.hours, it.timeStart.minutes, true
-                    ).show()
+                    openTimeEditDialog.value = true
+                    openTimeSecondEditDialog.value = true
                 }
             }
         }
     }
+    if (openTimeSecondAddDialog.value) {
+        EventsTimePickerDialog(
+            onSubmit = viewModel::onTimePicked,
+            openDialogCustom = openTimeSecondAddDialog,
+            time = Time(14, 0),
+            period = PeriodPart.END,
+            onlyTime = true
+        )
+    }
+    if (openTimeAddDialog.value) {
+        EventsTimePickerDialog(
+            onSubmit = viewModel::onTimePicked,
+            openDialogCustom = openTimeAddDialog,
+            time = Time(12, 0),
+            period = PeriodPart.START,
+        )//если нажать отмена, напишется просто предыдущее время и всё собьётся
+    }
+
     val toolbarHeight = 200.dp
     val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
     val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }

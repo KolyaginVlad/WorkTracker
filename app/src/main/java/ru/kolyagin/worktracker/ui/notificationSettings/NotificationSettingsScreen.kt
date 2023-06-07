@@ -77,7 +77,10 @@ fun NotificationSettingsScreen(
         }
     }
     if (openAddDialog.value) {
-        CustomAddDialog(onSubmit = viewModel::addSalary, openDialogCustom = openAddDialog)
+        CustomAddDialog(
+            onSubmit = viewModel::addSalary,
+            openDialogCustom = openAddDialog
+        )
     }
     if (openEditDialog.value) {
         CustomAddDialog(

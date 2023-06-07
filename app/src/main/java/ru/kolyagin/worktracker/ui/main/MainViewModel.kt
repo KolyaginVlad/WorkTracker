@@ -202,7 +202,7 @@ class MainViewModel @Inject constructor(
             (events[LocalDate.now().dayOfWeek.ordinal]?.toPersistentList() ?: persistentListOf())
                 .find { it.isDinner }
                 ?.let { it.timeEnd.toTimeWithSeconds() - it.timeStart.toTimeWithSeconds() }
-                ?: TimeWithSeconds(1,0,0)
+                ?: TimeWithSeconds(1, 0, 0)
         var pauseStart = preferenceRepository.timeOfCurrentStateSet
         val pauseStop = LocalTime.now().toTimeWithSeconds()
         if (dinner >= pauseStop - pauseStart)
@@ -266,12 +266,15 @@ class MainViewModel @Inject constructor(
         trySendEvent(MainEvent.AddEventTime)
     }
 
-    fun onTimePicked(time: Time, periodPart: PeriodPart) {
+    fun onTimePicked(foralDays: Boolean, time: Time, periodPart: PeriodPart, name: String) {
         selectedDayOfWeek?.let { dayOfWeek ->
             launchViewModelScope {
                 addingEvent.let {
+                    if (foralDays) {
+                        selectedDayOfWeek = -1
+                    }
                     if (periodPart == PeriodPart.START) {
-                        addingEvent = it.copy(timeStart = time)
+                        addingEvent = it.copy(timeStart = time,name = name)
                     } else {
                         addingEvent = it.copy(timeEnd = time)
                         if (addingEvent.timeStart >= addingEvent.timeEnd) {
@@ -286,7 +289,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun onTimeChanging(time: Time, periodPart: PeriodPart) {
+    fun onTimeChanging(foralDays: Boolean, time: Time, periodPart: PeriodPart) {
         selectedDayOfWeek?.let { dayOfWeek ->
             launchViewModelScope {
                 var newEvent: WorkEvent = addingEvent

@@ -1,4 +1,4 @@
-package ru.kolyagin.worktracker.ui.notificationSettings.views
+package ru.kolyagin.worktracker.ui.main.views
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -27,57 +27,67 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.core.text.isDigitsOnly
 import ru.kolyagin.worktracker.R
-import ru.kolyagin.worktracker.ui.main.views.Button
+import ru.kolyagin.worktracker.domain.models.Time
+import ru.kolyagin.worktracker.ui.notificationSettings.views.LabelAndSwitch
+import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TextFieldAndLabel
+import ru.kolyagin.worktracker.ui.views.timePicker.TimePicker
 import java.util.Locale
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun CustomAddDialog(
-    onSubmit: (Boolean, Int, Long) -> Unit,
+fun EventsTimePickerDialog(
+    onSubmit: (Boolean, Time, PeriodPart, String) -> Unit,
     openDialogCustom: MutableState<Boolean>,
     modifier: Modifier = Modifier,
-    daystart: Int = 0,
-    showDaySelector: Boolean = true
+    period: PeriodPart,
+    time: Time = Time(0, 0),
+    onlyTime: Boolean = false
 ) {
     Dialog(
         onDismissRequest = { openDialogCustom.value = false },
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Surface(
-            color = Color.Transparent,
-            modifier = modifier.fillMaxWidth(0.95F)
+            color = Color.Transparent, modifier = modifier.fillMaxWidth(0.95F)
         ) {
-            CustomDialogUI(
+            EventsTimePickerDialogUI(
                 openDialogCustom = openDialogCustom,
                 onSubmit = onSubmit,
                 modifier = Modifier,
-                daystart = daystart,
-                showDaySelector = showDaySelector
+                timeDef = time,
+                period = period,
+                onlyTime = onlyTime
             )
         }
     }
 }
 
+
 @Composable
-fun CustomDialogUI(
+fun EventsTimePickerDialogUI(
     modifier: Modifier,
     openDialogCustom: MutableState<Boolean>,
-    onSubmit: (Boolean, Int, Long) -> Unit,
-    daystart: Int,
-    showDaySelector: Boolean
+    onSubmit: (Boolean, Time, PeriodPart, String) -> Unit,
+    period: PeriodPart,
+    timeDef: Time,
+    onlyTime: Boolean
 ) {
-    val salaryRate = remember {
-        mutableStateOf("0")
-    }
     var checked by remember {
         mutableStateOf(false)
     }
-    val day = remember {
-        mutableStateOf(daystart)
+    val selectedHour = remember {
+        mutableStateOf(timeDef.hours)
+    }
+    val selectedMinute = remember {
+        mutableStateOf(timeDef.minutes)
+    }
+    val breakEvent = stringResource(id = R.string.break_work)
+    val name = remember {
+        mutableStateOf(breakEvent)
     }
     Card(
         shape = RoundedCornerShape(40.dp),
@@ -90,51 +100,49 @@ fun CustomDialogUI(
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(id = R.string.dialog_hourly_rate),
+                text = stringResource(id = R.string.add_break),
                 color = MaterialTheme.colors.primaryVariant,
                 modifier = Modifier.align(CenterHorizontally)
             )
-            LabelAndSwitch(
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(
-                    top = 32.dp,
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = 32.dp
-                ),
-                label = stringResource(id = R.string.take_for_every_day),
-                value = checked,
-                onCheck = { checked = !checked }
-            )
-            if (showDaySelector && !checked) DaySelector(
-                day,
-                modifier = Modifier
-                    .padding(bottom = 24.dp)
-                    .fillMaxWidth(0.7F)
-                    .align(CenterHorizontally)
-            )
-            TextFieldAndLabel(
-                modifier = Modifier
+            if (!onlyTime) {
+                TextFieldAndLabel(modifier = Modifier
                     .padding(
-                        start = 16.dp, end = 14.dp, bottom = 14.dp
+                        top = 20.dp, start = 16.dp, end = 14.dp, bottom = 4.dp
                     )
                     .fillMaxWidth(),
-                label = stringResource(id = R.string.take_for_every_day),
-                name = salaryRate,
-                onValueChange = {
-                    if (it != "" && it.isDigitsOnly()) salaryRate.value = it
-                }
+                    label = stringResource(id = R.string.take_for_every_day),
+                    name = name,
+                    onValueChange = { name.value = it })
+                Spacer(size = 28.dp)
+            }
+            TimePicker(
+                selectedHour = selectedHour,
+                selectedMinute = selectedMinute,
+                modifier = Modifier.align(CenterHorizontally)
             )
+            if (!onlyTime) {
+                LabelAndSwitch(style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(
+                        top = 32.dp, start = 20.dp, end = 20.dp, bottom = 32.dp
+                    ),
+                    label = stringResource(id = R.string.take_for_every_day),
+                    value = checked,
+                    onCheck = { checked = !checked })
+            }
             Row(
                 modifier = Modifier
-                    .padding(top = 32.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
                     borderColor = MaterialTheme.colors.primaryVariant,
                     onClick = {
-                        onSubmit(checked, day.value, salaryRate.value.toLong())
+                        onSubmit(
+                            checked,
+                            Time(selectedHour.value, selectedMinute.value),
+                            period,
+                            name.value
+                        )
                         openDialogCustom.value = !openDialogCustom.value
                     },
                     modifier = Modifier,
@@ -154,16 +162,16 @@ fun CustomDialogUI(
     }
 }
 
-
 @SuppressLint("UnrememberedMutableState")
 @Preview(locale = "ru")
 @Composable
-private fun SalaryDialogPrev() {
+private fun EventsDialogPrev() {
     WorkTrackerTheme {
-        CustomAddDialog(
+        EventsTimePickerDialog(
             modifier = Modifier,
             openDialogCustom = mutableStateOf(true),
-            onSubmit = { _, _, _ -> })
+            onSubmit = { _, _, _, _ -> },
+            period = PeriodPart.START
+        )
     }
 }
-

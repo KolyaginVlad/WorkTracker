@@ -55,13 +55,11 @@ fun TimePicker(
     val selectedTime by remember {
         derivedStateOf { if (selectedPart.value == TimePart.Hour) selectedHour.value else selectedMinute.value / 5 }
     }
-
-    val onTime: (Int) -> Unit = remember {
+    val onTime: (Int) -> Unit =
         {
             if (selectedPart.value == TimePart.Hour) selectedHour.value =
                 it else selectedMinute.value = it * 5
         }
-    }
 
     Column(
         modifier = modifier
@@ -172,17 +170,26 @@ fun Mark(
     onIndex: (Int) -> Unit,
     isSelected: Boolean,
     textStyle: TextStyle = MaterialTheme.typography.h6,
+    ableToSelect: Boolean = true,
     colorUnselect: Color = PrimaryVariant,
-    colorSelect: Color = StatePrimaryWhite38
+    colorSelect: Color = StatePrimaryWhite38,
+    colorNotAbleToselect: Color = StatePrimaryWhite38
 ) {
     Text(
         text = text,
         style = textStyle,
-        color = if (isSelected) colorSelect else colorUnselect,
+        color =
+        if (ableToSelect) {
+            if (isSelected) colorSelect else colorUnselect
+        } else colorNotAbleToselect,
         modifier = Modifier.clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = { onIndex(index) }
+            onClick = {
+                if (ableToSelect) {
+                    onIndex(index)
+                }
+            }
         )
     )
 }
@@ -254,8 +261,8 @@ fun TimePickerPreview() {
     WorkTrackerTheme {
         Box(contentAlignment = Alignment.Center) {
             TimePicker(
-                selectedHour = mutableStateOf(0),
-                selectedMinute = mutableStateOf(0)
+                selectedMinute = mutableStateOf(0),
+                selectedHour = mutableStateOf(0)
             )
         }
     }
