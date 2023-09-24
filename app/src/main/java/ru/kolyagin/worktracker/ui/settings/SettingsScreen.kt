@@ -1,10 +1,12 @@
 package ru.kolyagin.worktracker.ui.settings
 
 import android.app.TimePickerDialog
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -24,8 +26,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -88,7 +92,7 @@ private fun SettingsScreenContent(
     onAddPeriod: (DayOfWeek) -> Unit,
     onDinnerChange: (DayOfWeek, Boolean) -> Unit
 ) {
-    val toolbarHeight = 200.dp
+    val toolbarHeight = 140.dp
     val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
     val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
     val nestedScrollConnection = remember {
@@ -108,6 +112,13 @@ private fun SettingsScreenContent(
             .nestedScroll(nestedScrollConnection)
     ) {
         val scrollState = rememberScrollState()
+        Image(
+            modifier = Modifier
+                .fillMaxSize(),
+            painter = painterResource(id = R.drawable.header),
+            contentScale = ContentScale.FillBounds,
+            contentDescription = null
+        )
         TopBar(
             title = stringResource(id = R.string.work_schedule),
             onBackPressed = navigator::navigateUp,
@@ -116,11 +127,12 @@ private fun SettingsScreenContent(
                 .height(toolbarHeight)
                 .offset { IntOffset(x = 0, y = toolbarOffsetHeightPx.value.roundToInt()) },
         )
+        val round = (56 * (toolbarHeightPx + toolbarOffsetHeightPx.value)/toolbarHeightPx).dp
         Column(
             modifier = Modifier
                 .padding(
                     top = max(
-                        toolbarHeight - 48.dp + with(LocalDensity.current) {
+                        toolbarHeight - 16.dp + with(LocalDensity.current) {
                             toolbarOffsetHeightPx.value.toDp()
                         },
                         0.dp
@@ -128,7 +140,7 @@ private fun SettingsScreenContent(
                 )
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .clip(RoundedCornerShape(topStart = 56.dp, topEnd = 56.dp))
+                .clip(RoundedCornerShape(topStart = round, topEnd = round))
                 .background(MaterialTheme.colors.background)
                 .verticalScroll(scrollState)
                 .padding(top = 16.dp)
@@ -145,6 +157,7 @@ private fun SettingsScreenContent(
                 onDinnerChange = onDinnerChange,
                 totalTime = state.totalTime
             )
+            Spacer(size = 12.dp)
             Spacer(-with(LocalDensity.current) {
                 toolbarOffsetHeightPx.value.toDp()
             })

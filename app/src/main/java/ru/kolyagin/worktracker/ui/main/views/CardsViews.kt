@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ButtonElevation
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
@@ -107,6 +108,7 @@ fun EventList(
     ) {
         events.sortedBy { it.timeStart }.forEach {
             OutlinedButton(
+                elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
                 border = BorderStroke(2.dp, contentColor),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedButtonShapes.medium,
@@ -117,7 +119,7 @@ fun EventList(
                 )
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 19.dp)
                 ) {
                     Text(
                         text = it.timeStart.toString() + "-" + it.timeEnd.toString(),
@@ -141,7 +143,8 @@ fun EventList(
                     Icon(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp).clickable(onClick = remember(it, day) {
+                            .padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+                            .clickable(onClick = remember(it, day) {
                                 {
                                     onClickDeleteEvent(
                                         it,
@@ -178,6 +181,7 @@ fun Button(
 ) {
     Button(
         modifier = modifier,
+        elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
         shape = RoundedButtonShapes.medium,
         border = BorderStroke(2.dp, borderColor),
         onClick = onClick,

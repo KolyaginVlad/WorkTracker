@@ -48,7 +48,6 @@ fun WorkingScreenContent(
                 id = R.string.overwork_time
             )
         )
-        Spacer(12.dp)
         Button(
             modifier = Modifier
                 .fillMaxWidth()
@@ -89,6 +88,7 @@ fun WorkingScreenContent(
             onClick = onClickEndWork,
             text = stringResource(id = R.string.finish_work),
             backgroundColor = MaterialTheme.colors.primaryVariant,
+            borderColor = MaterialTheme.colors.primaryVariant,
             contentColor = MaterialTheme.colors.onSecondary
         )
     }

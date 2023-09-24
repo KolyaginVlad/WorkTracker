@@ -1,10 +1,12 @@
 package ru.kolyagin.worktracker.ui.main
 
 import android.app.TimePickerDialog
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -29,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -103,7 +107,7 @@ fun MainScreen(
             }
         }
     }
-    val toolbarHeight = 200.dp
+    val toolbarHeight = 140.dp
     val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
     val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
     val nestedScrollConnection = remember {
@@ -123,6 +127,13 @@ fun MainScreen(
             .nestedScroll(nestedScrollConnection),
     ) {
         val scrollState = rememberScrollState()
+        Image(
+            modifier = Modifier
+                .fillMaxSize(),
+            painter = painterResource(id = R.drawable.header),
+            contentScale = ContentScale.FillBounds,
+            contentDescription = null
+        )
         TopBar(
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,11 +148,12 @@ fun MainScreen(
                 tint = Color.Unspecified
             )
         }
+        val round = (56 * (toolbarHeightPx + toolbarOffsetHeightPx.value)/toolbarHeightPx).dp
         Column(
             modifier = Modifier
                 .padding(
                     top = max(
-                        toolbarHeight - 48.dp + with(LocalDensity.current) {
+                        toolbarHeight - 16.dp + with(LocalDensity.current) {
                             toolbarOffsetHeightPx.value.toDp()
                         },
                         0.dp
@@ -149,7 +161,7 @@ fun MainScreen(
                 )
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .clip(RoundedCornerShape(topStart = 56.dp, topEnd = 56.dp))
+                .clip(RoundedCornerShape(topStart = round, topEnd = round))
                 .background(MaterialTheme.colors.background)
                 .verticalScroll(scrollState)
                 .padding(top = 16.dp)

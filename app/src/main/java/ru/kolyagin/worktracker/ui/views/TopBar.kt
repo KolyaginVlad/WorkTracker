@@ -36,14 +36,6 @@ fun TopBar(
     Box(
         modifier = modifier
     ) {
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter),
-            painter = painterResource(id = R.drawable.header),
-            contentScale = ContentScale.Crop,
-            contentDescription = null
-        )
         onBackPressed?.let {
             Row(
                 modifier = Modifier

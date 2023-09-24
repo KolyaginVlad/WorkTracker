@@ -80,7 +80,7 @@ fun WorkStartScreenContent(
         EventList(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 12.dp),
+                .padding(12.dp),
             events = state.events,
             onClickDeleteEvent = onClickDeleteEvent,
             onAddPeriod = onAddPeriod,
@@ -105,6 +105,7 @@ fun StartButton(
         Button(
             enabled = buttonActive,
             modifier = Modifier.fillMaxWidth(),
+            elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
             shape = RoundedButtonShapes.medium,
             onClick = onClickStartWork,
             colors = ButtonDefaults.buttonColors(
@@ -115,7 +116,7 @@ fun StartButton(
             )
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
                 style = MaterialTheme.typography.button,
                 text = if (startEarly) stringResource(id = R.string.work_start_early)
                 else stringResource(

@@ -57,7 +57,7 @@ fun ListOfWorkDays(
     onDinnerChange: (DayOfWeek, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         TotalScheduleInfo(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -193,6 +193,7 @@ private fun ColumnScope.Periods(
             border = BorderStroke(2.dp, contentColor),
             modifier = modifier,
             shape = RoundedButtonShapes.medium,
+            elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
             onClick = {},
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = backgroundColor,
