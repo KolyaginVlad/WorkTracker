@@ -21,6 +21,7 @@ import ru.kolyagin.worktracker.domain.repositories.WorkStatisticRepository
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.utils.Constants
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
+import ru.kolyagin.worktracker.utils.log.Logger
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -29,10 +30,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    logger: Logger,
     private val scheduleRepository: ScheduleRepository,
     private val preferenceRepository: PreferenceRepository,
     private val workStatisticRepository: WorkStatisticRepository
-) : BaseViewModel<MainScreenState, MainEvent>(MainScreenState()) {
+) : BaseViewModel<MainScreenState, MainEvent>(MainScreenState(), logger) {
     private var timerJob: Job? = null
     private var schedule: DayWorkInfo? = null
     private var events: Map<Int, List<WorkEvent>> = mapOf()

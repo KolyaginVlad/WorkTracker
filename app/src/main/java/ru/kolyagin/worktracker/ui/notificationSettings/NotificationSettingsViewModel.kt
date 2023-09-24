@@ -4,10 +4,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
+import ru.kolyagin.worktracker.utils.log.Logger
 import javax.inject.Inject
 
 @HiltViewModel
 class NotificationSettingsViewModel @Inject constructor(
+    logger: Logger,
     private val preferenceRepository: PreferenceRepository
 ) : BaseViewModel<NotificationSettingsScreenState, NotificationSettingsEvent>(
     NotificationSettingsScreenState(
@@ -20,7 +22,7 @@ class NotificationSettingsViewModel @Inject constructor(
         dinnerTime = preferenceRepository.dinnerTimeInNotWorkingTime,
         startWorkOffset = preferenceRepository.timeBeforeStartWork,
         endWorkOffset = preferenceRepository.timeBeforeEndWork,
-    )
+    ), logger
 ) {
 
     fun onMorningNotificationEnableChange(enable: Boolean) {

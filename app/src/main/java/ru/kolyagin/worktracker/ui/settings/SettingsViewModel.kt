@@ -9,13 +9,15 @@ import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.utils.Constants
 import ru.kolyagin.worktracker.utils.Constants.DINNER
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
+import ru.kolyagin.worktracker.utils.log.Logger
 import java.time.DayOfWeek
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
+    logger: Logger,
     private val scheduleRepository: ScheduleRepository
-) : BaseViewModel<SettingsScreenState, SettingsEvent>(SettingsScreenState()) {
+) : BaseViewModel<SettingsScreenState, SettingsEvent>(SettingsScreenState(), logger) {
 
     private var selectedDayOfWeek: DayOfWeek? = null
 
