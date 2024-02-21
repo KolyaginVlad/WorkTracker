@@ -57,7 +57,7 @@ fun TopBar(
             }
         }
         Text(
-            modifier = Modifier.align(Alignment.CenterStart).padding(start = 16.dp),
+            modifier = Modifier.align(Alignment.BottomStart).padding(start = 16.dp),
             text = title,
             style = MaterialTheme.typography.h5,
             color = OnPrimaryHighEmphasis

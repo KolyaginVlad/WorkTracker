@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -107,24 +108,11 @@ fun MainScreen(
             }
         }
     }
-    val toolbarHeight = 140.dp
-    val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
-    val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.y
-                val newOffset = toolbarOffsetHeightPx.value + delta
-                toolbarOffsetHeightPx.value = newOffset.coerceIn(-toolbarHeightPx, 0f)
-                return Offset.Zero
-            }
-        }
-    }
+    val toolbarHeight = 100.dp
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
-            .nestedScroll(nestedScrollConnection),
+            .fillMaxHeight(),
     ) {
         val scrollState = rememberScrollState()
         Image(
@@ -134,98 +122,87 @@ fun MainScreen(
             contentScale = ContentScale.FillBounds,
             contentDescription = null
         )
-        TopBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(toolbarHeight)
-                .offset { IntOffset(x = 0, y = toolbarOffsetHeightPx.value.roundToInt()) },
-            title = stringResource(id = R.string.work_periods)
-        ) {
-            Icon(
-                modifier = Modifier.clickable(onClick = viewModel::onClickOpenSettings),
-                painter = painterResource(id = R.drawable.settings),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
-        }
-        val round = (56 * (toolbarHeightPx + toolbarOffsetHeightPx.value)/toolbarHeightPx).dp
-        Column(
-            modifier = Modifier
-                .padding(
-                    top = max(
-                        toolbarHeight - 16.dp + with(LocalDensity.current) {
-                            toolbarOffsetHeightPx.value.toDp()
-                        },
-                        0.dp
+        Column(Modifier.verticalScroll(scrollState)) {
+            TopBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(toolbarHeight),
+                title = stringResource(id = R.string.work_periods)
+            ) {
+                IconButton(onClick = viewModel::onClickOpenSettings) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.settings),
+                        contentDescription = null,
+                        tint = Color.Unspecified
                     )
-                )
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .clip(RoundedCornerShape(topStart = round, topEnd = round))
-                .background(MaterialTheme.colors.background)
-                .verticalScroll(scrollState)
-                .padding(top = 16.dp)
-                .offset { IntOffset(x = 0, y = -toolbarOffsetHeightPx.value.roundToInt()) }
-        ) {
-            state.days.forEach {
-                Card(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
-                    shape = RoundedCornerShape(40.dp),
-                    backgroundColor = OnPrimaryHighEmphasis,
-                    elevation = 0.dp
-                ) {
-                    when (val currentState = it) {
-                        is CardState.WorkStart -> WorkStartScreenContent(
-                            state = currentState,
-                            onClickStartWork = viewModel::onClickStartWork,
-                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
-                            onAddPeriod = viewModel::onClickAddEvent,
-                            onClickEvent = viewModel::onClickEvent
-                        )
+                }
+            }
+            Spacer(size = 40.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(topStart = 56.dp, topEnd = 56.dp))
+                    .background(MaterialTheme.colors.background)
+                    .padding(top = 16.dp)
+            ) {
+                state.days.forEach {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
+                        shape = RoundedCornerShape(40.dp),
+                        backgroundColor = OnPrimaryHighEmphasis,
+                        elevation = 0.dp
+                    ) {
+                        when (val currentState = it) {
+                            is CardState.WorkStart -> WorkStartScreenContent(
+                                state = currentState,
+                                onClickStartWork = viewModel::onClickStartWork,
+                                onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                                onAddPeriod = viewModel::onClickAddEvent,
+                                onClickEvent = viewModel::onClickEvent
+                            )
 
-                        is CardState.Dinnering -> DinneringScreenContent(
-                            state = currentState,
-                            onClickReturnFromDinner = viewModel::onClickReturnFromDinner,
-                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
-                            onClickEvent = viewModel::onClickEvent,
-                            onAddPeriod = viewModel::onClickAddEvent,
-                            onClickEndWork = viewModel::onClickFinishWork
-                        )
+                            is CardState.Dinnering -> DinneringScreenContent(
+                                state = currentState,
+                                onClickReturnFromDinner = viewModel::onClickReturnFromDinner,
+                                onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                                onClickEvent = viewModel::onClickEvent,
+                                onAddPeriod = viewModel::onClickAddEvent,
+                                onClickEndWork = viewModel::onClickFinishWork
+                            )
 
-                        is CardState.Working -> WorkingScreenContent(
-                            state = currentState,
-                            onClickStartPause = viewModel::onClickStartPause,
-                            onClickGoToDinner = viewModel::onClickGoToDinner,
-                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
-                            onClickEvent = viewModel::onClickEvent,
-                            onAddPeriod = viewModel::onClickAddEvent,
-                            onClickEndWork = viewModel::onClickFinishWork
-                        )
+                            is CardState.Working -> WorkingScreenContent(
+                                state = currentState,
+                                onClickStartPause = viewModel::onClickStartPause,
+                                onClickGoToDinner = viewModel::onClickGoToDinner,
+                                onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                                onClickEvent = viewModel::onClickEvent,
+                                onAddPeriod = viewModel::onClickAddEvent,
+                                onClickEndWork = viewModel::onClickFinishWork
+                            )
 
-                        is CardState.Pause -> PauseScreenContent(
-                            state = currentState,
-                            onClickEndPause = viewModel::onClickEndPause,
-                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
-                            onClickEvent = viewModel::onClickEvent,
-                            onAddPeriod = viewModel::onClickAddEvent,
-                            onClickEndWork = viewModel::onClickFinishWork
-                        )
+                            is CardState.Pause -> PauseScreenContent(
+                                state = currentState,
+                                onClickEndPause = viewModel::onClickEndPause,
+                                onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                                onClickEvent = viewModel::onClickEvent,
+                                onAddPeriod = viewModel::onClickAddEvent,
+                                onClickEndWork = viewModel::onClickFinishWork
+                            )
 
-                        is CardState.Results -> ResultsScreenContent(
-                            state = currentState,
-                            onClickStartWork = viewModel::onClickStartWork,
-                            onClickDeleteEvent = viewModel::onClickDeleteEvent,
-                            onClickEvent = viewModel::onClickEvent,
-                            onAddPeriod = viewModel::onClickAddEvent
-                        )
+                            is CardState.Results -> ResultsScreenContent(
+                                state = currentState,
+                                onClickStartWork = viewModel::onClickStartWork,
+                                onClickDeleteEvent = viewModel::onClickDeleteEvent,
+                                onClickEvent = viewModel::onClickEvent,
+                                onAddPeriod = viewModel::onClickAddEvent
+                            )
+                        }
                     }
                 }
             }
-            Spacer(-with(LocalDensity.current) {
-                toolbarOffsetHeightPx.value.toDp()
-            })
         }
     }
 

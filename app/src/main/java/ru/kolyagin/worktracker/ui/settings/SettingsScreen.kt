@@ -92,24 +92,11 @@ private fun SettingsScreenContent(
     onAddPeriod: (DayOfWeek) -> Unit,
     onDinnerChange: (DayOfWeek, Boolean) -> Unit
 ) {
-    val toolbarHeight = 140.dp
-    val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
-    val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.y
-                val newOffset = toolbarOffsetHeightPx.value + delta
-                toolbarOffsetHeightPx.value = newOffset.coerceIn(-toolbarHeightPx, 0f)
-                return Offset.Zero
-            }
-        }
-    }
+    val toolbarHeight = 100.dp
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .nestedScroll(nestedScrollConnection)
     ) {
         val scrollState = rememberScrollState()
         Image(
@@ -119,48 +106,36 @@ private fun SettingsScreenContent(
             contentScale = ContentScale.FillBounds,
             contentDescription = null
         )
-        TopBar(
-            title = stringResource(id = R.string.work_schedule),
-            onBackPressed = navigator::navigateUp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(toolbarHeight)
-                .offset { IntOffset(x = 0, y = toolbarOffsetHeightPx.value.roundToInt()) },
-        )
-        val round = (56 * (toolbarHeightPx + toolbarOffsetHeightPx.value)/toolbarHeightPx).dp
-        Column(
-            modifier = Modifier
-                .padding(
-                    top = max(
-                        toolbarHeight - 16.dp + with(LocalDensity.current) {
-                            toolbarOffsetHeightPx.value.toDp()
-                        },
-                        0.dp
-                    )
-                )
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .clip(RoundedCornerShape(topStart = round, topEnd = round))
-                .background(MaterialTheme.colors.background)
-                .verticalScroll(scrollState)
-                .padding(top = 16.dp)
-                .offset { IntOffset(x = 0, y = -toolbarOffsetHeightPx.value.roundToInt()) },
-        ) {
-            ListOfWorkDays(
+        Column(Modifier.verticalScroll(scrollState)) {
+            TopBar(
+                title = stringResource(id = R.string.work_schedule),
+                onBackPressed = navigator::navigateUp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                listOfWorkPeriods = state.listOfWorkPeriods,
-                onClickPeriod = onClickPeriod,
-                onDeletePeriod = onDeletePeriod,
-                onAddPeriod = onAddPeriod,
-                onDinnerChange = onDinnerChange,
-                totalTime = state.totalTime
+                    .height(toolbarHeight),
             )
-            Spacer(size = 12.dp)
-            Spacer(-with(LocalDensity.current) {
-                toolbarOffsetHeightPx.value.toDp()
-            })
+            Spacer(size = 40.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(topStart = 56.dp, topEnd = 56.dp))
+                    .background(MaterialTheme.colors.background)
+                    .padding(top = 16.dp),
+            ) {
+                ListOfWorkDays(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    listOfWorkPeriods = state.listOfWorkPeriods,
+                    onClickPeriod = onClickPeriod,
+                    onDeletePeriod = onDeletePeriod,
+                    onAddPeriod = onAddPeriod,
+                    onDinnerChange = onDinnerChange,
+                    totalTime = state.totalTime
+                )
+                Spacer(size = 12.dp)
+            }
         }
     }
 }
