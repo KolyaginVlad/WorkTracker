@@ -39,6 +39,7 @@ class AlarmNotificationsManager @Inject constructor(
                     ?.takeIf {
                         it in preferenceRepository.morningRange
                                 && it > preferenceRepository.morningNotificationOffset
+                                && preferenceRepository.isMorningNotificationEnable
                     }
                     ?.let { workStart ->
                         scheduleAlarm(
@@ -48,7 +49,14 @@ class AlarmNotificationsManager @Inject constructor(
                         ) {
                             putExtra(Constants.DESCRIPTION, R.string.morning_start_work_description)
                         }
+                    } ?: run {
+                    cancel(
+                        dayWorkInfo.day.ordinal,
+                        Constants.MORNING_CONST,
+                    ) {
+                        putExtra(Constants.DESCRIPTION, R.string.morning_start_work_description)
                     }
+                }
             }
         }
     }
@@ -59,6 +67,7 @@ class AlarmNotificationsManager @Inject constructor(
                 dayWorkInfo.periods
                     .takeIf { it.isNotEmpty() }
                     ?.map { it.timeStart }
+                    ?.takeIf { preferenceRepository.isStartWorkNotificationEnable }
                     ?.forEach {
                         it.takeIf {
                             it >= preferenceRepository.morningRange.endInclusive
@@ -72,7 +81,15 @@ class AlarmNotificationsManager @Inject constructor(
                                 putExtra(Constants.DESCRIPTION, R.string.start_work_description)
                             }
                         }
+                    } ?: run {
+                    cancel(
+                        dayWorkInfo.day.ordinal,
+                        Constants.PRE_WORK_CONST,
+                    ) {
+                        action = Constants.PRE_WORK_ACTION
+                        putExtra(Constants.DESCRIPTION, R.string.start_work_description)
                     }
+                }
 
             }
         }
@@ -83,6 +100,7 @@ class AlarmNotificationsManager @Inject constructor(
             scheduleRepository.schedule().firstOrNull()?.forEach { dayWorkInfo ->
                 dayWorkInfo.periods
                     .takeIf { it.isNotEmpty() }
+                    ?.takeIf { preferenceRepository.isEndWorkNotificationEnable }
                     ?.map { it.timeEnd }
                     ?.forEach {
                         it.takeIf {
@@ -103,7 +121,18 @@ class AlarmNotificationsManager @Inject constructor(
                                 )
                             }
                         }
+                    } ?: run {
+                    cancel(
+                        dayWorkInfo.day.ordinal,
+                        Constants.EVENING_CONST,
+                    ) {
+                        action = Constants.FIN_WORK_ACTION
+                        putExtra(
+                            Constants.DESCRIPTION,
+                            R.string.evening_finish_work_description
+                        )
                     }
+                }
 
             }
         }
@@ -114,6 +143,7 @@ class AlarmNotificationsManager @Inject constructor(
             scheduleRepository.schedule().firstOrNull()?.forEach { dayWorkInfo ->
                 dayWorkInfo.periods
                     .takeIf { it.isNotEmpty() }
+                    ?.takeIf { preferenceRepository.isEndWorkNotificationEnable }
                     ?.map { it.timeEnd }
                     ?.forEach {
                         it.takeIf {
@@ -131,7 +161,15 @@ class AlarmNotificationsManager @Inject constructor(
                                 putExtra(Constants.DESCRIPTION, R.string.finish_work_description)
                             }
                         }
+                    } ?: run {
+                    cancel(
+                        dayWorkInfo.day.ordinal,
+                        Constants.FIN_WORK_CONST,
+                    ) {
+                        action = Constants.FIN_WORK_ACTION
+                        putExtra(Constants.DESCRIPTION, R.string.finish_work_description)
                     }
+                }
 
             }
         }
@@ -153,20 +191,29 @@ class AlarmNotificationsManager @Inject constructor(
     override fun scheduleDinnerNotification() {
         scope.launch {
             val time = preferenceRepository.dinnerTimeInNotWorkingTime
-            scheduleRepository.schedule().firstOrNull()?.forEach { dayWorkInfo ->
-                if (!dayWorkInfo.isDinnerInclude && dayWorkInfo.periods.all {
-                        time !in it.timeStart..it.timeEnd
-                    }
-                ) {
-                    scheduleAlarm(
-                        dayWorkInfo.day.ordinal,
-                        Constants.NOT_WORK_DINNER_CONST,
-                        time
+            val isEnabled = preferenceRepository.isDinnerNotificationEnable
+            scheduleRepository.schedule().firstOrNull()
+                ?.forEach { dayWorkInfo ->
+                    if (!dayWorkInfo.isDinnerInclude && dayWorkInfo.periods.all {
+                            time !in it.timeStart..it.timeEnd
+                        } && isEnabled && dayWorkInfo.periods.isNotEmpty()
                     ) {
-                        putExtra(Constants.DESCRIPTION, R.string.dinner_description)
+                        scheduleAlarm(
+                            dayWorkInfo.day.ordinal,
+                            Constants.NOT_WORK_DINNER_CONST,
+                            time
+                        ) {
+                            putExtra(Constants.DESCRIPTION, R.string.dinner_description)
+                        }
+                    } else {
+                        cancel(
+                            dayWorkInfo.day.ordinal,
+                            Constants.NOT_WORK_DINNER_CONST,
+                        ) {
+                            putExtra(Constants.DESCRIPTION, R.string.dinner_description)
+                        }
                     }
                 }
-            }
         }
     }
 
@@ -229,5 +276,22 @@ class AlarmNotificationsManager @Inject constructor(
             }
         val offset = OffsetDateTime.now().offset
         return notificationTime.toInstant(offset).toEpochMilli()
+    }
+
+    private fun cancel(
+        day: Int,
+        const: Int,
+        modifyIntent: Intent.() -> Unit = {}
+    ) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val resultIntent = Intent(context, NotificationReceiver::class.java).apply(modifyIntent)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            const + day,
+            resultIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        alarmManager.cancel(pendingIntent)
+
     }
 }

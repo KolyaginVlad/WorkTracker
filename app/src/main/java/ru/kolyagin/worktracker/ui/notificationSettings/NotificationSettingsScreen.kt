@@ -1,12 +1,15 @@
 package ru.kolyagin.worktracker.ui.notificationSettings
 
 import android.app.TimePickerDialog
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +20,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import kotlinx.coroutines.NonDisposableHandle.parent
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.ui.notificationSettings.content.DinnerCard
@@ -34,6 +41,7 @@ import ru.kolyagin.worktracker.ui.notificationSettings.content.EndWorkCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.MorningCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.StartWorkCard
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TopBar
 
 @Destination
@@ -89,79 +97,87 @@ private fun NotificationSettingsScreenContent(
     onEndWorkNotificationEnableChange: (Boolean) -> Unit,
     onEndWorkOffsetClick: () -> Unit,
 ) {
-    ConstraintLayout(
+    val toolbarHeight = 100.dp
+    val scrollState = rememberScrollState()
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(),
     ) {
-        val (topBar, content) = createRefs()
-        val scrollState = rememberScrollState()
-        TopBar(
+        Image(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.25f)
-                .constrainAs(topBar) {
-                    top.linkTo(parent.top)
-                },
-            title = stringResource(id = R.string.notification_settings),
-            onBackPressed = navigator::navigateUp
+                .fillMaxSize(),
+            painter = painterResource(id = R.drawable.header),
+            contentScale = ContentScale.FillBounds,
+            contentDescription = null
         )
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.80f)
-                .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
-                .background(MaterialTheme.colors.background)
-                .padding(top = 16.dp)
                 .verticalScroll(scrollState)
-                .constrainAs(content) {
-                    top.linkTo(topBar.bottom, margin = (-48).dp)
-                },
-            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            MorningCard(
+            TopBar(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                isEnable = state.isMorningNotificationEnable,
-                startTime = state.morningNotificationRange.start,
-                endTime = state.morningNotificationRange.endInclusive,
-                offset = state.morningOffset,
-                onEnableChange = onMorningNotificationEnableChange,
-                onStartTimeClick = onMorningStartTimeClick,
-                onEndTimeClick = onMorningEndTimeClick,
-                onOffsetClick = onMorningOffsetClick,
+                    .fillMaxWidth()
+                    .height(toolbarHeight),
+                title = stringResource(id = R.string.notification_settings),
+                onBackPressed = navigator::navigateUp
             )
+            Spacer(size = 40.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(topStart = 56.dp, topEnd = 56.dp))
+                    .background(MaterialTheme.colors.background)
+                    .padding(top = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                MorningCard(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    isEnable = state.isMorningNotificationEnable,
+                    startTime = state.morningNotificationRange.start,
+                    endTime = state.morningNotificationRange.endInclusive,
+                    offset = state.morningOffset,
+                    onEnableChange = onMorningNotificationEnableChange,
+                    onStartTimeClick = onMorningStartTimeClick,
+                    onEndTimeClick = onMorningEndTimeClick,
+                    onOffsetClick = onMorningOffsetClick,
+                )
 
-            DinnerCard(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                time = state.dinnerTime,
-                isEnable = state.isDinnerNotificationEnable,
-                onTimeClick = onDinnerTimeClick,
-                onEnableChange = onDinnerNotificationEnableChange
-            )
+                DinnerCard(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    time = state.dinnerTime,
+                    isEnable = state.isDinnerNotificationEnable,
+                    onTimeClick = onDinnerTimeClick,
+                    onEnableChange = onDinnerNotificationEnableChange
+                )
 
-            StartWorkCard(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                offset = state.startWorkOffset,
-                isEnable = state.isStartWorkNotificationEnable,
-                onOffsetClick = onStartWorkOffsetClick,
-                onEnableChange = onStartWorkNotificationEnableChange
-            )
+                StartWorkCard(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    offset = state.startWorkOffset,
+                    isEnable = state.isStartWorkNotificationEnable,
+                    onOffsetClick = onStartWorkOffsetClick,
+                    onEnableChange = onStartWorkNotificationEnableChange
+                )
 
-            EndWorkCard(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                offset = state.endWorkOffset,
-                isEnable = state.isEndWorkNotificationEnable,
-                onOffsetClick = onEndWorkOffsetClick,
-                onEnableChange = onEndWorkNotificationEnableChange
-            )
+                EndWorkCard(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 12.dp),
+                    offset = state.endWorkOffset,
+                    isEnable = state.isEndWorkNotificationEnable,
+                    onOffsetClick = onEndWorkOffsetClick,
+                    onEnableChange = onEndWorkNotificationEnableChange
+                )
+            }
+
         }
     }
 }
@@ -173,7 +189,7 @@ private fun NotificationSettingsPreview() {
         NotificationSettingsScreenContent(
             navigator = EmptyDestinationsNavigator,
             state = NotificationSettingsScreenState(),
-            {},{},{},{},{},{},{},{},{},{},
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
         )
     }
 }

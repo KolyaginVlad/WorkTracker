@@ -14,7 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -42,6 +47,7 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
+import ru.kolyagin.worktracker.ui.destinations.NotificationSettingsScreenDestination
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.settings.views.ListOfWorkDays
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
@@ -79,7 +85,14 @@ fun SettingsScreen(
         onClickPeriod = viewModel::onClickPeriod,
         onDeletePeriod = viewModel::onDeletePeriod,
         onAddPeriod = viewModel::onAddPeriod,
-        onDinnerChange = viewModel::onDinnerChange
+        onDinnerChange = viewModel::onDinnerChange,
+        onClickNotificationsSettings = remember {
+            {
+                navigator.navigate(NotificationSettingsScreenDestination) {
+                    launchSingleTop = true
+                }
+            }
+        }
     )
 }
 
@@ -90,7 +103,8 @@ private fun SettingsScreenContent(
     onClickPeriod: (DayOfWeek, WorkPeriod, PeriodPart) -> Unit,
     onDeletePeriod: (WorkPeriod) -> Unit,
     onAddPeriod: (DayOfWeek) -> Unit,
-    onDinnerChange: (DayOfWeek, Boolean) -> Unit
+    onDinnerChange: (DayOfWeek, Boolean) -> Unit,
+    onClickNotificationsSettings: () -> Unit
 ) {
     val toolbarHeight = 100.dp
     Box(
@@ -113,6 +127,15 @@ private fun SettingsScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(toolbarHeight),
+                icons = {
+                    IconButton(onClick = onClickNotificationsSettings) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = null,
+                            tint = Color.White,
+                        )
+                    }
+                }
             )
             Spacer(size = 40.dp)
             Column(
@@ -150,7 +173,8 @@ private fun SettingsPreview() {
             onClickPeriod = { _, _, _ -> },
             onDeletePeriod = { _ -> },
             onAddPeriod = { },
-            onDinnerChange = { _, _ -> }
+            onDinnerChange = { _, _ -> },
+            onClickNotificationsSettings = {}
         )
     }
 }

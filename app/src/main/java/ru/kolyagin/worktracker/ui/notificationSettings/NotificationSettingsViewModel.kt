@@ -3,6 +3,8 @@ package ru.kolyagin.worktracker.ui.notificationSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
+import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
+import ru.kolyagin.worktracker.ui.notifications.alarmManager.AlarmNotificationsManager
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import ru.kolyagin.worktracker.utils.log.Logger
 import javax.inject.Inject
@@ -10,7 +12,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NotificationSettingsViewModel @Inject constructor(
     logger: Logger,
-    private val preferenceRepository: PreferenceRepository
+    private val preferenceRepository: PreferenceRepository,
+    private val notificationsManager: NotificationsManager
 ) : BaseViewModel<NotificationSettingsScreenState, NotificationSettingsEvent>(
     NotificationSettingsScreenState(
         isMorningNotificationEnable = preferenceRepository.isMorningNotificationEnable,
@@ -30,6 +33,7 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.isMorningNotificationEnable = enable
             it.copy(isMorningNotificationEnable = enable)
         }
+        notificationsManager.scheduleMorningNotification()
     }
 
     fun onMorningStartTimeClick() {
@@ -64,6 +68,7 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.isDinnerNotificationEnable = enable
             it.copy(isDinnerNotificationEnable = enable)
         }
+        notificationsManager.scheduleDinnerNotification()
     }
 
     fun onDinnerTimeClick() {
@@ -80,6 +85,7 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.isStartWorkNotificationEnable = enable
             it.copy(isStartWorkNotificationEnable = enable)
         }
+        notificationsManager.schedulePreWorkNotification()
     }
 
     fun onStartWorkOffsetClick() {
@@ -96,6 +102,8 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.isEndWorkNotificationEnable = enable
             it.copy(isEndWorkNotificationEnable = enable)
         }
+        notificationsManager.scheduleEveningNotification()
+        notificationsManager.scheduleFinWorkNotification()
     }
 
     fun onEndWorkOffsetClick() {
@@ -115,6 +123,7 @@ class NotificationSettingsViewModel @Inject constructor(
                 morningNotificationRange = newRange
             )
         }
+        notificationsManager.scheduleMorningNotification()
     }
 
     private fun onMorningEndTimePicked(time: Time) {
@@ -125,6 +134,7 @@ class NotificationSettingsViewModel @Inject constructor(
                 morningNotificationRange = newRange
             )
         }
+        notificationsManager.scheduleMorningNotification()
     }
 
     private fun onMorningOffsetPicked(time: Time) {
@@ -132,6 +142,7 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.morningNotificationOffset = time
             it.copy(morningOffset = time)
         }
+        notificationsManager.scheduleMorningNotification()
     }
 
     private fun onDinnerPicked(time: Time) {
@@ -139,6 +150,7 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.dinnerTimeInNotWorkingTime = time
             it.copy(dinnerTime = time)
         }
+        notificationsManager.scheduleDinnerNotification()
     }
 
     private fun onStartWorkOffsetPicked(time: Time) {
@@ -146,6 +158,7 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.timeBeforeStartWork = time
             it.copy(startWorkOffset = time)
         }
+        notificationsManager.schedulePreWorkNotification()
     }
 
     private fun onEndWorkOffsetPicked(time: Time) {
@@ -153,6 +166,8 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.timeBeforeEndWork = time
             it.copy(endWorkOffset = time)
         }
+        notificationsManager.scheduleFinWorkNotification()
+        notificationsManager.scheduleEveningNotification()
     }
 
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -28,13 +29,13 @@ fun LabelAndTime(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            modifier = Modifier.weight(0.7f),
+            modifier = Modifier.fillMaxWidth(0.7f),
             text = label,
             style = MaterialTheme.typography.body2,
             color = MaterialTheme.colors.primary
         )
         Text(
-            modifier = Modifier.clickable(onClick = onTimeClick).weight(0.3f),
+            modifier = Modifier.clickable(onClick = onTimeClick),
             text = time.toString(),
             style = MaterialTheme.typography.body2,
             color = SurfaceDisabled,

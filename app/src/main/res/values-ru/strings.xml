@@ -45,7 +45,7 @@
     <string name="fix_your_state">Состояние исправлено!</string>
     <string name="time_worked">времени отработано</string>
     <string name="break_work">перерыв</string>
-    <string name="notification_settings">настройки уведомлений</string>
+    <string name="notification_settings">Настройки уведомлений</string>
     <string name="enable_morning_notification">Включить утреннее уведомление</string>
     <string name="enable_dinner_notification">Включить уведомление в обед</string>
     <string name="enable_start_work_notification">Включить уведомление перед началом периода</string>
