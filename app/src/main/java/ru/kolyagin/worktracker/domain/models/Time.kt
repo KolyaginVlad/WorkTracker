@@ -48,6 +48,10 @@ class Time(val hours: Int, val minutes: Int) : Comparable<Time> {
             hours * 60 + minutes
 
         fun Time.toTimeWithSeconds(seconds: Int = 0) = TimeWithSeconds(hours, minutes, seconds)
+
+        val MIN = Time(0, 0)
+
+        val MAX = Time(23, 59)
     }
 
 }

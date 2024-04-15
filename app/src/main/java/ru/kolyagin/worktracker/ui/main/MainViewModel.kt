@@ -18,6 +18,7 @@ import ru.kolyagin.worktracker.domain.models.WorkState
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
 import ru.kolyagin.worktracker.domain.repositories.WorkStatisticRepository
+import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.utils.Constants
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
@@ -33,7 +34,8 @@ class MainViewModel @Inject constructor(
     logger: Logger,
     private val scheduleRepository: ScheduleRepository,
     private val preferenceRepository: PreferenceRepository,
-    private val workStatisticRepository: WorkStatisticRepository
+    private val workStatisticRepository: WorkStatisticRepository,
+    private val notificationsManager: NotificationsManager
 ) : BaseViewModel<MainScreenState, MainEvent>(MainScreenState(), logger) {
     private var timerJob: Job? = null
     private var schedule: DayWorkInfo? = null
@@ -130,6 +132,7 @@ class MainViewModel @Inject constructor(
     fun onClickStartWork() {
         preferenceRepository.currentWorkState = WorkState.Working
         updateCardState()
+        notificationsManager.rescheduleNotifications()
     }
 
     fun onClickFinishWork() {
@@ -155,6 +158,7 @@ class MainViewModel @Inject constructor(
             }
             preferenceRepository.currentWorkState = WorkState.Worked
             updateCardState()
+            notificationsManager.rescheduleNotifications()
         }
     }
 
@@ -166,6 +170,7 @@ class MainViewModel @Inject constructor(
             )
             preferenceRepository.currentWorkState = WorkState.Pause
             updateCardState()
+            notificationsManager.rescheduleNotifications()
         }
     }
 
@@ -173,6 +178,7 @@ class MainViewModel @Inject constructor(
         updateTimeOfPause()
         preferenceRepository.currentWorkState = WorkState.Working
         updateCardState()
+        notificationsManager.rescheduleNotifications()
     }
 
     fun onClickGoToDinner() {
@@ -184,6 +190,7 @@ class MainViewModel @Inject constructor(
             preferenceRepository.currentWorkState = WorkState.Dinner
             preferenceRepository.isDinnerEnableToday = false
             updateCardState()
+            notificationsManager.rescheduleNotifications()
         }
     }
 
@@ -191,6 +198,7 @@ class MainViewModel @Inject constructor(
         updateTimeOfPauseAfterDinner()
         preferenceRepository.currentWorkState = WorkState.Working
         updateCardState()
+        notificationsManager.rescheduleNotifications()
     }
 
     private fun updateTimeOfPause() {

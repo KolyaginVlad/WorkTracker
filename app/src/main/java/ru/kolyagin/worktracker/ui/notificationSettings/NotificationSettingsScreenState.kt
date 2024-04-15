@@ -7,10 +7,13 @@ data class NotificationSettingsScreenState(
     val isMorningNotificationEnable: Boolean = true,
     val morningNotificationRange: ClosedRange<Time> = Time(0, 0)..Time(0, 0),
     val morningOffset: Time = Time(0, 0),
+    val morningOffsetDialogVisible: Boolean = false,
     val isDinnerNotificationEnable: Boolean = true,
     val dinnerTime: Time = Time(0, 0),
     val isStartWorkNotificationEnable: Boolean = true,
     val startWorkOffset: Time = Time(0, 0),
+    val startWorkOffsetDialogVisible: Boolean = false,
     val isEndWorkNotificationEnable: Boolean = true,
     val endWorkOffset: Time = Time(0, 0),
+    val endWorkOffsetDialogVisible: Boolean = false,
 ) : State()

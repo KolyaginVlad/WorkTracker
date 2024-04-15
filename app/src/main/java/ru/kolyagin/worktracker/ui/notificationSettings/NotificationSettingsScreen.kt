@@ -18,6 +18,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
@@ -41,6 +42,7 @@ import ru.kolyagin.worktracker.ui.notificationSettings.content.EndWorkCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.MorningCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.StartWorkCard
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.views.PickerDialog
 import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TopBar
 
@@ -65,6 +67,39 @@ fun NotificationSettingsScreen(
                 }
             }
         }
+    }
+    if (state.morningOffsetDialogVisible) {
+        PickerDialog(
+            time = state.morningOffset,
+            onTimePicked = viewModel::onMorningOffsetPicked,
+            onCancel = viewModel::onMorningOffsetClose,
+            max = remember {
+                Time(6, 0)
+            },
+            title = stringResource(id = R.string.morning_offset)
+        )
+    }
+    if (state.startWorkOffsetDialogVisible) {
+        PickerDialog(
+            time = state.startWorkOffset,
+            onTimePicked = viewModel::onStartWorkOffsetPicked,
+            onCancel = viewModel::onStartWorkOffsetClose,
+            max = remember {
+                Time(6, 0)
+            },
+            title = stringResource(id = R.string.start_offset)
+        )
+    }
+    if (state.endWorkOffsetDialogVisible) {
+        PickerDialog(
+            time = state.endWorkOffset,
+            onTimePicked = viewModel::onEndWorkOffsetPicked,
+            onCancel = viewModel::onEndWorkOffsetClose,
+            max = remember {
+                Time(6, 0)
+            },
+            title = stringResource(id = R.string.end_offset)
+        )
     }
     NotificationSettingsScreenContent(
         navigator = navigator,

@@ -55,6 +55,8 @@
     <string name="start_offset">Смещение от начала рабочего периода</string>
     <string name="end_offset">Смещение от конца рабочего периода</string>
     <string name="time_dinner">Время обеда</string>
+    <string name="apply">ПРИМЕНИТЬ</string>
+    <string name="cancel">ОТМЕНИТЬ</string>
 
     <plurals name="hoursL">
         <item quantity="one">%d час</item>

@@ -253,7 +253,7 @@ class AlarmNotificationsManager @Inject constructor(
     private fun schedule(
         alarmManager: AlarmManager,
         time: Time,
-        pendingIntent: PendingIntent?,
+        pendingIntent: PendingIntent,
         day: Int
     ) {
         alarmManager.setExactAndAllowWhileIdle(
