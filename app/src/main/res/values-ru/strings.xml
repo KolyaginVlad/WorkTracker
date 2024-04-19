@@ -57,6 +57,11 @@
     <string name="time_dinner">Время обеда</string>
     <string name="apply">ПРИМЕНИТЬ</string>
     <string name="cancel">ОТМЕНИТЬ</string>
+    <string name="statistic_for_date">Статистика за %s - %s</string>
+    <string name="time_for_working">время в работе</string>
+    <string name="time_for_plan_break">запланированные перерывы</string>
+    <string name="time_for_unplan_break">внеплановые перерывы</string>
+    <string name="select_date">Выберите дату</string>
 
     <plurals name="hoursL">
         <item quantity="one">%d час</item>

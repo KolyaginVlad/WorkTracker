@@ -72,7 +72,7 @@ class MainViewModel @Inject constructor(
             timerJob?.cancel()
             timerJob = launchViewModelScope {
                 val currentDay = LocalDate.now().dayOfWeek.ordinal
-                schedule = it.getOrNull(LocalDate.now().dayOfWeek.ordinal)
+                schedule = it.getOrNull(currentDay)
                 events = it.associate { Pair(it.day.ordinal, it.events) }
                 val startWorkRanges =
                     schedule?.let { schedule ->
@@ -92,14 +92,14 @@ class MainViewModel @Inject constructor(
                     val currentTime = LocalTime.now()
                     val time = currentTime.toTimeWithSeconds()
                     val currentState = getCurrentState(
-                        startWorkRanges,
-                        workingRanges,
-                        time,
-                        listOfDays[currentDay],
-                        currentTime,
-                        schedule?.totalTime,
-                        isDinnerEnable,
-                        currentEvents
+                        startWorkRanges = startWorkRanges,
+                        workingRanges = workingRanges,
+                        time = time,
+                        currentDayOfWeek = listOfDays[currentDay],
+                        currentTime = currentTime,
+                        totalTime = schedule?.totalTime,
+                        isDinnerEnable = isDinnerEnable,
+                        workEvents = currentEvents
                     )
                     val daysWithOutCurrent = (listOfDays.subList(
                         currentDay + 1, listOfDays.size
@@ -143,7 +143,7 @@ class MainViewModel @Inject constructor(
                 }
 
                 WorkState.Dinner -> {
-                    updateTimeOfPauseAfterDinner()
+                    updateTimeOfPause()
                 }
 
                 WorkState.Working -> {
@@ -195,10 +195,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun onClickReturnFromDinner() {
-        updateTimeOfPauseAfterDinner()
-        preferenceRepository.currentWorkState = WorkState.Working
-        updateCardState()
-        notificationsManager.rescheduleNotifications()
+        onClickEndPause()
     }
 
     private fun updateTimeOfPause() {
@@ -207,41 +204,30 @@ class MainViewModel @Inject constructor(
         calculateAndSavePauses(pauseStart, pauseStop)
     }
 
-    private fun updateTimeOfPauseAfterDinner() {
-        val dinner =
-            (events[LocalDate.now().dayOfWeek.ordinal]?.toPersistentList() ?: persistentListOf())
-                .find { it.isDinner }
-                ?.let { it.timeEnd.toTimeWithSeconds() - it.timeStart.toTimeWithSeconds() }
-                ?: TimeWithSeconds(1,0,0)
-        var pauseStart = preferenceRepository.timeOfCurrentStateSet
-        val pauseStop = LocalTime.now().toTimeWithSeconds()
-        if (dinner >= pauseStop - pauseStart)
-            return
-        pauseStart += dinner
-        calculateAndSavePauses(pauseStart, pauseStop)
-    }
-
     private fun calculateAndSavePauses(
         pauseStart: TimeWithSeconds,
         pauseStop: TimeWithSeconds
     ) = launchViewModelScope {
-        val listOfPausesWithoutDinner =
+        val listOfPauses =
             (events[LocalDate.now().dayOfWeek.ordinal]?.toPersistentList() ?: persistentListOf())
-                .filter { !it.isDinner }
                 .map { it.timeStart.toTimeWithSeconds()..it.timeEnd.toTimeWithSeconds() }
         val pause = pauseStart..pauseStop
-        listOfPausesWithoutDinner.foldRight(TimeWithSeconds.fromSeconds(0)) { elem, plannedTime ->
+        listOfPauses.foldRight(TimeWithSeconds.fromSeconds(0)) { elem, plannedTime ->
             when {
                 elem.start in pause && elem.endInclusive in pause -> {
                     plannedTime + (elem.endInclusive - elem.start)
                 }
 
                 elem.start in pause -> {
-                    plannedTime + pauseStop - elem.start
+                    plannedTime + (pauseStop - elem.start)
                 }
 
                 elem.endInclusive in pause -> {
                     plannedTime + elem.endInclusive - pauseStart
+                }
+
+                pauseStart in elem && pauseStop in elem -> {
+                    plannedTime + (pauseStop - pauseStart)
                 }
 
                 else -> {

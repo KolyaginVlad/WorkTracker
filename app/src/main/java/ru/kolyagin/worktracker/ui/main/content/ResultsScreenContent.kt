@@ -17,15 +17,15 @@ import ru.kolyagin.worktracker.domain.models.WorkStatistic
 import ru.kolyagin.worktracker.ui.main.CardState
 import ru.kolyagin.worktracker.ui.main.views.EventList
 import ru.kolyagin.worktracker.ui.main.views.HeaderDay
-import ru.kolyagin.worktracker.ui.main.views.WorkTimer
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.views.WorkTimer
 import java.time.DayOfWeek
 
 @Composable
 fun ResultsScreenContent(
     state: CardState.Results,
     onClickStartWork: () -> Unit = {},
-    onClickDeleteDay: () -> Unit = {},
+    onClickShowMore: () -> Unit = {},
     onClickDeleteEvent: (WorkEvent, Int) -> Unit = { _, _->},
     onAddPeriod: (Int) -> Unit = {},
     onClickEvent: (Int, WorkEvent) -> Unit = { _, _->},
@@ -35,8 +35,7 @@ fun ResultsScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 17.dp, top = 26.dp, end = 28.dp, bottom = 15.dp),
-            day = state.day,
-            onClickDeleteDay = onClickDeleteDay
+            day = state.day
         )
         WorkTimer(
             time = state.statistic.workTime,

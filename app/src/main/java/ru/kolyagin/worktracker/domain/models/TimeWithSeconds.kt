@@ -52,5 +52,7 @@ class TimeWithSeconds(val hours: Int, val minutes: Int, val seconds: Int) :
             (hours * 60 * 60 + minutes * 60 + seconds).toLong()
 
         fun TimeWithSeconds.toTime() = Time(hours, minutes)
+
+        val ZERO: TimeWithSeconds = fromSeconds(0)
     }
 }

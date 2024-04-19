@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ButtonElevation
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
@@ -25,13 +24,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import ru.kolyagin.worktracker.R
-import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
 import ru.kolyagin.worktracker.domain.models.WorkEvent
-import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.utils.toShortStringId
 import ru.kolyagin.worktracker.ui.views.AddButton
-import ru.kolyagin.worktracker.ui.views.Timer
 import ru.kolyagin.worktracker.utils.Constants.BREAK
 import java.time.DayOfWeek
 
@@ -41,7 +37,6 @@ fun HeaderDay(
     day: DayOfWeek,
     contentColor: Color = MaterialTheme.colors.primaryVariant,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
-    onClickDeleteDay: () -> Unit
 ) {
     Row(
         modifier = modifier.background(backgroundColor)
@@ -52,43 +47,6 @@ fun HeaderDay(
             modifier = Modifier.weight(1F),
             color = contentColor
         )
-//        Icon(
-//            modifier = Modifier
-                //				.padding(start = 18.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
-//                .clickable(onClick = onClickDeleteDay)
-//                .align(Alignment.CenterVertically),
-//            painter = painterResource(id = R.drawable.delete),
-//            contentDescription = null,
-//            tint = contentColor
-//        )
-    }
-}
-
-@Composable
-fun WorkTimer(
-    time: TimeWithSeconds?,
-    title: String,
-    primaryColor: Color = MaterialTheme.colors.primaryVariant,
-    disableColor: Color = PrimaryVariantDisabled,
-) {
-    time?.let {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = title,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                style = MaterialTheme.typography.h5,
-                color = primaryColor
-            )
-            Timer(
-                time = it,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 40.dp, top = 8.dp, end = 40.dp, bottom = 24.dp)
-                    .fillMaxWidth(),
-                primaryColor = primaryColor,
-                disableColor = disableColor,
-            )
-        }
     }
 }
 
@@ -101,7 +59,7 @@ fun EventList(
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
     onClickDeleteEvent: (WorkEvent, Int) -> Unit,
     onAddPeriod: (Int) -> Unit,
-    onClickEvent: (Int, WorkEvent) -> Unit
+    onClickEvent: (Int, WorkEvent) -> Unit,
 ) {
     Column(
         modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -177,7 +135,7 @@ fun Button(
     contentColor: Color,
     modifier: Modifier = Modifier,
     borderColor: Color = contentColor,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     Button(
         modifier = modifier,

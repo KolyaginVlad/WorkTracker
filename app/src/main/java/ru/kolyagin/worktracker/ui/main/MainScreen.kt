@@ -3,15 +3,12 @@ package ru.kolyagin.worktracker.ui.main
 import android.app.TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,25 +17,19 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,6 +39,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.ui.destinations.SettingsScreenDestination
+import ru.kolyagin.worktracker.ui.destinations.StatisticBottomSheetDestination
 import ru.kolyagin.worktracker.ui.main.content.DinneringScreenContent
 import ru.kolyagin.worktracker.ui.main.content.PauseScreenContent
 import ru.kolyagin.worktracker.ui.main.content.ResultsScreenContent
@@ -55,10 +47,8 @@ import ru.kolyagin.worktracker.ui.main.content.WorkStartScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkingScreenContent
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
-import ru.kolyagin.worktracker.ui.utils.max
 import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TopBar
-import kotlin.math.roundToInt
 
 @RootNavGraph(start = true)
 @Destination
@@ -109,6 +99,13 @@ fun MainScreen(
         }
     }
     val toolbarHeight = 100.dp
+    val goToStatistic = remember {
+        {
+            navigator.navigate(StatisticBottomSheetDestination) {
+                launchSingleTop = true
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -129,6 +126,16 @@ fun MainScreen(
                     .height(toolbarHeight),
                 title = stringResource(id = R.string.work_periods)
             ) {
+                IconButton(
+                    onClick = goToStatistic
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = null,
+                        tint = OnPrimaryHighEmphasis
+                    )
+                }
+
                 IconButton(onClick = viewModel::onClickOpenSettings) {
                     Icon(
                         painter = painterResource(id = R.drawable.settings),
@@ -161,7 +168,8 @@ fun MainScreen(
                                 onClickStartWork = viewModel::onClickStartWork,
                                 onClickDeleteEvent = viewModel::onClickDeleteEvent,
                                 onAddPeriod = viewModel::onClickAddEvent,
-                                onClickEvent = viewModel::onClickEvent
+                                onClickEvent = viewModel::onClickEvent,
+                                onClickShowMore = goToStatistic,
                             )
 
                             is CardState.Dinnering -> DinneringScreenContent(
@@ -170,7 +178,8 @@ fun MainScreen(
                                 onClickDeleteEvent = viewModel::onClickDeleteEvent,
                                 onClickEvent = viewModel::onClickEvent,
                                 onAddPeriod = viewModel::onClickAddEvent,
-                                onClickEndWork = viewModel::onClickFinishWork
+                                onClickEndWork = viewModel::onClickFinishWork,
+                                onClickShowMore = goToStatistic,
                             )
 
                             is CardState.Working -> WorkingScreenContent(
@@ -180,7 +189,8 @@ fun MainScreen(
                                 onClickDeleteEvent = viewModel::onClickDeleteEvent,
                                 onClickEvent = viewModel::onClickEvent,
                                 onAddPeriod = viewModel::onClickAddEvent,
-                                onClickEndWork = viewModel::onClickFinishWork
+                                onClickEndWork = viewModel::onClickFinishWork,
+                                onClickShowMore = goToStatistic,
                             )
 
                             is CardState.Pause -> PauseScreenContent(
@@ -189,7 +199,8 @@ fun MainScreen(
                                 onClickDeleteEvent = viewModel::onClickDeleteEvent,
                                 onClickEvent = viewModel::onClickEvent,
                                 onAddPeriod = viewModel::onClickAddEvent,
-                                onClickEndWork = viewModel::onClickFinishWork
+                                onClickEndWork = viewModel::onClickFinishWork,
+                                onClickShowMore = goToStatistic,
                             )
 
                             is CardState.Results -> ResultsScreenContent(
@@ -197,7 +208,8 @@ fun MainScreen(
                                 onClickStartWork = viewModel::onClickStartWork,
                                 onClickDeleteEvent = viewModel::onClickDeleteEvent,
                                 onClickEvent = viewModel::onClickEvent,
-                                onAddPeriod = viewModel::onClickAddEvent
+                                onAddPeriod = viewModel::onClickAddEvent,
+                                onClickShowMore = goToStatistic,
                             )
                         }
                     }

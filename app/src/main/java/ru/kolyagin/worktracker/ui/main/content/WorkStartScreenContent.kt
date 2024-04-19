@@ -22,12 +22,12 @@ import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.ui.main.CardState
 import ru.kolyagin.worktracker.ui.main.views.EventList
 import ru.kolyagin.worktracker.ui.main.views.HeaderDay
-import ru.kolyagin.worktracker.ui.main.views.WorkTimer
 import ru.kolyagin.worktracker.ui.theme.PrimaryVariantDisabled
 import ru.kolyagin.worktracker.ui.theme.Red
 import ru.kolyagin.worktracker.ui.theme.RedDisable
 import ru.kolyagin.worktracker.ui.theme.RoundedButtonShapes
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.views.WorkTimer
 import java.time.DayOfWeek
 
 @Composable
@@ -37,7 +37,7 @@ fun WorkStartScreenContent(
     onClickDeleteEvent: (WorkEvent, Int) -> Unit = { _, _ -> },
     onAddPeriod: (Int) -> Unit = {},
     onClickEvent: (Int, WorkEvent) -> Unit = { _, _ -> },
-    onClickDeleteDay: () -> Unit = {}
+    onClickShowMore: () -> Unit = {}
 ) {
     Column {
         val title: String
@@ -59,7 +59,6 @@ fun WorkStartScreenContent(
                 .fillMaxWidth()
                 .padding(start = 17.dp, top = 26.dp, end = 28.dp, bottom = 15.dp),
             day = state.day,
-            onClickDeleteDay = onClickDeleteDay,
             contentColor = textColor
         )
         WorkTimer(
@@ -148,6 +147,6 @@ private fun WorkStartScreenPreview() {
             onClickStartWork = {},
             onClickDeleteEvent = { _, _ -> },
             onAddPeriod = {},
-            onClickDeleteDay = {})
+            onClickShowMore = {})
     }
 }
