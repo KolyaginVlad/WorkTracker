@@ -1,6 +1,5 @@
 package ru.kolyagin.worktracker.ui.notificationSettings
 
-import android.app.TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,20 +20,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import kotlinx.coroutines.NonDisposableHandle.parent
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.ui.notificationSettings.content.DinnerCard
@@ -42,6 +39,8 @@ import ru.kolyagin.worktracker.ui.notificationSettings.content.EndWorkCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.MorningCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.StartWorkCard
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.utils.BaseMaterialTimePickerBuilder
+import ru.kolyagin.worktracker.ui.utils.rememberFragmentManager
 import ru.kolyagin.worktracker.ui.views.PickerDialog
 import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TopBar
@@ -52,18 +51,22 @@ fun NotificationSettingsScreen(
     navigator: DestinationsNavigator,
     viewModel: NotificationSettingsViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
+    val fragmentManager = rememberFragmentManager()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
-        viewModel.event.collect {
-            when (it) {
+        viewModel.event.collect { event ->
+            when (event) {
                 is NotificationSettingsEvent.ShowTimePicker -> {
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            it.onTimePick(Time(hour, minute))
-                        }, it.time.hours, it.time.minutes, false
-                    ).show()
+                   BaseMaterialTimePickerBuilder
+                        .setHour(event.time.hours)
+                        .setMinute(event.time.minutes)
+                        .build().apply {
+                            addOnPositiveButtonClickListener {
+                                event.onTimePick(Time(hour, minute))
+                            }
+                            show(fragmentManager, "NotificationSettingsScreen")
+                        }
+
                 }
             }
         }

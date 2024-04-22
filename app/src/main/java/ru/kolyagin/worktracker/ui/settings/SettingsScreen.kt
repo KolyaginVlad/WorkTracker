@@ -1,5 +1,6 @@
 package ru.kolyagin.worktracker.ui.settings
 
+import android.app.ProgressDialog.show
 import android.app.TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,6 +42,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -51,9 +55,12 @@ import ru.kolyagin.worktracker.ui.destinations.NotificationSettingsScreenDestina
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.settings.views.ListOfWorkDays
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
+import ru.kolyagin.worktracker.ui.utils.BaseMaterialTimePickerBuilder
 import ru.kolyagin.worktracker.ui.utils.max
+import ru.kolyagin.worktracker.ui.utils.rememberFragmentManager
 import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TopBar
+import ru.kolyagin.worktracker.utils.toLocalDate
 import java.time.DayOfWeek
 import kotlin.math.roundToInt
 
@@ -63,18 +70,21 @@ fun SettingsScreen(
     navigator: DestinationsNavigator,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val fragmentManager = rememberFragmentManager()
     LaunchedEffect(Unit) {
         viewModel.event.collect {
             when (it) {
                 is SettingsEvent.ShowTimePicker -> {
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            viewModel.onTimePicked(Time(hour, minute))
-                        }, it.time.hours, it.time.minutes, true
-                    ).show()
+                    BaseMaterialTimePickerBuilder
+                        .setHour(it.time.hours)
+                        .setMinute(it.time.minutes)
+                        .build().apply {
+                            addOnPositiveButtonClickListener {
+                                viewModel.onTimePicked(Time(hour, minute))
+                            }
+                            show(fragmentManager, "SettingsScreen")
+                        }
                 }
             }
         }

@@ -33,6 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -47,6 +49,8 @@ import ru.kolyagin.worktracker.ui.main.content.WorkStartScreenContent
 import ru.kolyagin.worktracker.ui.main.content.WorkingScreenContent
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
+import ru.kolyagin.worktracker.ui.utils.BaseMaterialTimePickerBuilder
+import ru.kolyagin.worktracker.ui.utils.rememberFragmentManager
 import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TopBar
 
@@ -57,43 +61,56 @@ fun MainScreen(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel()
 ) {
+    val fragmentManager = rememberFragmentManager()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        viewModel.event.collect {
-            when (it) {
+        viewModel.event.collect { event ->
+            when (event) {
                 is MainEvent.OpenSettings -> {
                     navigator.navigate(SettingsScreenDestination.route)
                 }
 
                 is MainEvent.AddEventTime -> {
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.END)
-                        }, 14, 0, true
-                    ).show()
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.START)
-                        }, 12, 0, true
-                    ).show()
+                   BaseMaterialTimePickerBuilder
+                        .setHour(12)
+                        .setMinute(0)
+                        .build().apply {
+                            addOnPositiveButtonClickListener {
+                                viewModel.onTimePicked(Time(hour, minute), PeriodPart.START)
+                                BaseMaterialTimePickerBuilder
+                                    .setHour(14)
+                                    .setMinute(0)
+                                    .build().apply {
+                                        addOnPositiveButtonClickListener {
+                                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.END)
+                                        }
+                                        show(fragmentManager, "MainScreen")
+                                    }
+                            }
+                            show(fragmentManager, "MainScreen")
+                        }
                 }
 
                 is MainEvent.ChangeEventTime -> {
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.END)
-                        }, it.timeEnd.hours, it.timeEnd.minutes, true
-                    ).show()
-                    TimePickerDialog(
-                        context,
-                        { _, hour: Int, minute: Int ->
-                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.START)
-                        }, it.timeStart.hours, it.timeStart.minutes, true
-                    ).show()
+                    BaseMaterialTimePickerBuilder
+                        .setHour(event.timeStart.hours)
+                        .setMinute(event.timeStart.minutes)
+                        .build().apply {
+                            addOnPositiveButtonClickListener {
+                                viewModel.onTimeChanging(Time(hour, minute), PeriodPart.START)
+                                BaseMaterialTimePickerBuilder
+                                    .setHour(event.timeEnd.hours)
+                                    .setMinute(event.timeEnd.minutes)
+                                    .build().apply {
+                                        addOnPositiveButtonClickListener {
+                                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.END)
+                                        }
+                                        show(fragmentManager, "MainScreen")
+                                    }
+                            }
+                            show(fragmentManager, "MainScreen")
+                        }
                 }
             }
         }

@@ -58,10 +58,11 @@
     <string name="apply">APPLY</string>
     <string name="cancel">CANCEL</string>
     <string name="statistic_for_date">Statistic for %s - %s</string>
-    <string name="time_for_working">working time</string>
-    <string name="time_for_plan_break">planned break time</string>
-    <string name="time_for_unplan_break">unplanned break time</string>
+    <string name="time_for_working">time at work</string>
+    <string name="time_for_plan_break">time for scheduled breaks</string>
+    <string name="time_for_unplan_break">time for unscheduled breaks</string>
     <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
 
     <plurals name="hoursL">
         <item quantity="one">%d hour</item>

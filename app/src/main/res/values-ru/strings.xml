@@ -62,6 +62,7 @@
     <string name="time_for_plan_break">запланированные перерывы</string>
     <string name="time_for_unplan_break">внеплановые перерывы</string>
     <string name="select_date">Выберите дату</string>
+    <string name="select_time">Выберите время</string>
 
     <plurals name="hoursL">
         <item quantity="one">%d час</item>

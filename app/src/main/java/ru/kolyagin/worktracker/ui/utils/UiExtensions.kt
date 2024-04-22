@@ -7,6 +7,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import ru.kolyagin.worktracker.R
 import java.time.DayOfWeek
 
@@ -43,3 +45,10 @@ fun rememberFragmentManager(): FragmentManager {
     val context = LocalContext.current
     return remember(context){ (context as AppCompatActivity).supportFragmentManager }
 }
+
+val BaseMaterialTimePickerBuilder: MaterialTimePicker.Builder
+    get() = MaterialTimePicker.Builder()
+        .setTitleText(R.string.select_time)
+        .setTimeFormat(TimeFormat.CLOCK_24H)
+        .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+        .setTheme(R.style.TimePickerDialogStyle)

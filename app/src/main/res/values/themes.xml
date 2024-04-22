@@ -8,10 +8,10 @@
     <style name="TimePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
         <item name="android:textColorPrimary">#91819E</item>
         <item name="android:colorAccent">#91819E</item>
-        <item name="android:timePickerStyle">@style/TimePickerDialogStyle</item>
+        <item name="materialTimePickerTheme">@style/TimePickerDialogStyle</item>
     </style>
 
-    <style name="TimePickerDialogStyle" parent="@android:style/Widget.Material.Light.TimePicker">
+    <style name="TimePickerDialogStyle" parent="ThemeOverlay.MaterialComponents.TimePicker">
         <item name="android:timePickerMode">clock</item>
         <item name="android:headerBackground">#91819E</item>
         <item name="android:headerTimeTextAppearance">@style/TextAppearance.TimePickerDialogStyle.TimeLabel</item>

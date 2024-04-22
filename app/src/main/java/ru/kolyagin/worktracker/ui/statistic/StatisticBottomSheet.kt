@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -121,24 +123,26 @@ private fun Content(
                 }
             }
             Spacer(size = 36.dp)
-            WorkTimer(
-                time = state.workTime,
-                title = stringResource(id = R.string.time_for_working),
-                titleStyle = MaterialTheme.typography.body2,
-            )
-            Spacer(size = 52.dp)
-            WorkTimer(
-                time = state.plannedPauseTime,
-                title = stringResource(id = R.string.time_for_plan_break),
-                titleStyle = MaterialTheme.typography.body2,
-            )
-            Spacer(size = 52.dp)
-            WorkTimer(
-                time = state.unplannedPauseTime,
-                title = stringResource(id = R.string.time_for_unplan_break),
-                titleStyle = MaterialTheme.typography.body2,
-            )
-            Spacer(size = 52.dp)
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                WorkTimer(
+                    time = state.workTime,
+                    title = stringResource(id = R.string.time_for_working),
+                    titleStyle = MaterialTheme.typography.body2,
+                )
+                Spacer(size = 16.dp)
+                WorkTimer(
+                    time = state.plannedPauseTime,
+                    title = stringResource(id = R.string.time_for_plan_break),
+                    titleStyle = MaterialTheme.typography.body2,
+                )
+                Spacer(size = 16.dp)
+                WorkTimer(
+                    time = state.unplannedPauseTime,
+                    title = stringResource(id = R.string.time_for_unplan_break),
+                    titleStyle = MaterialTheme.typography.body2,
+                )
+                Spacer(size = 16.dp)
+            }
         }
     }
 }
