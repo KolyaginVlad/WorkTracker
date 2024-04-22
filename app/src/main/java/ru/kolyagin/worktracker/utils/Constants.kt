@@ -24,7 +24,7 @@ object Constants {
     const val WORK_START_TIME = 30
     const val WORK_END_TIME = 10
 
-    const val NOT_WORK_DINNER_CONST = 10
+    const val DINNER_CONST = 10
 
 
     const val DINNER_HOURS = 13

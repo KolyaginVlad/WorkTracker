@@ -194,13 +194,10 @@ class AlarmNotificationsManager @Inject constructor(
             val isEnabled = preferenceRepository.isDinnerNotificationEnable
             scheduleRepository.schedule().firstOrNull()
                 ?.forEach { dayWorkInfo ->
-                    if (!dayWorkInfo.isDinnerInclude && dayWorkInfo.periods.all {
-                            time !in it.timeStart..it.timeEnd
-                        } && isEnabled && dayWorkInfo.periods.isNotEmpty()
-                    ) {
+                    if (isEnabled) {
                         scheduleAlarm(
                             dayWorkInfo.day.ordinal,
-                            Constants.NOT_WORK_DINNER_CONST,
+                            Constants.DINNER_CONST,
                             time
                         ) {
                             putExtra(Constants.DESCRIPTION, R.string.dinner_description)
@@ -208,7 +205,7 @@ class AlarmNotificationsManager @Inject constructor(
                     } else {
                         cancel(
                             dayWorkInfo.day.ordinal,
-                            Constants.NOT_WORK_DINNER_CONST,
+                            Constants.DINNER_CONST,
                         ) {
                             putExtra(Constants.DESCRIPTION, R.string.dinner_description)
                         }
