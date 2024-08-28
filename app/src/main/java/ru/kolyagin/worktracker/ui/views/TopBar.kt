@@ -36,14 +36,6 @@ fun TopBar(
     Box(
         modifier = modifier
     ) {
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter),
-            painter = painterResource(id = R.drawable.header),
-            contentScale = ContentScale.Crop,
-            contentDescription = null
-        )
         onBackPressed?.let {
             Row(
                 modifier = Modifier
@@ -65,7 +57,7 @@ fun TopBar(
             }
         }
         Text(
-            modifier = Modifier.align(Alignment.CenterStart).padding(start = 16.dp),
+            modifier = Modifier.align(Alignment.BottomStart).padding(start = 16.dp),
             text = title,
             style = MaterialTheme.typography.h5,
             color = OnPrimaryHighEmphasis

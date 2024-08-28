@@ -3,6 +3,8 @@ package ru.kolyagin.worktracker.data.di
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Binds
 import dagger.Module
@@ -34,19 +36,19 @@ interface DataModule {
     @Singleton
     @Binds
     fun bindScheduleRepository(
-        impl: ScheduleRepositoryImpl
+        impl: ScheduleRepositoryImpl,
     ): ScheduleRepository
 
     @Singleton
     @Binds
     fun bindPreferencesRepository(
-        impl: PreferenceRepositoryImpl
+        impl: PreferenceRepositoryImpl,
     ): PreferenceRepository
 
     @Singleton
     @Binds
     fun bindWorkStatisticRepository(
-        impl: WorkStatisticRepositoryImpl
+        impl: WorkStatisticRepositoryImpl,
     ): WorkStatisticRepository
 }
 
@@ -62,12 +64,36 @@ class DataProvidesModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context, roomCallback: RoomCallback) =
-        Room.databaseBuilder(
+    fun provideDatabase(
+        @ApplicationContext context: Context,
+        roomCallback: RoomCallback,
+    ): AppDatabase {
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE WorkStatistic RENAME TO TMP")
+                database.execSQL(
+                    """
+                    CREATE TABLE WorkStatistic
+                    (
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        date INTEGER NOT NULL,
+                        workTime INTEGER NOT NULL,
+                        plannedPauseTime INTEGER NOT NULL,
+                        unplannedPauseTime INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+                database.execSQL("DROP TABLE TMP")
+            }
+        }
+
+        return Room.databaseBuilder(
             context, AppDatabase::class.java, "WorkTracker"
         )
             .addCallback(roomCallback)
+            .addMigrations(MIGRATION_1_2)
             .build()
+    }
 
     @Provides
     @Singleton

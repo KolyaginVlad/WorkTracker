@@ -29,7 +29,8 @@ fun TotalScheduleInfo(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(40.dp),
-        backgroundColor = OnPrimaryHighEmphasis
+        backgroundColor = OnPrimaryHighEmphasis,
+        elevation = 0.dp
     ) {
         Text(
             modifier = Modifier.padding(24.dp),

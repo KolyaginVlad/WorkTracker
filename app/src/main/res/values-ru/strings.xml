@@ -45,7 +45,7 @@
     <string name="fix_your_state">Состояние исправлено!</string>
     <string name="time_worked">времени отработано</string>
     <string name="break_work">перерыв</string>
-    <string name="notification_settings">настройки уведомлений</string>
+    <string name="notification_settings">Настройки уведомлений</string>
     <string name="enable_morning_notification">Включить утреннее уведомление</string>
     <string name="enable_dinner_notification">Включить уведомление в обед</string>
     <string name="enable_start_work_notification">Включить уведомление перед началом периода</string>
@@ -55,6 +55,14 @@
     <string name="start_offset">Смещение от начала рабочего периода</string>
     <string name="end_offset">Смещение от конца рабочего периода</string>
     <string name="time_dinner">Время обеда</string>
+    <string name="apply">ПРИМЕНИТЬ</string>
+    <string name="cancel">ОТМЕНИТЬ</string>
+    <string name="statistic_for_date">Статистика за %s - %s</string>
+    <string name="time_for_working">время в работе</string>
+    <string name="time_for_plan_break">запланированные перерывы</string>
+    <string name="time_for_unplan_break">внеплановые перерывы</string>
+    <string name="select_date">Выберите дату</string>
+    <string name="select_time">Выберите время</string>
     <string name="hourly_rate">почасовая ставка</string>
     <string name="add_break">Добавить перерыв</string>
     <string name="dialog_hourly_rate">Часовая ставка</string>

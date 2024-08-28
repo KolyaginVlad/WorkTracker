@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.kolyagin.worktracker.domain.models.TimeWithSeconds
 import ru.kolyagin.worktracker.domain.models.WorkStatistic
+import java.time.LocalDate
 
 @Entity("WorkStatistic")
 data class WorkStatisticEntity(
@@ -13,14 +14,8 @@ data class WorkStatisticEntity(
     @ColumnInfo("id")
     val id: Long,
 
-    @ColumnInfo("dayOfMonth")
-    val dayOfMonth: Int,
-
-    @ColumnInfo("month")
-    val month: Int,
-
-    @ColumnInfo("year")
-    val year: Int,
+    @ColumnInfo("date")
+    val date: LocalDate,
 
     @ColumnInfo("workTime")
     val workTime: TimeWithSeconds,

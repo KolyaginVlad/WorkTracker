@@ -45,7 +45,7 @@
     <string name="fix_your_state">Your work state fixed!</string>
     <string name="time_worked">time worked</string>
     <string name="break_work">break</string>
-    <string name="notification_settings">notification settings</string>
+    <string name="notification_settings">Notification settings</string>
     <string name="enable_morning_notification">Enable morning notification</string>
     <string name="enable_dinner_notification">Enable dinner notification</string>
     <string name="enable_start_work_notification">Enable start work notification</string>
@@ -55,6 +55,14 @@
     <string name="start_offset">Offset from start work period</string>
     <string name="end_offset">Offset from end work period</string>
     <string name="time_dinner">Time dinnering</string>
+    <string name="apply">APPLY</string>
+    <string name="cancel">CANCEL</string>
+    <string name="statistic_for_date">Statistic for %s - %s</string>
+    <string name="time_for_working">time at work</string>
+    <string name="time_for_plan_break">time for scheduled breaks</string>
+    <string name="time_for_unplan_break">time for unscheduled breaks</string>
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
     <string name="dialog_hourly_rate">Hourly rate</string>
     <string name="add_break">Add break</string>
     <string name="hourly_rate">hourly rate</string>

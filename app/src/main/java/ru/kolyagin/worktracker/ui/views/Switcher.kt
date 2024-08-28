@@ -99,7 +99,7 @@ private fun DrawScope.drawTrack(trackColor: Color, trackWidth: Float, strokeWidt
 private fun animateAlignmentAsState(
     targetBiasValue: Float
 ): State<BiasAlignment> {
-    val bias by animateFloatAsState(targetBiasValue, label = "")
+    val bias by animateFloatAsState(targetBiasValue)
     return derivedStateOf { BiasAlignment(horizontalBias = bias, verticalBias = 0f) }
 }
 

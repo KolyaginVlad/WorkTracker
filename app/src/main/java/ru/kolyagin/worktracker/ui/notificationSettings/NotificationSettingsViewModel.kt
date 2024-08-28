@@ -5,13 +5,18 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
+import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
+import ru.kolyagin.worktracker.ui.notifications.alarmManager.AlarmNotificationsManager
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
 import java.time.DayOfWeek
+import ru.kolyagin.worktracker.utils.log.Logger
 import javax.inject.Inject
 
 @HiltViewModel
 class NotificationSettingsViewModel @Inject constructor(
-    private val preferenceRepository: PreferenceRepository
+    logger: Logger,
+    private val preferenceRepository: PreferenceRepository,
+    private val notificationsManager: NotificationsManager
 ) : BaseViewModel<NotificationSettingsScreenState, NotificationSettingsEvent>(
     NotificationSettingsScreenState(
         isMorningNotificationEnable = preferenceRepository.isMorningNotificationEnable,
@@ -24,7 +29,7 @@ class NotificationSettingsViewModel @Inject constructor(
         startWorkOffset = preferenceRepository.timeBeforeStartWork,
         endWorkOffset = preferenceRepository.timeBeforeEndWork,
         salaryRates = persistentListOf()
-    )
+    ), logger
 ) {
     init {
         preferenceRepository.salary().subscribe { salaries ->
@@ -77,6 +82,7 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.isMorningNotificationEnable = enable
             it.copy(isMorningNotificationEnable = enable)
         }
+        notificationsManager.scheduleMorningNotification()
     }
 
     fun onMorningStartTimeClick() {
@@ -98,12 +104,15 @@ class NotificationSettingsViewModel @Inject constructor(
     }
 
     fun onMorningOffsetClick() {
-        trySendEvent(
-            NotificationSettingsEvent.ShowTimePicker(
-                currentState.morningOffset,
-                ::onMorningOffsetPicked
-            )
-        )
+        updateState {
+            it.copy(morningOffsetDialogVisible = true)
+        }
+    }
+
+    fun onMorningOffsetClose() {
+        updateState {
+            it.copy(morningOffsetDialogVisible = false)
+        }
     }
 
     fun onDinnerNotificationEnableChange(enable: Boolean) {
@@ -111,6 +120,7 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.isDinnerNotificationEnable = enable
             it.copy(isDinnerNotificationEnable = enable)
         }
+        notificationsManager.scheduleDinnerNotification()
     }
 
     fun onDinnerTimeClick() {
@@ -127,15 +137,18 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.isStartWorkNotificationEnable = enable
             it.copy(isStartWorkNotificationEnable = enable)
         }
+        notificationsManager.schedulePreWorkNotification()
     }
 
     fun onStartWorkOffsetClick() {
-        trySendEvent(
-            NotificationSettingsEvent.ShowTimePicker(
-                currentState.startWorkOffset,
-                ::onStartWorkOffsetPicked
-            )
-        )
+        updateState {
+            it.copy(startWorkOffsetDialogVisible = true)
+        }
+    }
+    fun onStartWorkOffsetClose() {
+        updateState {
+            it.copy(startWorkOffsetDialogVisible = false)
+        }
     }
 
     fun onEndWorkNotificationEnableChange(enable: Boolean) {
@@ -143,15 +156,48 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.isEndWorkNotificationEnable = enable
             it.copy(isEndWorkNotificationEnable = enable)
         }
+        notificationsManager.scheduleEveningNotification()
+        notificationsManager.scheduleFinWorkNotification()
     }
 
     fun onEndWorkOffsetClick() {
-        trySendEvent(
-            NotificationSettingsEvent.ShowTimePicker(
-                currentState.endWorkOffset,
-                ::onEndWorkOffsetPicked
-            )
-        )
+        updateState {
+            it.copy(endWorkOffsetDialogVisible = true)
+        }
+    }
+
+    fun onEndWorkOffsetClose() {
+        updateState {
+            it.copy(endWorkOffsetDialogVisible = false)
+        }
+    }
+
+    fun onMorningOffsetPicked(time: Time) {
+        updateState {
+            preferenceRepository.morningNotificationOffset = time
+            it.copy(morningOffset = time)
+        }
+        notificationsManager.scheduleMorningNotification()
+        onMorningOffsetClose()
+    }
+
+    fun onStartWorkOffsetPicked(time: Time) {
+        updateState {
+            preferenceRepository.timeBeforeStartWork = time
+            it.copy(startWorkOffset = time)
+        }
+        notificationsManager.schedulePreWorkNotification()
+        onStartWorkOffsetClose()
+    }
+
+    fun onEndWorkOffsetPicked(time: Time) {
+        updateState {
+            preferenceRepository.timeBeforeEndWork = time
+            it.copy(endWorkOffset = time)
+        }
+        notificationsManager.scheduleFinWorkNotification()
+        notificationsManager.scheduleEveningNotification()
+        onEndWorkOffsetClose()
     }
 
     private fun onMorningStartTimePicked(time: Time) {
@@ -162,6 +208,7 @@ class NotificationSettingsViewModel @Inject constructor(
                 morningNotificationRange = newRange
             )
         }
+        notificationsManager.scheduleMorningNotification()
     }
 
     private fun onMorningEndTimePicked(time: Time) {
@@ -172,13 +219,7 @@ class NotificationSettingsViewModel @Inject constructor(
                 morningNotificationRange = newRange
             )
         }
-    }
-
-    private fun onMorningOffsetPicked(time: Time) {
-        updateState {
-            preferenceRepository.morningNotificationOffset = time
-            it.copy(morningOffset = time)
-        }
+        notificationsManager.scheduleMorningNotification()
     }
 
     private fun onDinnerPicked(time: Time) {
@@ -186,20 +227,7 @@ class NotificationSettingsViewModel @Inject constructor(
             preferenceRepository.dinnerTimeInNotWorkingTime = time
             it.copy(dinnerTime = time)
         }
-    }
-
-    private fun onStartWorkOffsetPicked(time: Time) {
-        updateState {
-            preferenceRepository.timeBeforeStartWork = time
-            it.copy(startWorkOffset = time)
-        }
-    }
-
-    private fun onEndWorkOffsetPicked(time: Time) {
-        updateState {
-            preferenceRepository.timeBeforeEndWork = time
-            it.copy(endWorkOffset = time)
-        }
+        notificationsManager.scheduleDinnerNotification()
     }
 
 }

@@ -24,17 +24,18 @@ fun AddButton(
     contentColor: Color = MaterialTheme.colors.primary,
     backgroundColor: Color = MaterialTheme.colors.onPrimary,
     onAddPeriod: (Int) -> Unit,
-    height: Dp = 18.dp,
+    height: Dp = 19.dp,
     width: Dp = 16.dp,
 ) {
     OutlinedButton(
         border = BorderStroke(2.dp, contentColor),
         modifier = modifier,
         shape = RoundedButtonShapes.medium,
+        elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
         onClick = remember(day) { { onAddPeriod(day) } },
         colors = ButtonDefaults.buttonColors(
             backgroundColor = backgroundColor,
-            contentColor = contentColor
+            contentColor = contentColor,
         )
     ) {
         Icon(

@@ -1,6 +1,8 @@
 package ru.kolyagin.worktracker.data.repositories
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.kolyagin.worktracker.data.database.dao.WorkStatisticDao
 import ru.kolyagin.worktracker.data.database.entities.mapToDomain
@@ -22,54 +24,51 @@ class WorkStatisticRepositoryImpl @Inject constructor(
 
     init {
         scope.launch {
-            workStatisticDao.getStatisticFlow(
-                cashedDate.dayOfMonth,
-                cashedDate.month.ordinal,
-                cashedDate.year,
-            ).collect {
+            workStatisticDao.getStatisticFlow(cashedDate).collect {
                 cashedStatistic = it?.mapToDomain()
             }
         }
     }
 
     override suspend fun addWorkTime(date: LocalDate, time: TimeWithSeconds) {
-        workStatisticDao.addWorkTime(
-            date.dayOfMonth,
-            date.month.ordinal,
-            date.year,
-            time
-        )
+        workStatisticDao.addWorkTime(date, time)
     }
 
     override suspend fun addPlannedPauseTime(date: LocalDate, time: TimeWithSeconds) {
-        workStatisticDao.addPlannedPauseTime(
-            date.dayOfMonth,
-            date.month.ordinal,
-            date.year,
-            time
-        )
+        workStatisticDao.addPlannedPauseTime(date, time)
     }
 
     override suspend fun addUnplannedPauseTime(date: LocalDate, time: TimeWithSeconds) {
-        workStatisticDao.addUnplannedPauseTime(
-            date.dayOfMonth,
-            date.month.ordinal,
-            date.year,
-            time
-        )
+        workStatisticDao.addUnplannedPauseTime(date, time)
     }
 
     override suspend fun getStatistic(date: LocalDate): WorkStatistic =
         (if (date == cashedDate)
             cashedStatistic
         else
-            workStatisticDao.getStatistic(
-                date.dayOfMonth,
-                date.month.ordinal,
-                date.year,
-            )?.mapToDomain()) ?: WorkStatistic(
+            workStatisticDao.getStatistic(date)?.mapToDomain()) ?: WorkStatistic(
             TimeWithSeconds.fromSeconds(0),
             TimeWithSeconds.fromSeconds(0),
             TimeWithSeconds.fromSeconds(0)
         )
+
+    override suspend fun getStatistic(dateStart: LocalDate, dateEnd: LocalDate): WorkStatistic? {
+        val statistics = workStatisticDao.getStatistic(dateStart, dateEnd)
+        return statistics
+            .asSequence()
+            .map { it.mapToDomain() }
+            .reduceOrNull { acc: WorkStatistic, workStatistic: WorkStatistic ->
+                acc.copy(
+                    workTime = acc.workTime + workStatistic.workTime,
+                    plannedPauseTime = acc.plannedPauseTime + workStatistic.plannedPauseTime,
+                    unplannedPauseTime = acc.unplannedPauseTime + workStatistic.unplannedPauseTime,
+                )
+            }
+    }
+
+    override fun getStatisticFlow(date: LocalDate): Flow<WorkStatistic?> {
+        return workStatisticDao.getStatisticFlow(date).map { it?.mapToDomain() }
+    }
+
+
 }
