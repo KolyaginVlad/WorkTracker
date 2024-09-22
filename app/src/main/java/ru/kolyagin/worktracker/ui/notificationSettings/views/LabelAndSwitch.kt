@@ -18,7 +18,8 @@ fun LabelAndSwitch(
     label: String,
     value: Boolean,
     onCheck: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    style: androidx.compose.ui.text.TextStyle =  MaterialTheme.typography.body2,
 ) {
     Row(
         modifier = modifier,
@@ -28,7 +29,7 @@ fun LabelAndSwitch(
         Text(
             modifier = Modifier.weight(0.7f),
             text = label,
-            style = MaterialTheme.typography.body2,
+            style = style,
             color = MaterialTheme.colors.primary
         )
         Box(modifier = Modifier.weight(0.3f), contentAlignment = Alignment.CenterEnd) {

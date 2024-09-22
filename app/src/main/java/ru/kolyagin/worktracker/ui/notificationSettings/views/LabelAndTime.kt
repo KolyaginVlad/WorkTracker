@@ -35,7 +35,8 @@ fun LabelAndTime(
             color = MaterialTheme.colors.primary
         )
         Text(
-            modifier = Modifier.clickable(onClick = onTimeClick),
+            modifier = Modifier
+                .clickable(onClick = onTimeClick),
             text = time.toString(),
             style = MaterialTheme.typography.body2,
             color = SurfaceDisabled,

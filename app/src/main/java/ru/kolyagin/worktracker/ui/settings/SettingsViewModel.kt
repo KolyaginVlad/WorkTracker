@@ -1,11 +1,13 @@
 package ru.kolyagin.worktracker.ui.settings
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.models.WorkEvent
 import ru.kolyagin.worktracker.domain.models.WorkPeriod
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.domain.repositories.ScheduleRepository
+import ru.kolyagin.worktracker.ui.notificationSettings.NotificationSettingsEvent
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.utils.Constants
 import ru.kolyagin.worktracker.utils.Constants.DINNER
@@ -32,6 +34,49 @@ class SettingsViewModel @Inject constructor(
             updateState {
                 it.copy(listOfWorkPeriods = list)
             }
+        }
+        preferenceRepository.salary().subscribe { salaries ->
+            updateState {
+                it.copy(salaryRates = salaries.toPersistentList())
+            }
+        }
+    }
+
+    fun addSalary(forallDays: Boolean, day: Int, rate: Long) {
+        launchViewModelScope {
+            if (forallDays) {
+                for (i in 0 until 7) preferenceRepository.addsalary(DayOfWeek.of(i + 1), rate)
+            } else {
+                preferenceRepository.addsalary(DayOfWeek.of(day + 1), rate)
+            }
+        }
+    }
+
+    fun setSalary(forallDays: Boolean, day: Int, rate: Long) {
+        launchViewModelScope {
+            if (forallDays) {
+                for (i in 0 until 7) preferenceRepository.setSalary(DayOfWeek.of(i + 1), rate)
+            } else {
+                preferenceRepository.setSalary(DayOfWeek.of(day + 1), rate)
+            }
+        }
+    }
+
+    fun onAddSalary() {
+        launchViewModelScope {
+            sendEvent(SettingsEvent.AddSalary)
+        }
+    }
+
+    fun onSetSalary(day: DayOfWeek) {
+        launchViewModelScope {
+            sendEvent(SettingsEvent.SetSalary(day))
+        }
+    }
+
+    fun onDeleteSalary(id: Long) {
+        launchViewModelScope {
+            preferenceRepository.deleteSalary(id)
         }
     }
 

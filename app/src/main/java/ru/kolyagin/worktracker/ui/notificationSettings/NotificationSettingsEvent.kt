@@ -2,6 +2,7 @@ package ru.kolyagin.worktracker.ui.notificationSettings
 
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.utils.base.Event
+import java.time.DayOfWeek
 
 sealed class NotificationSettingsEvent : Event() {
     class ShowTimePicker(

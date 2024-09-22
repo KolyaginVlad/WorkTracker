@@ -86,12 +86,28 @@ class DataProvidesModule {
                 database.execSQL("DROP TABLE TMP")
             }
         }
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS DaySalaryRate
+                    (
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        day INTEGER NOT NULL,
+                        rate INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_DaySalaryRate_day` ON `DaySalaryRate` (`day`)")
+            }
+        }
 
         return Room.databaseBuilder(
             context, AppDatabase::class.java, "WorkTracker"
         )
             .addCallback(roomCallback)
             .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_2_3)
             .build()
     }
 
@@ -104,6 +120,11 @@ class DataProvidesModule {
     @Singleton
     fun providesWorkStatisticDao(database: AppDatabase) =
         database.getWorkStatisticDao()
+
+    @Provides
+    @Singleton
+    fun providesSalaryRateDao(database: AppDatabase) =
+        database.getSalaryRateDao()
 
     @Provides
     @Singleton

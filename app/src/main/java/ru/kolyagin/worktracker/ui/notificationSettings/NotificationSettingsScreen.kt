@@ -17,7 +17,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -27,17 +29,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
+import ru.kolyagin.worktracker.ui.main.views.EventsTimePickerDialog
 import ru.kolyagin.worktracker.ui.notificationSettings.content.DinnerCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.EndWorkCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.MorningCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.StartWorkCard
+import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.utils.BaseMaterialTimePickerBuilder
 import ru.kolyagin.worktracker.ui.utils.rememberFragmentManager
@@ -51,25 +53,40 @@ fun NotificationSettingsScreen(
     navigator: DestinationsNavigator,
     viewModel: NotificationSettingsViewModel = hiltViewModel()
 ) {
-    val fragmentManager = rememberFragmentManager()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val openTimeEditDialog = remember {
+        mutableStateOf(false)
+    }
+    var selectedEditTime by remember {
+        mutableStateOf(Time(0,0))
+    }
+    var selectedCallback by remember {
+        mutableStateOf<(Time) -> Unit>({})
+    }
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 is NotificationSettingsEvent.ShowTimePicker -> {
-                   BaseMaterialTimePickerBuilder
-                        .setHour(event.time.hours)
-                        .setMinute(event.time.minutes)
-                        .build().apply {
-                            addOnPositiveButtonClickListener {
-                                event.onTimePick(Time(hour, minute))
-                            }
-                            show(fragmentManager, "NotificationSettingsScreen")
-                        }
-
+                    openTimeEditDialog.value = true
+                    selectedEditTime = event.time
+                    selectedCallback = event.onTimePick
                 }
             }
         }
+    }
+    if (openTimeEditDialog.value) {
+        EventsTimePickerDialog(
+            onSubmit = remember(selectedCallback) {
+                { _, time, _, _ ->
+                    selectedCallback(time)
+                }
+            },
+            openDialogCustom = openTimeEditDialog,
+            time = selectedEditTime,
+            period = PeriodPart.START,
+            onlyTime = true,
+            title = stringResource(id = R.string.select_time)
+        )
     }
     if (state.morningOffsetDialogVisible) {
         PickerDialog(
@@ -183,7 +200,6 @@ private fun NotificationSettingsScreenContent(
                     onEndTimeClick = onMorningEndTimeClick,
                     onOffsetClick = onMorningOffsetClick,
                 )
-
                 DinnerCard(
                     modifier = Modifier
                         .fillMaxSize()
@@ -227,7 +243,7 @@ private fun NotificationSettingsPreview() {
         NotificationSettingsScreenContent(
             navigator = EmptyDestinationsNavigator,
             state = NotificationSettingsScreenState(),
-            {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
         )
     }
 }

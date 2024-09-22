@@ -5,8 +5,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.kolyagin.worktracker.data.database.converters.LocalDateConverter
 import ru.kolyagin.worktracker.data.database.converters.TimeConverter
+import ru.kolyagin.worktracker.data.database.dao.SalaryRateDao
 import ru.kolyagin.worktracker.data.database.dao.ScheduleDao
 import ru.kolyagin.worktracker.data.database.dao.WorkStatisticDao
+import ru.kolyagin.worktracker.data.database.entities.DaySalaryRateEntity
 import ru.kolyagin.worktracker.data.database.entities.DayScheduleEntity
 import ru.kolyagin.worktracker.data.database.entities.WorkEventEntity
 import ru.kolyagin.worktracker.data.database.entities.WorkPeriodEntity
@@ -17,12 +19,16 @@ import ru.kolyagin.worktracker.data.database.entities.WorkStatisticEntity
         DayScheduleEntity::class,
         WorkPeriodEntity::class,
         WorkStatisticEntity::class,
-        WorkEventEntity::class
-    ], version = 2, exportSchema = false
+        WorkEventEntity::class,
+        DaySalaryRateEntity::class
+    ], version = 3, exportSchema = false
 )
 @TypeConverters(TimeConverter::class, LocalDateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getScheduleDao(): ScheduleDao
 
     abstract fun getWorkStatisticDao(): WorkStatisticDao
+
+    abstract fun getSalaryRateDao(): SalaryRateDao
+
 }

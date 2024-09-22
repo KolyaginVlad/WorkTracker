@@ -63,6 +63,12 @@
     <string name="time_for_unplan_break">внеплановые перерывы</string>
     <string name="select_date">Выберите дату</string>
     <string name="select_time">Выберите время</string>
+    <string name="hourly_rate">Почасовая ставка</string>
+    <string name="add_break">Добавить перерыв</string>
+    <string name="dialog_hourly_rate">Часовая ставка</string>
+    <string name="money_per_hour">₽ В ЧАС</string>
+    <string name="take_for_every_day">применить для всех дней</string>
+
 
     <plurals name="hoursL">
         <item quantity="one">%d час</item>

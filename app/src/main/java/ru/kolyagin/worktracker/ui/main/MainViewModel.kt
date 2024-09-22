@@ -262,12 +262,15 @@ class MainViewModel @Inject constructor(
         trySendEvent(MainEvent.AddEventTime)
     }
 
-    fun onTimePicked(time: Time, periodPart: PeriodPart) {
+    fun onTimePicked(foralDays: Boolean, time: Time, periodPart: PeriodPart, name: String) {
         selectedDayOfWeek?.let { dayOfWeek ->
             launchViewModelScope {
                 addingEvent.let {
+                    if (foralDays) {
+                        selectedDayOfWeek = -1
+                    }
                     if (periodPart == PeriodPart.START) {
-                        addingEvent = it.copy(timeStart = time)
+                        addingEvent = it.copy(timeStart = time, name = name)
                     } else {
                         addingEvent = it.copy(timeEnd = time)
                         if (addingEvent.timeStart >= addingEvent.timeEnd) {
@@ -285,20 +288,23 @@ class MainViewModel @Inject constructor(
     fun onTimeChanging(time: Time, periodPart: PeriodPart) {
         selectedDayOfWeek?.let { dayOfWeek ->
             launchViewModelScope {
-                var newEvent: WorkEvent = addingEvent
-                selectedWorkEvent?.let {
-                    newEvent = if (periodPart == PeriodPart.START) {
-                        it.copy(timeStart = time)
+                selectedWorkEvent = selectedWorkEvent?.let { selected ->
+                    if (periodPart == PeriodPart.START) {
+                        selected.copy(timeStart = time)
                     } else {
-                        it.copy(timeEnd = time)
+                        selected.copy(timeEnd = time)
+                    }.let { workEvent ->
+                        if (workEvent.timeStart >= workEvent.timeEnd) {
+                            workEvent.copy(timeStart = workEvent.timeEnd, timeEnd = workEvent.timeStart)
+                        } else {
+                            workEvent
+                        }.also { resultEvent ->
+                            if (periodPart == PeriodPart.END) {
+                                scheduleRepository.setWorkEventTime(resultEvent, dayOfWeek)
+                            }
+                        }
                     }
-                    if (newEvent.timeStart >= newEvent.timeEnd) {
-                        newEvent =
-                            it.copy(timeStart = newEvent.timeEnd, timeEnd = newEvent.timeStart)
-                    }
-                    scheduleRepository.setWorkEventTime(newEvent, dayOfWeek)
                 }
-                selectedWorkEvent = newEvent
             }
         }
     }

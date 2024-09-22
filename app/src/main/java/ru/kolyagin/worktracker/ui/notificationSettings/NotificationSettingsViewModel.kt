@@ -1,11 +1,14 @@
 package ru.kolyagin.worktracker.ui.notificationSettings
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.domain.repositories.PreferenceRepository
 import ru.kolyagin.worktracker.ui.notifications.NotificationsManager
 import ru.kolyagin.worktracker.ui.notifications.alarmManager.AlarmNotificationsManager
 import ru.kolyagin.worktracker.utils.base.BaseViewModel
+import java.time.DayOfWeek
 import ru.kolyagin.worktracker.utils.log.Logger
 import javax.inject.Inject
 

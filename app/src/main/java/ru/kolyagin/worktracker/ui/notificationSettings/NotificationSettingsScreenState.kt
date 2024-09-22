@@ -1,5 +1,8 @@
 package ru.kolyagin.worktracker.ui.notificationSettings
 
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import ru.kolyagin.worktracker.domain.models.DaySalaryRate
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.utils.base.State
 

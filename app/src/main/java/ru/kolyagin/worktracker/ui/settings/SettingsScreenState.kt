@@ -1,13 +1,16 @@
 package ru.kolyagin.worktracker.ui.settings
 
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import ru.kolyagin.worktracker.domain.models.DaySalaryRate
 import ru.kolyagin.worktracker.domain.models.DayWorkInfo
 import ru.kolyagin.worktracker.domain.models.Time
 import ru.kolyagin.worktracker.utils.base.State
 
 data class SettingsScreenState(
-    val listOfWorkPeriods: ImmutableList<DayWorkInfo> = persistentListOf()
+    val listOfWorkPeriods: ImmutableList<DayWorkInfo> = persistentListOf(),
+    val salaryRates: PersistentList<DaySalaryRate> = persistentListOf()
 ) : State() {
     val totalTime = listOfWorkPeriods
         .map { it.timeWithOutConflux }
