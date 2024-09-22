@@ -1,6 +1,5 @@
 package ru.kolyagin.worktracker.ui.main
 
-import android.app.TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,19 +21,18 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -50,8 +48,6 @@ import ru.kolyagin.worktracker.ui.main.content.WorkingScreenContent
 import ru.kolyagin.worktracker.ui.main.views.EventsTimePickerDialog
 import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.OnPrimaryHighEmphasis
-import ru.kolyagin.worktracker.ui.utils.BaseMaterialTimePickerBuilder
-import ru.kolyagin.worktracker.ui.utils.rememberFragmentManager
 import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TopBar
 
@@ -62,9 +58,7 @@ fun MainScreen(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    val fragmentManager = rememberFragmentManager()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
-    // val context = LocalContext.current
     val openTimeAddDialog = remember {
         mutableStateOf(false)
     }
@@ -77,6 +71,10 @@ fun MainScreen(
     val openTimeSecondEditDialog = remember {
         mutableStateOf(false)
     }
+
+    var selectedEditTime by remember {
+        mutableStateOf(Time(0,0)..Time(0,0))
+    }
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
@@ -85,49 +83,66 @@ fun MainScreen(
                 }
 
                 is MainEvent.AddEventTime -> {
-                   BaseMaterialTimePickerBuilder
-                        .setHour(12)
-                        .setMinute(0)
-                        .build().apply {
-                            addOnPositiveButtonClickListener {
-                                viewModel.onTimePicked(Time(hour, minute), PeriodPart.START)
-                                BaseMaterialTimePickerBuilder
-                                    .setHour(14)
-                                    .setMinute(0)
-                                    .build().apply {
-                                        addOnPositiveButtonClickListener {
-                                            viewModel.onTimePicked(Time(hour, minute), PeriodPart.END)
-                                        }
-                                        show(fragmentManager, "MainScreen")
-                                    }
-                            }
-                            show(fragmentManager, "MainScreen")
-                        }
+                    openTimeAddDialog.value = true
                 }
 
                 is MainEvent.ChangeEventTime -> {
-                    BaseMaterialTimePickerBuilder
-                        .setHour(event.timeStart.hours)
-                        .setMinute(event.timeStart.minutes)
-                        .build().apply {
-                            addOnPositiveButtonClickListener {
-                                viewModel.onTimeChanging(Time(hour, minute), PeriodPart.START)
-                                BaseMaterialTimePickerBuilder
-                                    .setHour(event.timeEnd.hours)
-                                    .setMinute(event.timeEnd.minutes)
-                                    .build().apply {
-                                        addOnPositiveButtonClickListener {
-                                            viewModel.onTimeChanging(Time(hour, minute), PeriodPart.END)
-                                        }
-                                        show(fragmentManager, "MainScreen")
-                                    }
-                            }
-                            show(fragmentManager, "MainScreen")
-                        }
+                    selectedEditTime = event.timeStart..event.timeEnd
+                    openTimeEditDialog.value = true
                 }
             }
         }
     }
+    if (openTimeSecondAddDialog.value) {
+        EventsTimePickerDialog(
+            onSubmit = viewModel::onTimePicked,
+            openDialogCustom = openTimeSecondAddDialog,
+            time = Time(14, 0),
+            period = PeriodPart.END,
+            onlyTime = true
+        )
+    }
+    if (openTimeAddDialog.value) {
+        EventsTimePickerDialog(
+            onSubmit = remember {
+                { foralDays, time, periodPart, name ->
+                    openTimeSecondAddDialog.value = true
+                    viewModel.onTimePicked(foralDays, time, periodPart, name)
+                }
+            },
+            openDialogCustom = openTimeAddDialog,
+            time = Time(12, 0),
+            period = PeriodPart.START,
+        )
+    }
+    if (openTimeSecondEditDialog.value) {
+        EventsTimePickerDialog(
+            onSubmit = remember {
+                { _, time, periodPart, _ ->
+                    viewModel.onTimeChanging(time, periodPart)
+                }
+            },
+            openDialogCustom = openTimeSecondEditDialog,
+            time = selectedEditTime.endInclusive,
+            period = PeriodPart.END,
+            onlyTime = true
+        )
+    }
+    if (openTimeEditDialog.value) {
+        EventsTimePickerDialog(
+            onSubmit = remember {
+                { _, time, periodPart, _ ->
+                    openTimeSecondEditDialog.value = true
+                    viewModel.onTimeChanging(time, periodPart)
+                }
+            },
+            openDialogCustom = openTimeEditDialog,
+            time = selectedEditTime.start,
+            period = PeriodPart.START,
+            onlyTime = true
+        )
+    }
+
     val toolbarHeight = 100.dp
     val goToStatistic = remember {
         {

@@ -37,7 +37,6 @@ import ru.kolyagin.worktracker.ui.views.TextFieldAndLabel
 import ru.kolyagin.worktracker.ui.views.timePicker.TimePicker
 import java.util.Locale
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EventsTimePickerDialog(
     onSubmit: (Boolean, Time, PeriodPart, String) -> Unit,
@@ -45,7 +44,8 @@ fun EventsTimePickerDialog(
     modifier: Modifier = Modifier,
     period: PeriodPart,
     time: Time = Time(0, 0),
-    onlyTime: Boolean = false
+    onlyTime: Boolean = false,
+    title: String = stringResource(id = R.string.add_break)
 ) {
     Dialog(
         onDismissRequest = { openDialogCustom.value = false },
@@ -60,7 +60,8 @@ fun EventsTimePickerDialog(
                 modifier = Modifier,
                 timeDef = time,
                 period = period,
-                onlyTime = onlyTime
+                onlyTime = onlyTime,
+                title = title
             )
         }
     }
@@ -70,11 +71,12 @@ fun EventsTimePickerDialog(
 @Composable
 fun EventsTimePickerDialogUI(
     modifier: Modifier,
+    title: String,
     openDialogCustom: MutableState<Boolean>,
     onSubmit: (Boolean, Time, PeriodPart, String) -> Unit,
     period: PeriodPart,
     timeDef: Time,
-    onlyTime: Boolean
+    onlyTime: Boolean,
 ) {
     var checked by remember {
         mutableStateOf(false)
@@ -100,7 +102,7 @@ fun EventsTimePickerDialogUI(
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(id = R.string.add_break),
+                text = title,
                 color = MaterialTheme.colors.primaryVariant,
                 modifier = Modifier.align(CenterHorizontally)
             )
@@ -110,7 +112,7 @@ fun EventsTimePickerDialogUI(
                         top = 20.dp, start = 16.dp, end = 14.dp, bottom = 4.dp
                     )
                     .fillMaxWidth(),
-                    label = stringResource(id = R.string.take_for_every_day),
+                    label = "",
                     name = name,
                     onValueChange = { name.value = it })
                 Spacer(size = 28.dp)
@@ -135,6 +137,13 @@ fun EventsTimePickerDialogUI(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
+                    modifier = Modifier,
+                    onClick = { openDialogCustom.value = !openDialogCustom.value },
+                    backgroundColor = MaterialTheme.colors.onPrimary,
+                    text = stringResource(id = R.string.cancel).uppercase(Locale.ROOT),
+                    contentColor = MaterialTheme.colors.primaryVariant,
+                )
+                Button(
                     borderColor = MaterialTheme.colors.primaryVariant,
                     onClick = {
                         onSubmit(
@@ -147,15 +156,8 @@ fun EventsTimePickerDialogUI(
                     },
                     modifier = Modifier,
                     backgroundColor = MaterialTheme.colors.primaryVariant,
-                    text = stringResource(id = R.string.submit).uppercase(Locale.ROOT),
+                    text = stringResource(id = R.string.apply).uppercase(Locale.ROOT),
                     contentColor = MaterialTheme.colors.onPrimary
-                )
-                Button(
-                    modifier = Modifier,
-                    onClick = { openDialogCustom.value = !openDialogCustom.value },
-                    backgroundColor = MaterialTheme.colors.onPrimary,
-                    text = stringResource(id = R.string.cancel).uppercase(Locale.ROOT),
-                    contentColor = MaterialTheme.colors.primaryVariant,
                 )
             }
         }

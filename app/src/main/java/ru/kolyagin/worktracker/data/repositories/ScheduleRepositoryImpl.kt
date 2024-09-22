@@ -66,7 +66,7 @@ class ScheduleRepositoryImpl @Inject constructor(
 	
 	override suspend fun addWorkEvent(dayOfWeek: Int, event: WorkEvent) {
 		if (dayOfWeek == -1) {
-			for (i in 0 until 6)
+			for (i in 0 until 7)
 				scheduleDao.addEvent(
 					i,
 					event.name,

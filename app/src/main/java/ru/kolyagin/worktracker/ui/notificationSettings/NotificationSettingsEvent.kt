@@ -9,11 +9,4 @@ sealed class NotificationSettingsEvent : Event() {
         val time: Time,
         val onTimePick: (Time) -> Unit
     ) : NotificationSettingsEvent()
-
-    object AddSalary : NotificationSettingsEvent()
-
-    class SetSalary(
-        val day: DayOfWeek,
-    ) : NotificationSettingsEvent()
-
 }

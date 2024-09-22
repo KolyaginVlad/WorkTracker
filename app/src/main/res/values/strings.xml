@@ -65,11 +65,9 @@
     <string name="select_time">Select time</string>
     <string name="dialog_hourly_rate">Hourly rate</string>
     <string name="add_break">Add break</string>
-    <string name="hourly_rate">hourly rate</string>
+    <string name="hourly_rate">Hourly rate</string>
     <string name="money_per_hour">$ PER HOUR</string>
     <string name="take_for_every_day">submit for every day</string>
-    <string name="submit">submit</string>
-    <string name="cancel">cancel</string>
 
 
     <plurals name="hoursL">

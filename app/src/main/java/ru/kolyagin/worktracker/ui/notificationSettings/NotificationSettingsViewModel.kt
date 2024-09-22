@@ -28,54 +28,8 @@ class NotificationSettingsViewModel @Inject constructor(
         dinnerTime = preferenceRepository.dinnerTimeInNotWorkingTime,
         startWorkOffset = preferenceRepository.timeBeforeStartWork,
         endWorkOffset = preferenceRepository.timeBeforeEndWork,
-        salaryRates = persistentListOf()
     ), logger
 ) {
-    init {
-        preferenceRepository.salary().subscribe { salaries ->
-            updateState {
-                it.copy(salaryRates = salaries.toPersistentList())
-            }
-        }
-    }
-
-    fun addSalary(forallDays: Boolean, day: Int, rate: Long) {
-        launchViewModelScope {
-            if (forallDays) {
-                for (i in 0 until 7) preferenceRepository.addsalary(DayOfWeek.of(i + 1), rate)
-            } else {
-                preferenceRepository.addsalary(DayOfWeek.of(day + 1), rate)
-            }
-        }
-    }
-
-    fun setSalary(forallDays: Boolean, day: Int, rate: Long) {
-        launchViewModelScope {
-            if (forallDays) {
-                for (i in 0 until 7) preferenceRepository.setSalary(DayOfWeek.of(i + 1), rate)
-            } else {
-                preferenceRepository.setSalary(DayOfWeek.of(day + 1), rate)
-            }
-        }
-    }
-
-    fun onAddSalary() {
-        launchViewModelScope {
-            sendEvent(NotificationSettingsEvent.AddSalary)
-        }
-    }
-
-    fun onSetSalary(day: DayOfWeek) {
-        launchViewModelScope {
-            sendEvent(NotificationSettingsEvent.SetSalary(day))
-        }
-    }
-
-    fun onDeleteSalary(id: Long) {
-        launchViewModelScope {
-            preferenceRepository.deleteSalary(id)
-        }
-    }
 
     fun onMorningNotificationEnableChange(enable: Boolean) {
         updateState {

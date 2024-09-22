@@ -29,26 +29,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import ru.kolyagin.worktracker.R
 import ru.kolyagin.worktracker.domain.models.Time
+import ru.kolyagin.worktracker.ui.main.views.EventsTimePickerDialog
 import ru.kolyagin.worktracker.ui.notificationSettings.content.DinnerCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.EndWorkCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.MorningCard
-import ru.kolyagin.worktracker.ui.notificationSettings.content.SalaryCard
 import ru.kolyagin.worktracker.ui.notificationSettings.content.StartWorkCard
-import ru.kolyagin.worktracker.ui.notificationSettings.views.CustomAddDialog
+import ru.kolyagin.worktracker.ui.settings.models.PeriodPart
 import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.utils.BaseMaterialTimePickerBuilder
 import ru.kolyagin.worktracker.ui.utils.rememberFragmentManager
 import ru.kolyagin.worktracker.ui.views.PickerDialog
 import ru.kolyagin.worktracker.ui.views.Spacer
 import ru.kolyagin.worktracker.ui.views.TopBar
-import java.time.DayOfWeek
 
 @Destination
 @Composable
@@ -56,37 +53,40 @@ fun NotificationSettingsScreen(
     navigator: DestinationsNavigator,
     viewModel: NotificationSettingsViewModel = hiltViewModel()
 ) {
-    val fragmentManager = rememberFragmentManager()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
-    val openAddDialog = remember { mutableStateOf(false) }
-    val openEditDialog = remember { mutableStateOf(false) }
-    var dayStart by remember { mutableStateOf(0) }
+    val openTimeEditDialog = remember {
+        mutableStateOf(false)
+    }
+    var selectedEditTime by remember {
+        mutableStateOf(Time(0,0))
+    }
+    var selectedCallback by remember {
+        mutableStateOf<(Time) -> Unit>({})
+    }
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 is NotificationSettingsEvent.ShowTimePicker -> {
-                   BaseMaterialTimePickerBuilder
-                        .setHour(event.time.hours)
-                        .setMinute(event.time.minutes)
-                        .build().apply {
-                            addOnPositiveButtonClickListener {
-                                event.onTimePick(Time(hour, minute))
-                            }
-                            show(fragmentManager, "NotificationSettingsScreen")
-                        }
-
-                }
-
-                is NotificationSettingsEvent.AddSalary -> {
-                    openAddDialog.value = true
-                }
-
-                is NotificationSettingsEvent.SetSalary -> {
-                    openEditDialog.value = true
-                    dayStart = it.day.ordinal
+                    openTimeEditDialog.value = true
+                    selectedEditTime = event.time
+                    selectedCallback = event.onTimePick
                 }
             }
         }
+    }
+    if (openTimeEditDialog.value) {
+        EventsTimePickerDialog(
+            onSubmit = remember(selectedCallback) {
+                { _, time, _, _ ->
+                    selectedCallback(time)
+                }
+            },
+            openDialogCustom = openTimeEditDialog,
+            time = selectedEditTime,
+            period = PeriodPart.START,
+            onlyTime = true,
+            title = stringResource(id = R.string.select_time)
+        )
     }
     if (state.morningOffsetDialogVisible) {
         PickerDialog(
@@ -121,20 +121,6 @@ fun NotificationSettingsScreen(
             title = stringResource(id = R.string.end_offset)
         )
     }
-    if (openAddDialog.value) {
-        CustomAddDialog(
-            onSubmit = viewModel::addSalary,
-            openDialogCustom = openAddDialog
-        )
-    }
-    if (openEditDialog.value) {
-        CustomAddDialog(
-            onSubmit = viewModel::setSalary,
-            openDialogCustom = openEditDialog,
-            daystart = dayStart,
-            showDaySelector = false
-        )
-    }
     NotificationSettingsScreenContent(
         navigator = navigator,
         state = state,
@@ -148,9 +134,6 @@ fun NotificationSettingsScreen(
         onStartWorkOffsetClick = viewModel::onStartWorkOffsetClick,
         onEndWorkNotificationEnableChange = viewModel::onEndWorkNotificationEnableChange,
         onEndWorkOffsetClick = viewModel::onEndWorkOffsetClick,
-        onSalaryAdd = viewModel::onAddSalary,
-        onSetSalary = viewModel::onSetSalary,
-        onDeleteSalary = viewModel::onDeleteSalary
     )
 }
 
@@ -168,9 +151,6 @@ private fun NotificationSettingsScreenContent(
     onStartWorkOffsetClick: () -> Unit,
     onEndWorkNotificationEnableChange: (Boolean) -> Unit,
     onEndWorkOffsetClick: () -> Unit,
-    onSalaryAdd: () -> Unit,
-    onSetSalary: (DayOfWeek) -> Unit,
-    onDeleteSalary: (Long) -> Unit,
 ) {
     val toolbarHeight = 100.dp
     val scrollState = rememberScrollState()
@@ -207,28 +187,19 @@ private fun NotificationSettingsScreenContent(
                     .padding(top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                SalaryCard(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                salary = state.salaryRates,
-                onSalaryAdd = onSalaryAdd,
-                onSetSalary = onSetSalary,
-                onDeleteSalary = onDeleteSalary
-            )
-            MorningCard(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                isEnable = state.isMorningNotificationEnable,
-                startTime = state.morningNotificationRange.start,
-                endTime = state.morningNotificationRange.endInclusive,
-                offset = state.morningOffset,
-                onEnableChange = onMorningNotificationEnableChange,
-                onStartTimeClick = onMorningStartTimeClick,
-                onEndTimeClick = onMorningEndTimeClick,
-                onOffsetClick = onMorningOffsetClick,
-            )
+                MorningCard(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    isEnable = state.isMorningNotificationEnable,
+                    startTime = state.morningNotificationRange.start,
+                    endTime = state.morningNotificationRange.endInclusive,
+                    offset = state.morningOffset,
+                    onEnableChange = onMorningNotificationEnableChange,
+                    onStartTimeClick = onMorningStartTimeClick,
+                    onEndTimeClick = onMorningEndTimeClick,
+                    onOffsetClick = onMorningOffsetClick,
+                )
                 DinnerCard(
                     modifier = Modifier
                         .fillMaxSize()
@@ -272,7 +243,7 @@ private fun NotificationSettingsPreview() {
         NotificationSettingsScreenContent(
             navigator = EmptyDestinationsNavigator,
             state = NotificationSettingsScreenState(),
-            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, { }, { }, { _ -> }
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
         )
     }
 }

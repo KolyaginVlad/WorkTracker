@@ -34,7 +34,6 @@ import ru.kolyagin.worktracker.ui.theme.WorkTrackerTheme
 import ru.kolyagin.worktracker.ui.views.TextFieldAndLabel
 import java.util.Locale
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CustomAddDialog(
     onSubmit: (Boolean, Int, Long) -> Unit,
@@ -106,20 +105,22 @@ fun CustomDialogUI(
                 value = checked,
                 onCheck = { checked = !checked }
             )
-            if (showDaySelector && !checked) DaySelector(
-                day,
-                modifier = Modifier
-                    .padding(bottom = 24.dp)
-                    .fillMaxWidth(0.7F)
-                    .align(CenterHorizontally)
-            )
+            if (showDaySelector && !checked) {
+                DaySelector(
+                    dayOfWeek = day,
+                    modifier = Modifier
+                        .padding(bottom = 24.dp)
+                        .fillMaxWidth(0.7F)
+                        .align(CenterHorizontally)
+                )
+            }
             TextFieldAndLabel(
                 modifier = Modifier
                     .padding(
                         start = 16.dp, end = 14.dp, bottom = 14.dp
                     )
                     .fillMaxWidth(),
-                label = stringResource(id = R.string.take_for_every_day),
+                label = "",
                 name = salaryRate,
                 onValueChange = {
                     if (it != "" && it.isDigitsOnly()) salaryRate.value = it
@@ -132,6 +133,13 @@ fun CustomDialogUI(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
+                    modifier = Modifier,
+                    onClick = { openDialogCustom.value = !openDialogCustom.value },
+                    backgroundColor = MaterialTheme.colors.onPrimary,
+                    text = stringResource(id = R.string.cancel).uppercase(Locale.ROOT),
+                    contentColor = MaterialTheme.colors.primaryVariant,
+                )
+                Button(
                     borderColor = MaterialTheme.colors.primaryVariant,
                     onClick = {
                         onSubmit(checked, day.value, salaryRate.value.toLong())
@@ -139,15 +147,8 @@ fun CustomDialogUI(
                     },
                     modifier = Modifier,
                     backgroundColor = MaterialTheme.colors.primaryVariant,
-                    text = stringResource(id = R.string.submit).uppercase(Locale.ROOT),
+                    text = stringResource(id = R.string.apply).uppercase(Locale.ROOT),
                     contentColor = MaterialTheme.colors.onPrimary
-                )
-                Button(
-                    modifier = Modifier,
-                    onClick = { openDialogCustom.value = !openDialogCustom.value },
-                    backgroundColor = MaterialTheme.colors.onPrimary,
-                    text = stringResource(id = R.string.cancel).uppercase(Locale.ROOT),
-                    contentColor = MaterialTheme.colors.primaryVariant,
                 )
             }
         }

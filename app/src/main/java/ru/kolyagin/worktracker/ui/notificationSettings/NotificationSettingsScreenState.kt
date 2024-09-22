@@ -19,5 +19,4 @@ data class NotificationSettingsScreenState(
     val isEndWorkNotificationEnable: Boolean = true,
     val endWorkOffset: Time = Time(0, 0),
     val endWorkOffsetDialogVisible: Boolean = false,
-    val salaryRates: PersistentList<DaySalaryRate> = persistentListOf()
 ) : State()
